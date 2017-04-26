@@ -4,7 +4,7 @@
 		<hr>
 		<p v-for = '(v,i) in products'>
 			{{ v.title }} - {{ v.price }} 剩余 {{ v.inventory }}
-			<button :disable='v.inventory >= 1' @click='addToCart(v)'>添加到购物车</button>
+			<button :disabled='v.inventory == 0' @click='addToCart(v)'>添加到购物车</button>
 		</p>
 	</div>
 </template>
@@ -22,9 +22,15 @@
 			})
 		},
 		methods:{
-			...mapActions({
-				addToCart:'addToCart'
-			})
+			addToCart({id,inventory}){
+				const str = id;
+				let obj ={
+					id:str,
+					quantity:1,
+					inventory,
+				}
+				this.$store.dispatch('addToCart',obj)	
+			}
 		},
 		created(){
 			this.$store.dispatch('getAllProduct')

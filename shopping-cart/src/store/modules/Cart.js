@@ -14,10 +14,10 @@ const getters = {
 
 // actions
 const actions = {
-   checkout({commit,state}){
+   checkout({commit,state},products){
     const savedCartItems = [...state.added]
     commit(types.CHECKOUT_REQUEST)
-    shop.buyProducts(state.added,
+    shop.buyProducts(products,
       () => commit(types.CHECKOUT_SUCCESS),
       () => commit(types.CHECKOUT_FAILURE,{savedCartItems})
       )
@@ -26,12 +26,12 @@ const actions = {
 
 // mutations
 const mutations = {
-  [types.ADD_TO_CART](state,{id}){
+  [types.ADD_TO_CART](state,{id,quantity}){
     const record = state.added.find(product => product.id === id);
     if (!record) {
-      state.added.push({id,quantity:1})
+      state.added.push({id,quantity:quantity})
     }else{
-      record.quantity++;
+      record.quantity += quantity;
     }
   },
   [types.DELE_PRODUCT](state,{id,quantity}){

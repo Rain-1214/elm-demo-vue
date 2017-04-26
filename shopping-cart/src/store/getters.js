@@ -5,7 +5,8 @@ export const cartProducts = state => {
       id:id,
       title: product.title,
       price: product.price,
-      quantity
+      quantity,
+      inventory:product.inventory
     }
   })
 }
