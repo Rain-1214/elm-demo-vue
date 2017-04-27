@@ -4,12 +4,13 @@ import * as types from '../mutation-types'
 // initial state
 // shape: [{ id, quantity }]
 const state = {
-  added:[]
+  added:[],
+  deleStateus:null
 }
 
 // getters
 const getters = {
-
+  deleStateus:state => state.deleStateus
 }
 
 // actions
@@ -44,12 +45,17 @@ const mutations = {
         }else{
           e.quantity -= quantity;
         }
-        alert('删除成功')
       }
     })
     if (flag) {
-      alert('删除失败，请重试')
+      state.deleStateus ='failure'
+    }else{
+      state.deleStateus = 'success'
     }
+    let vm = state;
+    setTimeout(function(){
+      vm.deleStateus = null
+    },3000)
   },
   [types.CHECKOUT_REQUEST](state){
     state.added =[]
