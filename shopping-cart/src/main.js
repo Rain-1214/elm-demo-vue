@@ -6,6 +6,9 @@ import routerConfig from './router.config.js'
 
 import store from './store'
 
+import {currency} from './tool/'
+
+Vue.filter('currency',currency);
 
 Vue.use(vueRouter);
 

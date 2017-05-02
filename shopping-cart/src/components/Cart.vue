@@ -12,7 +12,7 @@
 				type="checkbox" name="deleCheck" 
 				v-model='deleCheck' :value='v.id'>
 			{{v.title}} X {{v.quantity}} <br>
-			{{v.price}} x {{v.quantity}} = {{ v.price * v.quantity}} <br>
+			{{v.price | currency}} x {{v.quantity}} = {{ v.price * v.quantity | currency}} <br>
 		
 			<button 
 				:disabled = 'changeNum[i] === 0 || !changeNum[i]'
@@ -20,7 +20,6 @@
 				>add</button>
 			<input 
 				type="text" 
-				:value.number = '11111'
 				v-model.number='changeNum[i]'
 				@input = 'notMinus(i)'>
 			<button 
@@ -30,7 +29,7 @@
 		<template v-if='products.length !== 0'>
 			<button @click='deleSele' :disabled = 'deleCheck.length === 0'>勾选删除</button>{{deleStateus}}
 		</template>
-		<p v-show='products.length != 0'>总价格: {{ total }}</p>
+		<p v-show='products.length != 0'>总价格: {{ total | currency}}</p>
 		<button :disabled='selectProduct.length === 0' v-show='products.length != 0' @click ='checkout'>checkout</button>
 	</div>
 </template>
