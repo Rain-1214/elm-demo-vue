@@ -1,0 +1,42 @@
+@import 'common/tool.scss';
+$blue:#26a2ff;
+#app{
+	height: 100vh;
+	.welcome-wapper{
+		height: 100vh;
+		background: #ecf6fb;
+		.center{
+			padding-top: 0;
+			@include tb-center(relative);
+			>img{
+				@include lr-center-mar;
+			}
+			>h1{
+				color: $blue;
+				text-align: center;
+				padding:10px 0;
+			}
+			>.btn-warpper{
+				text-align: center;
+				>button:first-child{
+					margin-right: 10px;
+				}
+			}
+		}
+	}	
+	>div{
+		min-height: 100vh;
+		.center{
+			padding-top: 40px;
+		}
+	}
+	.login-warpper{
+		padding-right: 10px;
+		padding-left: 10px;
+		h1{
+			color: $blue;
+			text-align: center;
+			padding:10px 0;
+		}
+	}
+}

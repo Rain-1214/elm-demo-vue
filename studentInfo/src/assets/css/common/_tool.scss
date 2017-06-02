@@ -1,0 +1,79 @@
+@mixin lr-center-mar{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@mixin lr-center-transform($position){
+  position: $position;
+  left:50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
+@mixin tb-center($position){
+  position: $position;
+  top:50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+@mixin all-center($position){
+  position: $position;
+  top:50%;
+  left:50%;
+  -webkit-transform: translate(-50%,-50%);
+  -moz-transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+  -o-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+}
+
+@mixin triangle($direction,$size,$color){
+    display: inline-block;
+    width: 0;
+    height: 0;
+    @if($direction == "left"){
+        border-right:$size solid $color;
+        border-top:$size solid transparent;
+        border-bottom:$size solid transparent;
+    }@else if($direction == "right"){
+        border-left:$size solid $color;
+        border-top:$size solid transparent;
+        border-bottom:$size solid transparent;
+    }@else if($direction == "top"){
+        border-bottom:$size solid $color;
+        border-left:$size solid transparent;
+        border-right:$size solid transparent;
+    }@else if($direction == "bottom"){
+        border-top:$size solid $color;
+        border-left:$size solid transparent;
+        border-right:$size solid transparent;
+    }
+    @content;
+}
+
+@mixin circle($size,$color){
+    display: inline-block;
+    width:$size;
+    height: $size;;
+    background: $color;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    @content;
+}
+
+@mixin clear{
+  &::after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
