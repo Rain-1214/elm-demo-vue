@@ -38,5 +38,14 @@ $blue:#26a2ff;
 			text-align: center;
 			padding:10px 0;
 		}
+		.changLabel{
+			label{
+				width: 100% !important;
+			}
+			>div{
+				width: 100% !important;
+				margin-left: 0 !important;
+			}
+		}
 	}
 }

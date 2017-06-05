@@ -7,7 +7,7 @@
 			    <el-input v-model="form.userName"></el-input>
 			  </el-form-item>
 			  <el-form-item label="密码">
-			    <el-input v-model="form.password"></el-input>
+			    <el-input type="password" v-model="form.password"></el-input>
 			  </el-form-item>
 			  <el-form-item>
 			  	<router-link to='forgetPassword'><span class="h5">忘记密码？</span></router-link>
@@ -41,6 +41,7 @@
           data:data
         })
         .then(function (response) {
+            console.log(response);
             if(response.status == 200){
             	if(!response.data.errorCode) { 
             		Toast(response.data.message);

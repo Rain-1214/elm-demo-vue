@@ -13,22 +13,6 @@ export default {
     return {
     	
     }
-  },
-  created(){
-    // this.$ajax({
-    //   method:'post',
-    //   url:'http://localhost:8080/StudentInfo/user/login.do',
-    //   data:{
-    //   	userName:"admin",
-    //   	password:"123456"
-    //   }
-    // })
-    // .then(function (response) {
-    //     console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
   }
 
 }

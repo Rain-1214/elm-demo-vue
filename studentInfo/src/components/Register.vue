@@ -12,16 +12,14 @@
         <el-form-item label="再次输入密码" prop="passwordAgain">
           <el-input type='password' v-model="form.passwordAgain"></el-input>
         </el-form-item>
-			</el-form>
-      <el-form ref="form" :rules="rules" :model="form" label-position="top">
-        <el-form-item label="安全问题" prop="safetyQuestion">
+        <el-form-item class='changLabel' label="安全问题" prop="safetyQuestion">
           <el-input v-model="form.safetyQuestion"></el-input>
         </el-form-item>
-        <el-form-item label="安全问题答案" prop="safetyAnswer">
+        <el-form-item class='changLabel' label="安全问题答案" prop="safetyAnswer">
           <el-input v-model="form.safetyAnswer"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click.native="onSubmit">立即注册</el-button>
+          <el-button type="primary" @click.native="onSubmit('form')">立即注册</el-button>
           <router-link to="/home"><el-button type="default">返回首页</el-button></router-link>
         </el-form-item>
       </el-form>  	
@@ -41,6 +39,26 @@
         }
         callback()
       }
+      const checkRepeatUserName = (rule,value,callback) => {
+        this.$ajax.post('http://localhost:8080/StudentInfo/user/findUser.do',{userName:value})
+                  .then((response) => {
+                    console.log(response);
+                    if(response.status == 200){
+                      if(!response.data.errorCode) { 
+                        return callback(new Error(response.data.message))
+                      }else{
+                        callback()
+                      }
+                    }else{
+                      Toast('网络出现问题，请稍候再试');
+                      callback()
+                    }
+                  })
+                  .catch((error) => { 
+                    console.log(error)
+                    callback()
+                  })
+      }
 			return {
         passwordAgainBoolean:false,
         form:{
@@ -53,7 +71,8 @@
         rules: {
           userName: [
             { required: true, message: '请输入用户名', trigger: 'blur,change' },
-            { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur,change' }
+            { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur,change' },
+            { validator: checkRepeatUserName, trigger: 'blur' }
           ],
           password: [
             { required: true, message: '请输入密码', trigger: 'blur,change' },
@@ -73,33 +92,39 @@
 			}
 		},
     methods:{
-      onSubmit(){ 
+      onSubmit(formName){ 
         const data = this.form;
-        this.$ajax({
-          method:'post',
-          url:'http://localhost:8080/StudentInfo/user/register.do',
-          data:{
-            userName:data.userName,
-            password:data.password,
-            safetyQuestion:data.safetyQuestion,
-            safetyAnswer:data.safetyAnswer
+        console.log(this.$refs)
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.$ajax({
+              method:'post',
+              url:'http://localhost:8080/StudentInfo/user/register.do',
+              data:{
+                userName:data.userName,
+                password:data.password,
+                safetyQuestion:data.safetyQuestion,
+                safetyAnswer:data.safetyAnswer
+              }
+            })
+            .then(function (response) {
+                console.log(response);
+                if(response.status == 200){
+                  if(!response.data.errorCode) { 
+                    Toast(response.data.message);
+                  }else{
+                    Toast('注册成功');
+                  }
+                }else{
+                  Toast('网络出现问题，请稍候再试');
+                }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
           }
         })
-        .then(function (response) {
-            console.log(response);
-            if(response.status == 200){
-              if(!response.data.errorCode) { 
-                Toast(response.data.message);
-              }else{
-                Toast('注册成功');
-              }
-            }else{
-              Toast('网络出现问题，请稍候再试');
-            }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+        
       }
     }
 	}
