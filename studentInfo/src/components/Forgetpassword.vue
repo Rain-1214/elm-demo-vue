@@ -5,7 +5,7 @@
 				<el-form ref="form" :model="form" :rules="rules" label-width="80px" label-position="top">
 					<h1>忘记密码</h1>
 				  <el-form-item label="请输入用户名" prop='userName'>
-				    <el-input v-model="form.userName"></el-input>
+				    <el-input v-model="form.userName" :key="1"></el-input>
 				  </el-form-item>
 				  <el-form-item>
 				    <el-button type="primary" @click.native="onSubmit('form')">下一步</el-button>
@@ -17,7 +17,7 @@
 				<el-form ref="form2" :model="form2" :rules="rules" label-width="80px" label-position="top">
 					<h1>回答安全问题</h1>
 				  <el-form-item label="安全问题">
-				    <el-input  :disabled="true" v-model="form2.safetyQuestion"></el-input>
+				    <el-input :disabled="true" v-model="form2.safetyQuestion"></el-input>
 				  </el-form-item>
 				  <el-form-item label="请输入安全问题答案">
 				    <el-input v-model="form2.safetyAnswer"></el-input>
@@ -31,10 +31,10 @@
 			<template v-if="alterPassword">
 				<el-form ref="form3" :model="form3" :rules="rules" label-width="80px" label-position="top">
 					<h1>回答安全问题</h1>
-				  <el-form-item label="新密码">
+				  <el-form-item label="新密码" prop="password">
 				    <el-input v-model="form3.password"></el-input>
 				  </el-form-item>
-				  <el-form-item label="重复输入新密码">
+				  <el-form-item label="重复输入新密码" prop="passwordAgain">
 				    <el-input v-model="form3.passwordAgain"></el-input>
 				  </el-form-item>
 				  <el-form-item>

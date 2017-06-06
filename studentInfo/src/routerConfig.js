@@ -2,6 +2,7 @@ import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 import Home from './components/Home.vue'
 import ForgetPassword from './components/Forgetpassword.vue'
+import Student from './components/Student.vue'
 
 export default{
 	mode: 'history',
@@ -10,6 +11,7 @@ export default{
 		{ path: '/home', component: Home},
 		{ path: '/login', component: Login},
 		{ path: '/register', component: Register},
-		{ path: '/forgetPassword', component: ForgetPassword}
+		{ path: '/forgetPassword', component: ForgetPassword},
+		{ path: '/student', component: Student},
 	]
 }

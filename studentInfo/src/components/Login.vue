@@ -35,6 +35,7 @@
 		methods:{
 			onSubmit(){
 				const data = this.form;
+				const _this = this;
 				this.$ajax({
           method:'post',
           url:'http://localhost:8080/StudentInfo/user/login.do',
@@ -46,7 +47,7 @@
             	if(!response.data.errorCode) { 
             		Toast(response.data.message);
             	}else{
-            		Toast('登录成功');
+            		_this.$router.push('/student')
             	}
             }else{
             	Toast('网络出现问题，请稍候再试');

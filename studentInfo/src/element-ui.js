@@ -13,3 +13,8 @@ Vue.use(Select)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
+
+import { Table,tableColumn } from 'element-ui'
+
+Vue.use(Table);
+Vue.use(tableColumn)
