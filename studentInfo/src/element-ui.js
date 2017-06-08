@@ -14,7 +14,10 @@ Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
 
-import { Table,tableColumn } from 'element-ui'
+import { Table,tableColumn,Option,Dialog,Icon } from 'element-ui'
 
 Vue.use(Table);
 Vue.use(tableColumn)
+Vue.use(Option)
+Vue.use(Dialog)
+Vue.use(Icon)
