@@ -1,5 +1,8 @@
 @import 'common/tool.scss';
 $blue:#26a2ff;
+header{
+	z-index: 9 !important;
+}
 #app{
 	height: 100vh;
 	.welcome-wapper{

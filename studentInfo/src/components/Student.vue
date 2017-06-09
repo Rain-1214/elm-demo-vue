@@ -78,6 +78,11 @@
 
 		  </div>
 
+		  <div style="margin-top:20px" v-show="formList.length != 0">
+		  	<el-button type="success" @click="addStudents('all')">添加所有学生</el-button>
+				<el-button type="danger" @click="cancelAdd()">删除所有要添加的学生</el-button>
+		  </div>
+
 		  <el-dialog size="large" title="修改" :visible.sync="alertStudentState">
 			  <el-form :model="alertStudent" ref="alertStudent">
 			    <el-form-item 
@@ -121,7 +126,7 @@
 	</div>
 </template>
 <script>
-	import { Indicator,Toast } from 'mint-ui';
+	import { Indicator,Toast,MessageBox } from 'mint-ui';
 	export default {
     data() {
       return {
@@ -129,7 +134,7 @@
         tableData: [],
         multipleSelection: [],
         gradeList:[],
-        gradeListBack:[],
+        gradeData:{},
         alertStudentIndex:"",
         alertStudent:{
         	id:"",
@@ -168,8 +173,8 @@
       	const {id,name,age} = this.alertStudent;
       	const _this = this;
       	let grade = {};
-      	this.gradeListBack.forEach((e) => {
-      		if (e.gradeName == _this.alertStudent.grade) {
+      	this.gradeList.forEach((e) => {
+      		if (e.id == _this.alertStudent.grade) {
       			const {id,gradeName} = e; 
       			grade = {id,gradeName}
       		}
@@ -205,48 +210,75 @@
       },
       daleteStudent(scope){
       	const _this = this;
-      	let deleteStudents = [];
-      	const {id} = scope.row;
-      	deleteStudents.push(id);
-      	const data = {ids:deleteStudents};
-      	this.$ajax
-      			.post("http://localhost:8080/StudentInfo/student/deleteStudent.do",data)
-      			.then((response) => {
-      				Toast({
-							  message: '删除成功',
-							  iconClass: 'el-icon-check'
-							});
-      				_this.loadStudent();
-      			})
-      			.catch((error) => {
-      				console.log(error)
-      			})
+      	MessageBox.confirm('确定删除?').then(action => {
+					let deleteStudents = [];
+	      	const {id} = scope.row;
+	      	deleteStudents.push(id);
+	      	const data = {ids:deleteStudents};
+	      	_this.$ajax
+	      			.post("http://localhost:8080/StudentInfo/student/deleteStudent.do",data)
+	      			.then((response) => {
+	      				Toast({
+								  message: '删除成功',
+								  iconClass: 'el-icon-check'
+								});
+	      				_this.loadStudent();
+	      			})
+	      			.catch((error) => {
+	      				console.log(error)
+	      			})  
+				}).catch((error) => {
+
+				});
+      	
       },
       addStudents(student,index){
       	console.log(student)
       	const _this = this;
-      	let {name,age,grade:gradeId} = student;
-      	if(name == "" || age == "" || gradeId == ""){
-      		Toast("必须填写好完整信息才能添加");
-      		return false;
-      	}
-      	age = parseInt(age);
-      	if(age <= 0 || Object.is(age,NaN)){
-      		Toast("年龄必须为大于零的数字");
-      		return false;
-      	}
-
       	let studentList = [];
-      	let grade = {};
-      	this.gradeListBack.forEach((e) => {
-      		if (e.id == gradeId) {
-      			const {id,gradeName} = e; 
-      			grade = {id,gradeName}
+      	let data ={};
+      	if(student != "all"){
+	      	let {name,age,grade:gradeId} = student;
+	      	if(name == "" || age == "" || gradeId == ""){
+	      		Toast("必须填写好完整信息才能添加");
+	      		return false;
+	      	}
+	      	age = parseInt(age);
+	      	if(age <= 0 || Object.is(age,NaN)){
+	      		Toast("年龄必须为大于零的数字");
+	      		return false;
+	      	}	
+	      	const gradeName= this.gradeData[gradeId];    	
+      		let grade = {id:gradeId,gradeName};
+
+      		let addStudent = {name,age,grade} 
+      		studentList.push(addStudent);
+      		data = {students:studentList};
+      	}else{
+      		let flag = true;
+      		this.formList.forEach((e) => {
+      			let {name,age,grade:gradeId} = e;
+		      	if(name == "" || age == "" || gradeId == ""){
+		      		Toast("必须填写好完整信息才能添加");
+		      		flag = false;
+		      	}
+		      	age = parseInt(age);
+		      	if(age <= 0 || Object.is(age,NaN)){
+		      		Toast("年龄必须为大于零的数字");
+		      		flag = false;
+		      	}	
+		      	e.age = parseInt(age);
+		      	let gradeName = _this.gradeData[gradeId];
+		      	let grade = {id:gradeId,gradeName};
+		      	e.grade = grade;
+      		});
+      		if(flag){
+      			data = {students:this.formList};
+      		}else{
+      			return false;
       		}
-      	});
-      	let addStudent = {name,age,grade} 
-      	studentList.push(addStudent);
-      	const data = {students:studentList};
+      	}
+      	console.log(data)
       	this.$ajax
       			.post('http://localhost:8080/StudentInfo/student/addStudents.do',data)
       			.then((response) => {
@@ -255,7 +287,14 @@
 							  message: '添加成功',
 							  iconClass: 'el-icon-check'
 							});
-							_this.loadStudent();
+							if(student != "all"){
+								_this.formList.splice(index,1)
+								_this.loadStudent();	
+							}else{
+								_this.formList.splice(0,_this.formList.length);
+								_this.loadStudent();	
+							}
+							
       			})
       			.catch((error) => {
       				console.log(error)
@@ -282,22 +321,13 @@
     },
     created(){
     	const _this = this;
-    	// this.formList.push(this.form);
-
     	this.$ajax
     			.post("http://localhost:8080/StudentInfo/grade/findGrade.do")
 					.then((response) => {
-						_this.gradeListBack = response.data.data;
-						let gradeList = [];
-						response.data.data.forEach((e) => {
-							console.log(e)
-							const {id,gradeName} = e;
-							let grade = {id,gradeName};
-							gradeList.push(grade);
+						_this.gradeList = response.data.data;
+						_this.gradeList.forEach((e) => {
+							_this.gradeData[e.id] = e.gradeName;
 						})
-						_this.gradeList = gradeList;
-						_this.gradeListBack = gradeList;
-
 					})
 					.catch((error) => {
 						console.log(error)
