@@ -40,7 +40,7 @@
         callback()
       }
       const checkRepeatUserName = (rule,value,callback) => {
-        this.$ajax.post('http://localhost:8080/StudentInfo/user/findUser.do',{userName:value})
+        this.$ajax.post('/StudentInfo/user/findUser.do',{userName:value})
                   .then((response) => {
                     console.log(response);
                     if(response.status == 200){
@@ -99,7 +99,7 @@
           if (valid) {
             this.$ajax({
               method:'post',
-              url:'http://localhost:8080/StudentInfo/user/register.do',
+              url:'/StudentInfo/user/register.do',
               data:{
                 userName:data.userName,
                 password:data.password,

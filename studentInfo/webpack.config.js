@@ -58,7 +58,14 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     noInfo: true,
-    port:'9000'
+    port:'9000',
+    proxy: {  
+      '/StudentInfo/*': {  
+          target: 'http://localhost:8080',  
+          changeOrigin: true,
+          ecure: false  
+      }  
+    }  
   },
   performance: {
     hints: false

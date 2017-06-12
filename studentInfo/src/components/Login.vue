@@ -38,7 +38,7 @@
 				const _this = this;
 				this.$ajax({
           method:'post',
-          url:'http://localhost:8080/StudentInfo/user/login.do',
+          url:'/StudentInfo/user/login.do',
           data:data
         })
         .then(function (response) {

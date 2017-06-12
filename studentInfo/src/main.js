@@ -9,6 +9,7 @@ import VueRouterConfig from './routerConfig.js'
 import './assets/css/app.scss'
 import './assets/css/common.scss'
 import 'mint-ui/lib/style.css'
+import 'animate.css/animate.css'
 
 import './element-ui.js'
 

@@ -101,7 +101,7 @@
 					if(valid) {
 						this.$ajax({
 		          method:'post',
-		          url:'http://localhost:8080/StudentInfo/user/findUserSafetyQuestion.do',
+		          url:'/StudentInfo/user/findUserSafetyQuestion.do',
 		          data:data
 		        })
 		        .then(function (response) {
@@ -134,7 +134,7 @@
 					if(valid) {
 						this.$ajax({
 		          method:'post',
-		          url:'http://localhost:8080/StudentInfo/user/findUserSafetyQuestion.do',
+		          url:'/StudentInfo/user/findUserSafetyQuestion.do',
 		          data:data
 		        })
 		        .then(function (response) {
@@ -163,7 +163,7 @@
 					if(valid) {
 						this.$ajax({
 		          method:'post',
-		          url:'http://localhost:8080/StudentInfo/user/alterUser.do',
+		          url:'/StudentInfo/user/alterUser.do',
 		          data:data
 		        })
 		        .then(function (response) {
