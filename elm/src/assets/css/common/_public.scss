@@ -1,0 +1,30 @@
+a,p,ul,li,dd,dt,dl,span,h1,h2,h3,h4,h5,h6,p,div{
+  text-decoration: none;
+  box-sizing: border-box;
+  font-size:14px;
+  -webkit-margin-before: 0em;
+  -webkit-margin-after: 0em;
+  padding:0;
+  margin:0;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  list-style-type: none;
+  font-weight: normal;
+}
+
+*, *:after, *:before { box-sizing: border-box; }
+
+h1,.h1{
+  font-size: 20px;
+}
+h2,.h2{
+  font-size: 18px;
+}
+h3,.h3{
+  font-size: 16px;
+}
+h4,.h4{
+  font-size: 13px;
+}
+h5,.h5{
+  font-size: 12px;
+}
