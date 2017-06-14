@@ -57,7 +57,15 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: true
+    noInfo: true,
+    port:'9000',
+    proxy: {  
+      '/ElmPro/*': {  
+          target: 'http://localhost:8080',  
+          changeOrigin: true,
+          ecure: false  
+      }  
+    }
   },
   performance: {
     hints: false
