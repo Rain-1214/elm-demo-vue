@@ -8,7 +8,9 @@ const state = {
 }
 
 const getters ={
-	currentLocation:state => state.currentLocation
+	currentLocation:state => state.currentLocation,
+	latitude:state => state.latitude,
+	longitude:state => state.longitude,
 }
 
 const actions = { 
@@ -21,7 +23,7 @@ const actions = {
 
 		})
 		.catch((error) => {
-			console.log(error)
+			state.currentLocation = '未知'
 		})
 	}
 }
@@ -40,3 +42,5 @@ export default {
   actions,
   mutations
 }
+
+

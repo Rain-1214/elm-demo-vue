@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
 
+
 import vueRouter from 'vue-router'
 import routerConfig from './router.config.js'
-import MintUI from 'mint-ui'
 
+import MintUI from 'mint-ui'
 
 import store from './store'
 
@@ -17,6 +18,7 @@ import './element-ui.js'
 
 Vue.use(MintUI);
 Vue.use(vueRouter);
+
 
 const router = new vueRouter(routerConfig);
 

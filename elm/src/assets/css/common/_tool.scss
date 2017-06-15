@@ -80,3 +80,9 @@ $blue:#26a2ff;
     clear: both;
   }
 }
+
+@mixin ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
