@@ -1,7 +1,7 @@
 <template>
 	<div id="SearchAddress">
 		<mt-header>
-      <section slot="left" @click="$router.go(-1)">
+      <section slot="left" @click="close()">
         <i class="el-icon-arrow-left"></i>
       </section>
     </mt-header>
@@ -10,17 +10,14 @@
     </div>
     <mt-cell title="当前定位城市" :value="currentLocation"></mt-cell>		
     <div class="list" v-for='(v,i) in addressArray'>
-	    <mt-cell :title="v.name" is-link :label="v.city + ',' + v.district" :key="v"></mt-cell>		
+	    <mt-cell :title="v.name" is-link :label="v.city + ',' + v.district" :key="v" @click.native="toHome(v)"></mt-cell>		
     </div>
 	</div>
 </template>
 <script>
-	import {mapGetters,mapMutations} from 'vuex';
 	import {searchAddress} from '../../api/location.js';
 	import _ from 'lodash'
 	import * as types from '../../store/mutation-types.js';
-
-
 	export default{
 		data(){
 			return {
@@ -28,30 +25,36 @@
 				addressArray:[]
 			}
 		},
-		computed:{
-			...mapGetters([
-					'currentLocation',
-					'latitude',
-					'longitude'
-				])
-		},
+		props:['currentLocation','latitude','longitude'],
 		methods:{
+			close(){
+				this.$emit('close');
+			},
+			//函数节流
 			search:_.throttle(function(){
 				let data;
 				const _this = this;
 				if(this.latitude != "" && this.longitude != ""){
+					//解构赋值
 					let {searchText} = this.$data;
 					let {currentLocation,latitude,longitude} = this;
+					// 转码防止乱码
 					searchText = encodeURIComponent(searchText);
 					currentLocation = encodeURIComponent(currentLocation);
+
 					data = {searchText,currentLocation,latitude,longitude};
 				}else{
+
 					let {searchText} = this.$data;
 					let {currentLocation} = this;
+
 					searchText = encodeURIComponent(searchText);
 					currentLocation = encodeURIComponent(currentLocation);
+
 					data = {searchText,currentLocation}
 				}
+				// 请求解析地址
+				console.log(data);
 				searchAddress(data)
 				.then((res) => {
 					console.log(JSON.parse(res.data.data))
@@ -61,10 +64,14 @@
 				.catch((error) => {
 					console.log(error)
 				})	
-			},3000)
+			},3000),
+			toHome(address){
+				this.$store.commit(types.ALERT_TEMPADDRESS,address);
+				this.$router.push('/home')
+			}
 		},
 		created(){
-			this.$store.commit(types.ALERT_LOCATION,{currentLocation:this.$route.params.city})
+			
 		}
 
 	}

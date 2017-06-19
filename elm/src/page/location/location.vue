@@ -6,7 +6,7 @@
       </section>
     </mt-header>
 		<mt-cell title="当前定位城市" value="定位不准时请手动选择"></mt-cell>		
-		<mt-cell :title="currentLocation" is-link :to="'/searchAddress/' + currentLocation">
+		<mt-cell :title="currentLocation" @click.native="popupVisible=true">
 			<i v-show="loadShow" slot="icon" class="el-icon-loading"></i>
 		</mt-cell>
 
@@ -15,9 +15,9 @@
 				<p>热门城市</p>
 			</div>
 			<ul class="hot">
-				<router-link v-for="(e,i) in hotCity" tag="li" :to="'/searchAddress/' + e.name"  :key="e">
+				<li v-for="(e,i) in hotCity" :key="e" @click="toSearchAddress(e)">
 					{{e}}
-				</router-link>
+				</li>
 			</ul>		
 		</div>
 		
@@ -26,22 +26,35 @@
 				{{k}}
 			</div>
 			<ul>
-				<router-link v-for="(e,i) in v" tag="li" :to="'/searchAddress/' + e.name" :key="e">
+				<li v-for="(e,i) in v" :key="e" @click="toSearchAddress(e.name)">
 					{{e.name}}
-				</router-link>
+				</li>
 			</ul>
 		</div>
+
+		<mt-popup
+		  v-model="popupVisible"
+		  position="right"
+		  popup-transition="popup-fade">
+		  <search-Address 
+		  	:currentLocation="currentLocation"
+		  	:latitude="latitude"
+		  	:longitude="longitude"
+		  	@close="afreshDate()"></search-Address>
+		</mt-popup>
 	</div>
 </template>
 <script>
-	import {mapGetters,mapMutations} from 'vuex'
-	import * as types from '../../store/mutation-types.js';
+	import {mapGetters} from 'vuex'
 	import {getHotCity,getAllCity} from '../../api/location.js'
+	import * as types from '../../store/mutation-types.js'
+	import SearchAddress from '../components/SearchAddress.vue'
 
 	export default{
 		data(){
 			return {
 				loadShow:true,
+				popupVisible:false,
 				hotCity:[],
 				allCity:{
 					'A':[],
@@ -75,10 +88,23 @@
 		},
 		computed:{
 			...mapGetters([
-				'currentLocation'
+				'currentLocation',
+				'latitude',
+				'longitude'
 			])
 		},
 		methods:{
+			toSearchAddress(address){
+				console.log(address)
+				this.$store.commit(types.ALERT_LOCATION,{currentLocation:address,latitude:"",longitude:""});
+				this.popupVisible=true;
+			},
+			afreshDate(){
+				this.$store.commit(types.ALERT_LOCATION,{currentLocation:"",latitude:"",longitude:""});
+				this.popupVisible = false;
+				this.loadShow = true;
+				this.loadLocation();
+			},
 			loadLocation(){
 				const _this = this;
 				if(this.currentLocation == ""){
@@ -103,7 +129,6 @@
 				}else{
 					this.loadShow = false;
 				}
-				
 			},
 			loadHotCity(){
 				//从后台获取热门城市列表
@@ -116,7 +141,7 @@
 				})
 			},
 			loadAllCity(){
-				//从json问价获取所有城市信息并按拼音首字母分割
+				//从json文件获取所有城市信息并按拼音首字母分割
 				const _this = this;
 				getAllCity().then((res) => {
 					console.log(res)
@@ -133,6 +158,9 @@
 			this.loadLocation();
 			this.loadHotCity();
 			this.loadAllCity();
+		},
+		components:{
+			'search-Address':SearchAddress,
 		}
 	}
 </script>
@@ -168,5 +196,10 @@
 				}
 			}
 		}
+	}
+	.mint-popup{
+		width: 100vw;
+		height: 100vh;
+		overflow-y: scroll;
 	}
 </style>

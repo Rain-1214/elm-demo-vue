@@ -1,11 +1,11 @@
 import Location from './page/location/location.vue'
-import SearchAddress from './page/location/SearchAddress.vue'
+import Home from './page/home/Home.vue'
 
 export default{
 	mode: 'history',
 	routes:[
-		{ path: '/', redirect: '/home' },
+		{ path: '/', redirect: '/location' },
 		{ path: '/location', component: Location},
-		{ path: '/searchAddress/:city', component: SearchAddress},
+		{ path: '/home', component: Home},
 	]
 }

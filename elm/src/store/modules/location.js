@@ -4,26 +4,27 @@ import {analysisLocation} from '../../api/location.js';
 const state = {
 	latitude: '', // 当前位置纬度
 	longitude: '', // 当前位置经度
-	currentLocation:''
+	currentLocation:'',
+	tempAddress:{}
 }
 
 const getters ={
 	currentLocation:state => state.currentLocation,
 	latitude:state => state.latitude,
 	longitude:state => state.longitude,
+	tempAddress:state => state.tempAddress,
 }
 
 const actions = { 
 	getLocation({commit,state},location){
 		analysisLocation(location).then((res) => {
 			console.log(res)
-
 			const {result:{addressComponent:{province:currentLocation}}} = JSON.parse(res.data.data);
 			commit(types.ALERT_LOCATION,{currentLocation,...location});
 
 		})
 		.catch((error) => {
-			state.currentLocation = '未知'
+			state.currentLocation = '未获取到地址请手动选择'
 		})
 	}
 }
@@ -33,7 +34,10 @@ const mutations = {
 		state.currentLocation = currentLocation;
 		state.latitude = latitude;
 		state.longitude = longitude;
-	}
+	},
+	[types.ALERT_TEMPADDRESS](state,tempAddress){
+		Object.assign(state.tempAddress,tempAddress);
+	},
 }
 
 export default {
