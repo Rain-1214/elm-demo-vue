@@ -5,8 +5,17 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 export default {
   name: 'app',
+  computed:{
+  	...mapGetters(['tempAddress'])
+  },
+  created(){
+  	// if(!this.tempAddress.name){
+  	// 	this.$router.push('/location')
+  	// }
+  }
 }
 </script>
 

@@ -16,3 +16,6 @@ Vue.use(TableColumn)
 Vue.use(Option)
 Vue.use(Dialog)
 Vue.use(Icon)
+
+import { Rate } from 'element-ui'
+Vue.use(Rate)

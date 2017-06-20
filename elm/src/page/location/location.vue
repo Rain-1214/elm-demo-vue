@@ -1,9 +1,6 @@
 <template>
 	<div id="location">
 		<mt-header title="选择城市">
-      <section slot="left" @click="$router.go(-1)">
-        <i class="el-icon-arrow-left"></i>
-      </section>
     </mt-header>
 		<mt-cell title="当前定位城市" value="定位不准时请手动选择"></mt-cell>		
 		<mt-cell :title="currentLocation" @click.native="popupVisible=true">

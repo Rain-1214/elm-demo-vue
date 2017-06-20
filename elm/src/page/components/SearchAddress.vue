@@ -54,12 +54,9 @@
 					data = {searchText,currentLocation}
 				}
 				// 请求解析地址
-				console.log(data);
 				searchAddress(data)
 				.then((res) => {
-					console.log(JSON.parse(res.data.data))
 					_this.addressArray = JSON.parse(res.data.data).result;
-					console.log(_this.addressArray)
 				})
 				.catch((error) => {
 					console.log(error)
