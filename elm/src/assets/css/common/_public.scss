@@ -1,7 +1,8 @@
+@import "./responsive";
+@import './tool';
 a,p,ul,li,dd,dt,dl,span,h1,h2,h3,h4,h5,h6,p,div{
   text-decoration: none;
   box-sizing: border-box;
-  font-size:14px;
   -webkit-margin-before: 0em;
   -webkit-margin-after: 0em;
   padding:0;
@@ -9,22 +10,80 @@ a,p,ul,li,dd,dt,dl,span,h1,h2,h3,h4,h5,h6,p,div{
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   list-style-type: none;
   font-weight: normal;
+  @include remCalc('font-size',36px)
+}
+
+input{
+  outline: none;
 }
 
 *, *:after, *:before { box-sizing: border-box; }
 
 h1,.h1{
-  font-size: 20px;
+  @include remCalc('font-size',40px);
 }
 h2,.h2{
-  font-size: 18px;
+  @include remCalc('font-size',36px);
 }
 h3,.h3{
-  font-size: 16px;
+  @include remCalc('font-size',32px);
 }
 h4,.h4{
-  font-size: 13px;
+  @include remCalc('font-size',26px);
 }
 h5,.h5{
-  font-size: 12px;
+  @include remCalc('font-size',24px);
+}
+
+.mint-header{
+  @include remCalc-imp('height',80px);
+  .mint-header-title{
+    @include remCalc('font-size',40px);
+  } 
+}
+
+.mint-cell{
+  @include remCalc-imp('height',120px);
+
+  .mint-cell-wrapper{
+    @include remCalc('font-size',32px);
+    @include remCalc-imp('height',120px);
+  }
+  .mint-cell-label{
+    @include remCalc('font-size',24px);
+  }
+}
+
+.blue-border{
+  border:1px solid $blue;
+  color: $blue;
+  @include remCalc('border-radius',3px);
+  @include remCalc('padding',4px);
+  @include remCalc('font-size',30px)
+}
+.blue-background{
+  background: $blue;
+  color: #fff;
+  @include remCalc('border-radius',3px);
+  @include remCalc('font-size',30px)
+  @include remCalc('padding',4px);
+}
+.yellow-background{
+  background: $yellow;
+  color: #333;
+  @include remCalc('border-radius',3px);
+  @include remCalc('font-size',30px)
+  @include remCalc('padding',4px);
+}
+
+
+
+.blue{
+  color: $blue;
+}
+.gray{
+  color: #666;
+}
+.lightgray{
+  color: #ddd
 }

@@ -75,21 +75,19 @@
 </script>
 <style lang="scss" scoped>
   @import '../../assets/css/common/tool';
-  header{
-
-  }
+  @import '../../assets/css/common/responsive';
 	.searchInput{
 		background: $blue;
 		padding:15px 0;
 		input{
-			height: 40px;
 			width: 90%;
 			display: block;
 			margin: 0 auto;
-			border-radius: 20px ;
-			padding:0 15px;
 			border:none;
 			outline: none;
+			@include remCalc('height',80px);
+			@include remCalc('border-radius',40px);
+			@include remCalc('padding',0px,30px);
 		}
 	}
 </style>

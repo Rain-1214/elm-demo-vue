@@ -18,7 +18,6 @@ const getters ={
 const actions = { 
 	getLocation({commit,state},location){
 		analysisLocation(location).then((res) => {
-			console.log(res)
 			const {result:{addressComponent:{province:currentLocation}}} = JSON.parse(res.data.data);
 			commit(types.ALERT_LOCATION,{currentLocation,...location});
 

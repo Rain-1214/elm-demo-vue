@@ -1,7 +1,6 @@
 <template>
 	<div id="location">
-		<mt-header title="选择城市">
-    </mt-header>
+		<mt-header title="选择城市"></mt-header>
 		<mt-cell title="当前定位城市" value="定位不准时请手动选择"></mt-cell>		
 		<mt-cell :title="currentLocation" @click.native="popupVisible=true">
 			<i v-show="loadShow" slot="icon" class="el-icon-loading"></i>
@@ -18,7 +17,7 @@
 			</ul>		
 		</div>
 		
-		<div class="allCity" v-for='(v,k) in allCity' v-show="v.length != 0">
+		<div class="allCity" v-for='(v,k) in allCity'>
 			<div class="title">
 				{{k}}
 			</div>
@@ -53,34 +52,7 @@
 				loadShow:true,
 				popupVisible:false,
 				hotCity:[],
-				allCity:{
-					'A':[],
-					'B':[],
-					'C':[],
-					'D':[],
-					'E':[],
-					'F':[],
-					'G':[],
-					'H':[],
-					'I':[],
-					'J':[],
-					'K':[],
-					'L':[],
-					'M':[],
-					'N':[],
-					'O':[],
-					'P':[],
-					'Q':[],
-					'R':[],
-					'S':[],
-					'T':[],
-					'U':[],
-					'V':[],
-					'W':[],
-					'X':[],
-					'Y':[],
-					'Z':[],
-				}
+				allCity:{}
 			}
 		},
 		computed:{
@@ -141,10 +113,22 @@
 				//从json文件获取所有城市信息并按拼音首字母分割
 				const _this = this;
 				getAllCity().then((res) => {
-					console.log(res)
+					let data={};
 					res.data.forEach((e) => {
-						_this.allCity[e.pinyin[0]].push(e);
+						if(data[e.pinyin[0]]){
+							data[e.pinyin[0]].push(e);
+						}else{
+							const pinyinFirst = e.pinyin[0];
+							data[pinyinFirst] = [];
+							data[e.pinyin[0]].push(e);
+						}
 					});
+					let newKeys = Object.keys(data).sort();
+					let newData = {};
+					newKeys.forEach((e) => {
+						newData[e] = data[e];
+					});
+					Object.assign(_this.allCity,newData);
 				})
 				.catch((error) => {
 					console.log(error)
@@ -163,15 +147,14 @@
 </script>
 <style lang='scss' scope>
 	@import "../../assets/css/common/tool";
-	.mint-cell-wrapper{
-		border-bottom: 1px solid #e5e5e5;
-	}
+	@import "../../assets/css/common/responsive";
 	.allCity{
-		margin-top: 20px;
+		@include remCalc('margin-top',20px);
 		.title{
 			border-top: 1px solid #e5e5e5;
 			border-bottom: 1px solid #e5e5e5;
-			padding:5px 10px;
+			@include remCalc('padding',10px,20px);
+			@include remCalc('font-size',45px);
 		}
 		ul{
 			@include clear;
@@ -183,10 +166,11 @@
 			li{
 				width: 20%;
 				float: left;
-				padding:15px 0; 
 				text-align: center;
 				border-right:1px solid #e5e5e5;
 				border-bottom:1px solid #e5e5e5;
+				@include remCalc('padding',30px,0px);
+				@include remCalc('font-size',36px);
 				@include ellipsis;
 				&:nth-child(5n){
 					border-right:none;
