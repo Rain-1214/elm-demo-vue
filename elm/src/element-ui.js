@@ -17,5 +17,7 @@ Vue.use(Option)
 Vue.use(Dialog)
 Vue.use(Icon)
 
-import { Rate } from 'element-ui'
+import { Rate,Tabs,TabPane } from 'element-ui'
 Vue.use(Rate)
+Vue.use(Tabs)
+Vue.use(TabPane)

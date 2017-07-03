@@ -145,7 +145,7 @@
 		}
 	}
 </script>
-<style lang='scss' scope>
+<style lang='scss' scoped>
 	@import "../../assets/css/common/tool";
 	@import "../../assets/css/common/responsive";
 	.allCity{

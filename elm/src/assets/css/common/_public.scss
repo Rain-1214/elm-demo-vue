@@ -68,6 +68,14 @@ h5,.h5{
   @include remCalc('font-size',30px)
   @include remCalc('padding',4px);
 }
+.green-background{
+  background: $green;
+  color: #fff;
+  @include remCalc('border-radius',3px);
+  @include remCalc('font-size',30px)
+  @include remCalc('padding',4px);
+}
+
 .yellow-background{
   background: $yellow;
   color: #333;
