@@ -26,66 +26,39 @@
 		    <el-tab-pane label="商品" name="first">
 		   		<section class="products" :style="{height:computedHeight}">
 						<div class="list">
-							<ul>
+							<ul >
 								<li class="active">
 									热销
 								</li>
 								<li>
 									优惠
 								</li>	
-								<li>
-									限时五折
+								<li v-for = "(v,i) in shopFoods">
+									{{v.listName}}
 								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>
-								<li>
-									限时五折
-								</li>	
 							</ul>
 						</div>
-						<div class="product-wrapper">
+						<div class="product-wrapper" @scroll="productScroll($event)">
 							<ul>
-								<li>
-									<p>热销<span>大家喜欢吃，才叫真的好吃</span></p>		
+
+								<li v-for ="(v,i) in shopFoods">
+									<p>{{v.listName}}<span>{{v.description}}</span></p>		
 									<ul>
-										<li>
+										<li v-for ="(item,index) in v.foodList">
 											<div class="food-img">
-												<img src="https://fuss10.elemecdn.com/9/47/c109a4aaa9912dd4866a9617f420cjpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/">
+												<img :src="item.foodPic">
 											</div>
 											<div class="food-detail">
-												<header>非凡油条</header>
-												<section class="gray">月售621份 好评率99%</section>
-												<section>特别好吃</section>
-												<section class="prive">
-													<span>￥6</span>
+												<header>{{item.foodName}}</header>
+												<section class="gray">月售{{item.countMonth}}份 好评率{{item.goodEvaluate * 100}}%</section>
+												<section>{{item.foodInfo}}</section>
+												<section class="price">
+													<span>￥{{item.price}}</span>
+													<div class="pull-right">
+														<button class="minus">-</button>
+														<span>1</span>
+														<button class="plus">+</button>
+													</div>
 												</section>
 											</div>
 										</li>
@@ -108,12 +81,17 @@
 </template>
 <script>
 	
+	import * as _ from 'lodash';
+	import {getShopFoodTypeList} from '../../api/shop.js';
+
 	export default{
 		name:'shop',
 		data(){
 			return {
 				tag:'first',
-				computedHeight:''
+				computedHeight:'',
+				shopFoods:[]
+
 			}
 		},
 		computed:{
@@ -122,10 +100,19 @@
 		methods:{
 			handleClick(tab, event) {
         console.log(tab, event);
-      }
+      },
+      productScroll:_.throttle((event) => {
+      	console.log(event.srcElement.scrollTop)
+      },100)
 		},
 		created(){
-
+			const _this = this;
+			getShopFoodTypeList({id:1}).then((res) =>{
+				_this.shopFoods = res.data.data;	
+			})
+			.catch((error) => {
+				console.log(error);
+			})
 		},
 		mounted(){
 			let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
@@ -242,11 +229,11 @@
 		.list{
 			height: 100%;
 			overflow-y: auto;
+			background: #ededed;
 			@include remCalc('width',240px);
 
 			ul{
 				li{
-					background: #ededed;
 					@include remCalc('font-size',38px);
 					@include remCalc('padding',40px,30px);
 					&.active{
@@ -290,9 +277,45 @@
 									&.gray{
 										color: #666;
 									}
-									span{
+									>span{
 										color: #f60;
 										@include remCalc('font-size',42px);
+									}
+								}
+								.price{
+									display: flex;
+									justify-content: space-between;
+									>span{
+										display: block;
+									}
+									.pull-right{
+										display: flex;
+										span{
+											text-align: center;
+											overflow: hidden;
+											@include remCalc('line-height',58px);
+											@include remCalc('margin-left',25px);
+											@include remCalc('margin-right',25px);
+											@include remCalc('font-size',42px);
+											@include remCalc('min-width',40px);
+											@include remCalc('max-width',100px);
+										}
+										.minus{
+											background: #fff;
+											border-radius: 50%;				
+											border:1px solid $blue;
+											color: $blue;			
+											@include remCalc('width',58px);
+											@include remCalc('height',58px);
+										}
+										.plus{
+											background: $blue;
+											border-radius: 50%;
+											color: #fff;
+											border:none;
+											@include remCalc('width',58px);
+											@include remCalc('height',58px);	
+										}
 									}
 								}
 							}
