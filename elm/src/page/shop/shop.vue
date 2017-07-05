@@ -133,189 +133,189 @@
 	@import '../../assets/css/common/responsive';
 
 	#shop{
-		max-height: 100vh;
-		overflow: hidden;
-	}
+			max-height: 100vh;
+			overflow: hidden;
 
-	.shop-header{
-		background: $blue;
-		@include remCalc('height',407px);
-		@include remCalc('padding',20px);
-		.back{
-			color: #fff;
-			@include remCalc('margin-bottom',20px);
-			i{
-				@include remCalc('font-size',48px);
+		.shop-header{
+			background: $blue;
+			@include remCalc('height',407px);
+			@include remCalc('padding',20px);
+			.back{
+				color: #fff;
+				@include remCalc('margin-bottom',20px);
+				i{
+					@include remCalc('font-size',48px);
+				}
+			}
+			.shop-info{
+				display: flex;
+				flex-direction:row;
+				flex-wrap:nowrap;
+				.img{
+					@include remCalc('width',240px);
+					img{
+						width: 100%;
+					}
+				}
+				.txt{
+					display: flex;
+					flex-direction:column;
+					flex:1;
+					color: #fff;
+					position: relative;
+					@include remCalc('padding-left',40px);
+					h1,p{
+						display: block;
+					}
+					h1{
+						font-weight: bold;
+						@include remCalc('font-size',52px);
+						@include remCalc('margin-bottom',20px);
+						@include ellipsis;
+					}
+					p{
+						@include remCalc('font-size',30px)
+						@include remCalc('margin',10px,0)
+						@include ellipsis;
+					}
+					i{
+						@include remCalc('right',20px);
+						@include tb-center(absolute);
+					}
+				}
+			}
+			.activity{
+				color: #fff;
+				p{
+					@include ellipsis;
+					span{
+						margin-right: 10px;
+					}
+				}
 			}
 		}
-		.shop-info{
+		.tag{
+			.el-tabs__header{
+				margin: 0;
+			}
+			.el-tabs__nav{
+				float: none !important;
+				width: 100% !important;
+				.el-tabs__item{
+					width: 50%;
+					height: auto;
+					line-height: 1;
+					text-align: center;
+					@include remCalc('font-size',58px);
+					@include remCalc('padding',40px,0);
+					&.is-active{
+						&:after{
+							content: "";
+							display: block;
+							background: $blue;
+							@include lr-center-transform(absolute);
+							@include remCalc('bottom',20px);
+							@include remCalc('width',116px);
+							@include remCalc('height',6px);
+						}
+					}
+				}
+			}
+		}
+		.products{
 			display: flex;
 			flex-direction:row;
 			flex-wrap:nowrap;
-			.img{
+			.list{
+				height: 100%;
+				overflow-y: auto;
+				background: #ededed;
 				@include remCalc('width',240px);
-				img{
-					width: 100%;
-				}
-			}
-			.txt{
-				display: flex;
-				flex-direction:column;
-				flex:1;
-				color: #fff;
-				position: relative;
-				@include remCalc('padding-left',40px);
-				h1,p{
-					display: block;
-				}
-				h1{
-					font-weight: bold;
-					@include remCalc('font-size',52px);
-					@include remCalc('margin-bottom',20px);
-					@include ellipsis;
-				}
-				p{
-					@include remCalc('font-size',30px)
-					@include remCalc('margin',10px,0)
-					@include ellipsis;
-				}
-				i{
-					@include remCalc('right',20px);
-					@include tb-center(absolute);
-				}
-			}
-		}
-		.activity{
-			color: #fff;
-			p{
-				@include ellipsis;
-				span{
-					margin-right: 10px;
-				}
-			}
-		}
-	}
-	.tag{
-		.el-tabs__header{
-			margin: 0;
-		}
-		.el-tabs__nav{
-			float: none !important;
-			width: 100% !important;
-			.el-tabs__item{
-				width: 50%;
-				height: auto;
-				line-height: 1;
-				text-align: center;
-				@include remCalc('font-size',58px);
-				@include remCalc('padding',40px,0);
-				&.is-active{
-					&:after{
-						content: "";
-						display: block;
-						background: $blue;
-						@include lr-center-transform(absolute);
-						@include remCalc('bottom',20px);
-						@include remCalc('width',116px);
-						@include remCalc('height',6px);
-					}
-				}
-			}
-		}
-	}
-	.products{
-		display: flex;
-		flex-direction:row;
-		flex-wrap:nowrap;
-		.list{
-			height: 100%;
-			overflow-y: auto;
-			background: #ededed;
-			@include remCalc('width',240px);
 
-			ul{
-				li{
-					@include remCalc('font-size',38px);
-					@include remCalc('padding',40px,30px);
-					&.active{
-						background: #fff;
-						border-left: 8px solid $blue;
+				ul{
+					li{
+						@include remCalc('font-size',38px);
+						@include remCalc('padding',40px,30px);
+						&.active{
+							background: #fff;
+							border-left: 8px solid $blue;
+						}
 					}
 				}
 			}
-		}
-		.product-wrapper{
-			flex:1;
-			height: 100%;
-			overflow-y: auto;
-			>ul{
-				>li{
-					>p{
-						background: #f1f1f1;
-						@include remCalc('padding',26px,42px);
-						@include remCalc('font-size',36px);
-						span{
-							color: #999;
-							@include remCalc('font-size',28px);
-						}
-					}
-					>ul{
-						>li{
-							display: flex;
-							.food-img{
-								flex:2;
-								@include remCalc('padding',30px)
+			.product-wrapper{
+				flex:1;
+				height: 100%;
+				overflow-y: auto;
+				>ul{
+					>li{
+						>p{
+							background: #f1f1f1;
+							@include remCalc('padding',26px,42px);
+							@include remCalc('font-size',36px);
+							span{
+								color: #999;
+								@include remCalc('font-size',28px);
 							}
-							.food-detail{
-								flex:8;
-								@include remCalc('padding',30px,15px)
-								header{
-									font-weight: bold;
-									@include remCalc('font-size',48px);
+						}
+						>ul{
+							>li{
+								display: flex;
+								.food-img{
+									flex:2;
+									@include remCalc('padding',30px)
 								}
-								section{
-									margin:10px 0;
-									&.gray{
-										color: #666;
+								.food-detail{
+									flex:8;
+									@include remCalc('padding',30px,15px)
+									header{
+										font-weight: bold;
+										@include remCalc('font-size',48px);
 									}
-									>span{
-										color: #f60;
-										@include remCalc('font-size',42px);
-									}
-								}
-								.price{
-									display: flex;
-									justify-content: space-between;
-									>span{
-										display: block;
-									}
-									.pull-right{
-										display: flex;
-										span{
-											text-align: center;
-											overflow: hidden;
-											@include remCalc('line-height',58px);
-											@include remCalc('margin-left',25px);
-											@include remCalc('margin-right',25px);
+									section{
+										margin:10px 0;
+										&.gray{
+											color: #666;
+										}
+										>span{
+											color: #f60;
 											@include remCalc('font-size',42px);
-											@include remCalc('min-width',40px);
-											@include remCalc('max-width',100px);
 										}
-										.minus{
-											background: #fff;
-											border-radius: 50%;				
-											border:1px solid $blue;
-											color: $blue;			
-											@include remCalc('width',58px);
-											@include remCalc('height',58px);
+									}
+									.price{
+										display: flex;
+										justify-content: space-between;
+										>span{
+											display: block;
 										}
-										.plus{
-											background: $blue;
-											border-radius: 50%;
-											color: #fff;
-											border:none;
-											@include remCalc('width',58px);
-											@include remCalc('height',58px);	
+										.pull-right{
+											display: flex;
+											span{
+												text-align: center;
+												overflow: hidden;
+												@include remCalc('line-height',58px);
+												@include remCalc('margin-left',25px);
+												@include remCalc('margin-right',25px);
+												@include remCalc('font-size',42px);
+												@include remCalc('min-width',40px);
+												@include remCalc('max-width',100px);
+											}
+											.minus{
+												background: #fff;
+												border-radius: 50%;				
+												border:1px solid $blue;
+												color: $blue;			
+												@include remCalc('width',58px);
+												@include remCalc('height',58px);
+											}
+											.plus{
+												background: $blue;
+												border-radius: 50%;
+												color: #fff;
+												border:none;
+												@include remCalc('width',58px);
+												@include remCalc('height',58px);	
+											}
 										}
 									}
 								}
@@ -326,4 +326,5 @@
 			}
 		}
 	}
+	
 </style>
