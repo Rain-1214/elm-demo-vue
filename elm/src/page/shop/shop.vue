@@ -90,6 +90,7 @@
 			return {
 				tag:'first',
 				computedHeight:'',
+				shopId:-1,
 				shopFoods:[]
 
 			}
@@ -107,7 +108,9 @@
 		},
 		created(){
 			const _this = this;
-			getShopFoodTypeList({id:1}).then((res) =>{
+			this.shopId = parseInt(this.$route.params.id);
+			const id = this.shopId;
+			getShopFoodTypeList({id}).then((res) =>{
 				_this.shopFoods = res.data.data;	
 			})
 			.catch((error) => {
@@ -128,8 +131,6 @@
 	
 	@import '../../assets/css/common/tool';
 	@import '../../assets/css/common/responsive';
-	
-	
 
 	#shop{
 		max-height: 100vh;
