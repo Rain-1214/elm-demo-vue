@@ -83,7 +83,13 @@ h5,.h5{
   @include remCalc('font-size',30px)
   @include remCalc('padding',4px);
 }
-
+.yellow-border{
+  border:1px solid $yellow;
+  color: $yellow;
+  @include remCalc('border-radius',3px);
+  @include remCalc('padding',4px);
+  @include remCalc('font-size',30px)
+}
 
 
 .blue{

@@ -49,15 +49,27 @@
 												<img :src="item.foodPic">
 											</div>
 											<div class="food-detail">
-												<header>{{item.foodName}}</header>
+												<header>
+													{{item.foodName}} 
+													<span 
+													class="yellow-border" 
+													v-if="item.foodPropertyList.length != 0">
+														多规格
+													</span>
+												</header>
 												<section class="gray">月售{{item.countMonth}}份 好评率{{item.goodEvaluate * 100}}%</section>
 												<section>{{item.foodInfo}}</section>
 												<section class="price">
 													<span>￥{{item.price}}</span>
 													<div class="pull-right">
-														<button class="minus">-</button>
-														<span>1</span>
-														<button class="plus">+</button>
+														<template v-if="item.foodPropertyList.length == 0">
+															<button class="minus">-</button>
+															<span>1</span>
+															<button class="plus">+</button>
+														</template>
+														<template v-else>
+															<button class="blue-background">选规格</button>
+														</template>
 													</div>
 												</section>
 											</div>
@@ -104,13 +116,15 @@
       },
       productScroll:_.throttle((event) => {
       	console.log(event.srcElement.scrollTop)
-      },100)
+      },100),
+
 		},
 		created(){
 			const _this = this;
 			this.shopId = parseInt(this.$route.params.id);
 			const id = this.shopId;
 			getShopFoodTypeList({id}).then((res) =>{
+				console.log(res);
 				_this.shopFoods = res.data.data;	
 			})
 			.catch((error) => {
@@ -127,7 +141,7 @@
 	}
 
 </script>
-<style lang='scss' >
+<style lang='scss'>
 	
 	@import '../../assets/css/common/tool';
 	@import '../../assets/css/common/responsive';
@@ -271,6 +285,12 @@
 									header{
 										font-weight: bold;
 										@include remCalc('font-size',48px);
+										span{
+											float: right;
+											@include remCalc('padding-left',30px);
+											@include remCalc('padding-right',30px);
+											@include remCalc('border-radius',30px);
+										}
 									}
 									section{
 										margin:10px 0;
@@ -315,6 +335,13 @@
 												border:none;
 												@include remCalc('width',58px);
 												@include remCalc('height',58px);	
+											}
+											.blue-background{
+												border:none;
+												outline: none;
+												@include remCalc('padding-left',30px);
+												@include remCalc('padding-right',30px);
+												@include remCalc('border-radius',30px);
 											}
 										}
 									}
