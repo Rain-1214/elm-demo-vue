@@ -137,7 +137,7 @@
 							time = 20;
 						}
 						e.time = time;
-						_this.shopList.push(e);3
+						_this.shopList.push(e);
 					});
 					console.log(_this.shopList)
 				})
@@ -152,7 +152,7 @@
 		}
 	}
 </script>
-<style lang='scss' scoped>
+<style lang='scss'>
   @import '../../assets/css/common/tool';
   @import '../../assets/css/common/responsive';
   @import '../../assets/css/common/public';

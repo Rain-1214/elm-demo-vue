@@ -68,7 +68,7 @@
 															<button class="plus">+</button>
 														</template>
 														<template v-else>
-															<button class="blue-background">选规格</button>
+															<button class="blue-background" @click="showSelect(item)">选规格</button>
 														</template>
 													</div>
 												</section>
@@ -87,7 +87,24 @@
 		    </el-tab-pane>
 		  </el-tabs>
 		</section>
-		
+		<mt-popup
+		  v-model="selectFoodType"
+		  popup-transition="popup-fade">
+		  <div class="foodtype">
+		  	<h1 class="text-center">{{foodType.foodName}}</h1>
+		  	<template v-for="(v,i) in foodType.foodPropertyList">
+			  	<h2>{{v.typeName}}</h2>
+			  	<ul>
+			  		<li 
+			  		:class="{'active':selectArray[i][index]}" 
+			  		v-for="(item,index) in v.foodPropertyDetail"
+			  		@click="changeSelect(i,index)">
+			  			{{item.name}}
+			  		</li>
+			  	</ul>
+		  	</template>
+		  </div>
+		</mt-popup>
 		
 	</div>
 </template>
@@ -103,8 +120,10 @@
 				tag:'first',
 				computedHeight:'',
 				shopId:-1,
-				shopFoods:[]
-
+				shopFoods:[],
+				selectFoodType:false,
+				selectArray:[],
+				foodType:{},
 			}
 		},
 		computed:{
@@ -117,7 +136,24 @@
       productScroll:_.throttle((event) => {
       	console.log(event.srcElement.scrollTop)
       },100),
-
+      showSelect(e){
+      	e.foodPropertyList.forEach((e) => {
+      		let tempArray = new Array(e.foodPropertyDetail.length);
+      		tempArray.fill(false);
+      		tempArray[0] = true;
+      		this.selectArray.push(tempArray);
+      	});
+      	console.log(this.selectArray)
+      	Object.assign(this.foodType,e);
+      	this.selectFoodType = true;
+      },
+      changeSelect(i,index){
+      	if(!this.selectArray[i][index]){
+      		this.selectArray[i].fill(false);
+      		this.selectArray[i][index] = true;
+      		console.log(this.selectArray)
+      	}
+      }
 		},
 		created(){
 			const _this = this;
@@ -147,9 +183,32 @@
 	@import '../../assets/css/common/responsive';
 
 	#shop{
-			max-height: 100vh;
-			overflow: hidden;
-
+		max-height: 100vh;
+		overflow: hidden;
+		.foodtype{
+			min-width: 80vw;
+			@include remCalc('padding',40px);
+			h1{
+				@include remCalc('font-size',60px);
+			}
+			h2{
+				@include remCalc('font-size',50px);
+				margin-bottom: 20px;
+				margin-top: 20px;
+			}
+			ul{
+				display: flex;
+				li{
+					@include remCalc('padding',15px,30px);
+					@include remCalc('border-radius',50px);
+					@include remCalc('margin-right',20px);
+					&.active{
+						color:$blue;
+						border: 1px solid $blue;
+					}
+				}
+			}
+		}		
 		.shop-header{
 			background: $blue;
 			@include remCalc('height',407px);
