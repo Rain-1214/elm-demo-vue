@@ -4,8 +4,8 @@ import {analysisLocation} from '../../api/location.js';
 const state = {
 	latitude: '', // 当前位置纬度
 	longitude: '', // 当前位置经度
-	currentLocation:'',
-	tempAddress:{}
+	currentLocation:'', //当前位置名称
+	tempAddress:{} // 已选择当前的具体位置信息
 }
 
 const getters ={

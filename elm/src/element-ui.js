@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
-import { Button, Select, Form, FormItem, Input } from 'element-ui'
 import App from './App.vue'
+import { Button, Select, Form, FormItem, Input } from 'element-ui'
 
 Vue.use(Button)
 Vue.use(Select)

@@ -8,6 +8,6 @@ export default{
 		{ path: '/', redirect: '/location' },
 		{ path: '/location', component: Location},
 		{ path: '/home', component: Home},
-		{ path: '/shop/:id', component: Shop},
+		{ path: '/shop', component: Shop},
 	]
 }

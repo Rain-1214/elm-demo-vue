@@ -75,20 +75,19 @@
 				this.loadLocation();
 			},
 			loadLocation(){
-				const _this = this;
 				if(this.currentLocation == ""){
 					//从浏览器获取地理位置
 					navigator.geolocation.getCurrentPosition((position) => {
 
 						const {latitude,longitude} = position.coords
-						_this.$store.dispatch('getLocation',{latitude,longitude})
-						_this.loadShow = false;
+						this.$store.dispatch('getLocation',{latitude,longitude})
+						this.loadShow = false;
 
 					},(error) => {
 						//没获取到用一个默认地址
 						const [latitude,longitude] = [31.1697816,121.55880439999999]//上海市浦东新区
-						_this.$store.dispatch('getLocation',{latitude,longitude})
-						_this.loadShow = false;
+						this.$store.dispatch('getLocation',{latitude,longitude})
+						this.loadShow = false;
 
 					},{
 					  enableHighAccuracy: true, // 是否获取高精度结果  
@@ -101,9 +100,8 @@
 			},
 			loadHotCity(){
 				//从后台获取热门城市列表
-				const _this = this;
 				getHotCity().then((res) => {
-					_this.hotCity = res.data.data;
+					this.hotCity = res.data.data;
 				})
 				.catch((error) => {
 					console.log(error);
@@ -111,7 +109,6 @@
 			},
 			loadAllCity(){
 				//从json文件获取所有城市信息并按拼音首字母分割
-				const _this = this;
 				getAllCity().then((res) => {
 					let data={};
 					res.data.forEach((e) => {
@@ -128,7 +125,7 @@
 					newKeys.forEach((e) => {
 						newData[e] = data[e];
 					});
-					Object.assign(_this.allCity,newData);
+					Object.assign(this.allCity,newData);
 				})
 				.catch((error) => {
 					console.log(error)

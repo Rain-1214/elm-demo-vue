@@ -33,7 +33,6 @@
 			//函数节流
 			search:_.throttle(function(){
 				let data;
-				const _this = this;
 				if(this.latitude != "" && this.longitude != ""){
 					//解构赋值
 					let {searchText} = this.$data;
@@ -56,7 +55,7 @@
 				// 请求解析地址
 				searchAddress(data)
 				.then((res) => {
-					_this.addressArray = JSON.parse(res.data.data).result;
+					this.addressArray = JSON.parse(res.data.data).result;
 				})
 				.catch((error) => {
 					console.log(error)

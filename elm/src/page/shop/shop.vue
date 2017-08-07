@@ -23,7 +23,7 @@
 		</section>
 		<section class="tag" >
 			<el-tabs v-model="tag" type="card" @tab-click="handleClick">
-		    <el-tab-pane label="商品" name="first">
+		    <el-tab-pane label="商品" name="product">
 		   		<section class="products" :style="{height:computedHeight}">
 						<div class="list">
 							<ul >
@@ -65,7 +65,7 @@
 														<template v-if="item.foodPropertyList.length == 0">
 															<button class="minus">-</button>
 															<span>1</span>
-															<button class="plus">+</button>
+															<button class="plus" @click = 'addToShopping(item)'>+</button>
 														</template>
 														<template v-else>
 															<button class="blue-background" @click="showSelect(item)">选规格</button>
@@ -80,7 +80,7 @@
 						</div>
 					</section>	
 		    </el-tab-pane>
-		    <el-tab-pane label="评价" name="second">
+		    <el-tab-pane label="评价" name="evaluate">
 		    	<section class="evaluate" :style="{'height':computedHeight}">
 		    		2222
 		    	</section>
@@ -91,6 +91,9 @@
 		  v-model="selectFoodType"
 		  popup-transition="popup-fade">
 		  <div class="foodtype">
+		  	<div class="close" @click = "selectFoodType = false">
+		  		<i class="el-icon-close"></i>
+		  	</div>
 		  	<h1 class="text-center">{{foodType.foodName}}</h1>
 		  	<template v-for="(v,i) in foodType.foodPropertyList">
 			  	<h2>{{v.typeName}}</h2>
@@ -103,6 +106,10 @@
 			  		</li>
 			  	</ul>
 		  	</template>
+		  	<div class="last-price">
+		  		<span>￥ {{currentPopupProductPrice}}</span>
+		  		<el-button type="primary" @click = 'addToShopping()'>添加到购物车</el-button>
+		  	</div>
 		  </div>
 		</mt-popup>
 		
@@ -111,23 +118,26 @@
 <script>
 	
 	import * as _ from 'lodash';
+	import * as type from '../../store/mutation-types.js';
 	import {getShopFoodTypeList} from '../../api/shop.js';
+	import {mapGetters} from 'vuex'
 
 	export default{
 		name:'shop',
 		data(){
 			return {
-				tag:'first',
-				computedHeight:'',
-				shopId:-1,
-				shopFoods:[],
-				selectFoodType:false,
-				selectArray:[],
-				foodType:{},
+				shopInfo:{},
+				tag:'product', //商品与评价切换
+				computedHeight:'', //商品组件高度
+				shopFoods:[], //店铺所有食物
+				selectFoodType:false, //多规格商品弹出框控制变量
+				selectArray:[], //多规格商品的已选择状态数组
+				foodType:{}, //多规格商品的类型对象
+				currentPopupProductPrice:0.00,
 			}
 		},
 		computed:{
-			
+			...mapGetters(['shoppingCartProducts','currentShop']),
 		},
 		methods:{
 			handleClick(tab, event) {
@@ -137,36 +147,66 @@
       	console.log(event.srcElement.scrollTop)
       },100),
       showSelect(e){
-      	e.foodPropertyList.forEach((e) => {
-      		let tempArray = new Array(e.foodPropertyDetail.length);
-      		tempArray.fill(false);
-      		tempArray[0] = true;
-      		this.selectArray.push(tempArray);
-      	});
-      	console.log(this.selectArray)
-      	Object.assign(this.foodType,e);
-      	this.selectFoodType = true;
+      //读取多规格商品的具体类型
+    	this.selectArray.splice(0);
+    	e.foodPropertyList.forEach((e) => {
+    		let tempArray = new Array(e.foodPropertyDetail.length);
+    		tempArray.fill(false);
+    		tempArray[0] = true;
+    		this.selectArray.push(tempArray);
+    	});
+    	Object.assign(this.foodType,e);
+    	//计算商品默认状态价格
+    	let productTypePrice = 0;
+    	this.foodType.foodPropertyList.forEach((e) => {
+    		productTypePrice += e.foodPropertyDetail[0].price;
+    	})
+    	this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
+    	this.selectFoodType = true;
+
       },
       changeSelect(i,index){
+      	// 多规格商品选择时 改变 选择状态
       	if(!this.selectArray[i][index]){
-      		this.selectArray[i].fill(false);
-      		this.selectArray[i][index] = true;
-      		console.log(this.selectArray)
+	      	//改变选中状态
+      		let trueIndex = this.selectArray[i].indexOf(true);
+      		this.selectArray[i].splice(trueIndex,1,false);
+      		this.selectArray[i].splice(index,1,true);
+      		//改变不同状态下的价格
+      		let productTypePrice = 0;
+		    	this.foodType.foodPropertyList.forEach((e,i) => {
+		    		let newtrueIndex = this.selectArray[i].indexOf(true);
+		    		productTypePrice += e.foodPropertyDetail[newtrueIndex].price;
+		    	})
+		    	this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
+      	}
+      },
+      addToShopping(product = false){
+      	//判断商品是否 为多规格商品 以判断是否需要计算价格
+      	if (product) {
+      		console.log(this.shoppingCartProducts)
+      	}else{
+      		const {foodName} = this.foodType;
+      		const shopId = this.currentShop.id;
+      		const price = this.currentPopupProductPrice;
+      		const {shopName} = this.currentShop;
+      		const product = {foodName,shopId,price,shopName};
+      		this.$store.commit(type.ADD_TO_SHOPPINGCART,product);
       	}
       }
 		},
 		created(){
-			const _this = this;
-			this.shopId = parseInt(this.$route.params.id);
-			const id = this.shopId;
+			//初始化时 通过店铺ID获取店铺商品
+			const id = this.currentShop.id;
 			getShopFoodTypeList({id}).then((res) =>{
 				console.log(res);
-				_this.shopFoods = res.data.data;	
+				this.shopFoods = res.data.data;	
 			})
 			.catch((error) => {
 				console.log(error);
 			})
 		},
+		//计算 底部商品组件的高
 		mounted(){
 			let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
 			let headerHeight = document.querySelector('.shop-header').offsetHeight;
@@ -188,6 +228,11 @@
 		.foodtype{
 			min-width: 80vw;
 			@include remCalc('padding',40px);
+			.close{
+				position: absolute;
+				@include remCalc('right',30px);
+				@include remCalc('top',30px);
+			}
 			h1{
 				@include remCalc('font-size',60px);
 			}
@@ -206,6 +251,21 @@
 						color:$blue;
 						border: 1px solid $blue;
 					}
+				}
+			}
+			.last-price{
+				@include remCalc('padding',20px,0);
+				display: flex;
+				flex-direction:row;
+				flex-wrap:nowrap;
+				justify-content: space-between;
+				>span{
+					color:#f60;
+					@include remCalc('font-size',60px);
+
+				}
+				button{
+					@include remCalc('padding',30px)
 				}
 			}
 		}		

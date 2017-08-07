@@ -6,11 +6,15 @@ import * as getters from './getters'
 Vue.use(Vuex)
 
 import location from './modules/location.js'
+import shoppingCart from './modules/shoppingCart.js'
+import shop from './modules/shop.js'
 
 export default new Vuex.Store({
   actions,
   getters,
   modules: {
   	location,
+  	shoppingCart,
+  	shop
   }
 })

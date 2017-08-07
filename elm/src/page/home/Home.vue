@@ -25,7 +25,7 @@
     	<div class="title">
     		<h2>推荐商家</h2>
     	</div>
-    	<div class="shop" v-for="(v,i) in shopList" @click="$router.push('/shop/'+ v.id)">
+    	<div class="shop" v-for="(v,i) in shopList" @click="toShopDetail(v)">
     		<div class="img">
     			<img :src="v.shopLogo">
     		</div>
@@ -87,6 +87,7 @@
 	</div>
 </template>
 <script>
+	import * as type from '../../store/mutation-types.js'
 	import {mapGetters,mapMutations} from 'vuex';
 	import {getShopTypeList,getShopList} from '../../api/shop.js';
 	import {getGreatCircleDistance} from '../../tool/computdistance.js';
@@ -104,21 +105,21 @@
 				])
 		},
 		methods:{
+			//获取店铺类型
 			loadShopTypeList(){
-				const _this = this;
 				getShopTypeList().then((res) => {
 					console.log(res);
 					//将店铺类型分割成8个一组的多个数组
 					for(let i = 0; i<res.data.data.length; i += 8){
-						_this.shopTypeList.push(res.data.data.slice(i,i+8));
+						this.shopTypeList.push(res.data.data.slice(i,i+8));
 					}
 				})
 				.catch((error) => {
 					console.log(error)
 				})
 			},
+			//获取所以店铺列表
 			loadShopList(){
-				const _this = this;
 				getShopList().then((res) => {
 					console.log(res);
 					res.data.data.forEach((e) => {
@@ -128,7 +129,7 @@
 						e.averageEvaluate = averageEvaluate;
 						// 计算商家与用户之间的距离
 						let {latitude:lat1,longitude:log1} = e;
-						let {lat:lat2,lng:log2} = _this.tempAddress.location;
+						let {lat:lat2,lng:log2} = this.tempAddress.location;
 						const distance = getGreatCircleDistance(lat1,log1,lat2,log2);
 						e.distance = distance;
 						// 计算配送时间
@@ -137,13 +138,17 @@
 							time = 20;
 						}
 						e.time = time;
-						_this.shopList.push(e);
+						this.shopList.push(e);
 					});
-					console.log(_this.shopList)
+					console.log(this.shopList)
 				})
 				.catch((error) => {
 					console.log(error)
 				})
+			},
+			toShopDetail(shop){
+				this.$store.commit(type.ALERT_CURRENTSHOP,shop);
+				this.$router.push('/shop');
 			}
 		},
 		created(){
