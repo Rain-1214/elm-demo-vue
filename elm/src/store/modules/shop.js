@@ -18,7 +18,7 @@ const mutations = {
 
 	[type.ALERT_CURRENTSHOP](state,shop){
 		Object.assign(state.currentShop,shop);
-	}
+	},
 
 }
 

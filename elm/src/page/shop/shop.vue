@@ -62,14 +62,21 @@
 												<section class="price">
 													<span>￥{{item.price}}</span>
 													<div class="pull-right">
-														<template v-if="item.foodPropertyList.length == 0">
-															<button class="minus">-</button>
-															<span>1</span>
+														<div v-show="item.foodPropertyList.length == 0">
+															<button v-show="shoppingCartProducts[currentShop.id]?
+															shoppingCartProducts[currentShop.id].foodIdList?
+															shoppingCartProducts[currentShop.id].foodIdList.has(item.id) != -1?true:false:false:false" class="minus">-</button>
+															<span v-show="shoppingCartProducts[currentShop.id]?
+															shoppingCartProducts[currentShop.id].foodIdList?
+															shoppingCartProducts[currentShop.id].foodIdList.has(item.id) != -1?true:false:false:false">1</span>
 															<button class="plus" @click = 'addToShopping(item)'>+</button>
-														</template>
-														<template v-else>
-															<button class="blue-background" @click="showSelect(item)">选规格</button>
-														</template>
+														</div>
+														<div v-show="item.foodPropertyList.length != 0">
+															<button v-show="shoppingCartProducts[currentShop.id]?
+															shoppingCartProducts[currentShop.id].foodIdList?
+															shoppingCartProducts[currentShop.id].foodIdList.has(item.id) != -1?false:true:true:true
+															" class="blue-background" @click="showSelect(item)">选规格</button>
+														</div>
 													</div>
 												</section>
 											</div>
@@ -181,17 +188,27 @@
 		    	this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
       	}
       },
-      addToShopping(product = false){
+      addToShopping(product=false){
       	//判断商品是否 为多规格商品 以判断是否需要计算价格
       	if (product) {
       		console.log(this.shoppingCartProducts)
       	}else{
-      		const {foodName} = this.foodType;
-      		const shopId = this.currentShop.id;
-      		const price = this.currentPopupProductPrice;
-      		const {shopName} = this.currentShop;
-      		const product = {foodName,shopId,price,shopName};
+      		//判断购物车中是否存在 该店铺 及该食物
+      		var foodType = ""; //实物规格
+      		this.foodType.foodPropertyList.forEach((element,index) => {
+      			const trueIndex = this.selectArray[index].indexOf(true);
+      			foodType += `[${element.foodPropertyDetail[trueIndex].name}]`;
+      		});
+      		let foodNum = 1;
+      		const {foodName} = this.foodType; //食物名称
+      		const {id:foodId} = this.foodType; //食物ID
+      		const {shopName} = this.currentShop; //当前店铺名称
+      		const shopId = this.currentShop.id; //店铺ID
+      		const price = this.currentPopupProductPrice; //食物价格
+      		const product = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
       		this.$store.commit(type.ADD_TO_SHOPPINGCART,product);
+      		this.selectFoodType = false;
+      		
       	}
       }
 		},

@@ -6,5 +6,6 @@ export const ALERT_TEMPADDRESS = 'ALERT_TEMPADDRESS'; //修改当前位置的具
 export const ALERT_CURRENTSHOP = 'ALERT_CURRENTSHOP';
 
 //购物车相关
-
 export const ADD_TO_SHOPPINGCART = 'ADD_TO_SHOPPINGCART'; //添加到购物车
+export const ADD_NUM_SHOPPINGCART = 'ADD_NUM_SHOPPINGCART'; //在购物车添加商品数量
+export const REDUCE_NUM_SHOPPINGCART = 'REDUCE_NUM_SHOPPINGCART'; //在购物车减少商品数量
