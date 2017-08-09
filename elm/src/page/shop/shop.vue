@@ -62,20 +62,32 @@
 												<section class="price">
 													<span>￥{{item.price}}</span>
 													<div class="pull-right">
-														<div v-show="item.foodPropertyList.length == 0">
-															<button v-show="shoppingCartProducts[currentShop.id]?
+														<div v-show="item.foodPropertyList.length === 0?true:
+															shoppingCartProducts[currentShop.id]?
 															shoppingCartProducts[currentShop.id].foodIdList?
-															shoppingCartProducts[currentShop.id].foodIdList.has(item.id) != -1?true:false:false:false" class="minus">-</button>
+															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false
+															">
+
+															<button class="minus" 
+															v-show="shoppingCartProducts[currentShop.id]?
+															shoppingCartProducts[currentShop.id].foodIdList?
+															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false">-</button>
+
 															<span v-show="shoppingCartProducts[currentShop.id]?
 															shoppingCartProducts[currentShop.id].foodIdList?
-															shoppingCartProducts[currentShop.id].foodIdList.has(item.id) != -1?true:false:false:false">1</span>
-															<button class="plus" @click = 'addToShopping(item)'>+</button>
+															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false">
+																{{
+																shoppingCartProducts[currentShop.id]?
+																shoppingCartProducts[currentShop.id][item.id]?
+																shoppingCartProducts[currentShop.id][item.id]:0:0}}
+															</span>
+															<button class="plus" @click='addToShopping(item)'>+</button>
 														</div>
-														<div v-show="item.foodPropertyList.length != 0">
-															<button v-show="shoppingCartProducts[currentShop.id]?
+														<div v-show="item.foodPropertyList.length === 0?false:
+															shoppingCartProducts[currentShop.id]?
 															shoppingCartProducts[currentShop.id].foodIdList?
-															shoppingCartProducts[currentShop.id].foodIdList.has(item.id) != -1?false:true:true:true
-															" class="blue-background" @click="showSelect(item)">选规格</button>
+															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?false:true:true:true">
+															<button class="blue-background" @click="showSelect(item)">选规格</button>
 														</div>
 													</div>
 												</section>
@@ -190,27 +202,46 @@
       },
       addToShopping(product=false){
       	//判断商品是否 为多规格商品 以判断是否需要计算价格
+      	if (product) {}
       	if (product) {
-      		console.log(this.shoppingCartProducts)
+      		let foodType = '';
+      		let foodNum = 1;
+      		let {foodName,price,id:foodId} = product; //食物名称 价格 ID
+      		let {shopName,id:shopId} = this.currentShop; //当前店铺名称 店铺ID
+      		let Data = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
+      		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
+      		this.selectFoodType = false;
       	}else{
       		//判断购物车中是否存在 该店铺 及该食物
-      		var foodType = ""; //实物规格
+      		let foodType = '';
+      		let foodNum = 1;
       		this.foodType.foodPropertyList.forEach((element,index) => {
       			const trueIndex = this.selectArray[index].indexOf(true);
       			foodType += `[${element.foodPropertyDetail[trueIndex].name}]`;
       		});
-      		let foodNum = 1;
-      		const {foodName} = this.foodType; //食物名称
-      		const {id:foodId} = this.foodType; //食物ID
-      		const {shopName} = this.currentShop; //当前店铺名称
-      		const shopId = this.currentShop.id; //店铺ID
-      		const price = this.currentPopupProductPrice; //食物价格
-      		const product = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
-      		this.$store.commit(type.ADD_TO_SHOPPINGCART,product);
+    		  let {foodName,id:foodId} = this.foodType; //食物名称 食物ID
+      	  let {shopName,id:shopId} = this.currentShop; //当前店铺名称
+     	 	  let price = this.currentPopupProductPrice; //食物价格
+      		let Data = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
+      		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
       		this.selectFoodType = false;
-      		
       	}
-      }
+      },
+		},
+		filters:{
+			computedProductNum(foodId,shoppingCartProducts,currentShop){
+				let productNum = 0;
+				if(shoppingCartProducts[currentShop.id] && shoppingCartProducts[currentShop.id].foodList){
+	      	shoppingCartProducts[currentShop.id].foodList.forEach((e,i) => {
+	      		if (e.foodId === foodId) {
+	      			productNum = e.foodNum
+	      		}
+	      	});
+	      	return productNum;
+				}else{
+					return 0;
+				}
+			}
 		},
 		created(){
 			//初始化时 通过店铺ID获取店铺商品

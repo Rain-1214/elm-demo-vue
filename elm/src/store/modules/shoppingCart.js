@@ -25,11 +25,17 @@ const mutations = {
 				if (e.foodType === foodType && e.foodId === foodId) {
 					eachFlag = false;
 					e.foodNum ++;
+					state.shoppingCartProducts[shopId][e.foodId] ++;
 				}
 			});
 			if (eachFlag) {
-				tempObject[shopId].foodIdList.add(foodId);
-				tempObject[shopId][foodList].push({foodName,price,foodType,foodNum,foodId});
+				state.shoppingCartProducts[shopId].foodIdList.add(foodId);
+				state.shoppingCartProducts[shopId].foodList.push({foodName,price,foodType,foodNum,foodId});
+				if (state.shoppingCartProducts[shopId][foodId]) {
+					state.shoppingCartProducts[shopId][foodId] ++;
+				}else{
+					state.shoppingCartProducts[shopId][foodId] = 1;
+				}
 			}
 		}else{
 			let tempObject = {};
@@ -38,6 +44,7 @@ const mutations = {
 			tempObject[shopId].foodIdList = new Set();
 			tempObject[shopId].foodIdList.add(foodId);
 			tempObject[shopId].foodList.push({foodName,price,foodType,foodNum,foodId});
+			tempObject[shopId][foodId] = 1;
 			Object.assign(state.shoppingCartProducts,tempObject);
 		}
 	}

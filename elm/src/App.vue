@@ -12,9 +12,9 @@ export default {
   	...mapGetters(['tempAddress'])
   },
   created(){
-  	// if(!this.tempAddress.name){
-  	// 	this.$router.push('/location')
-  	// }
+  	if(!this.tempAddress.name){
+  		this.$router.push('/location')
+  	}
   }
 }
 </script>
