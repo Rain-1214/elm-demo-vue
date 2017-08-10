@@ -71,23 +71,21 @@
 															<button class="minus" 
 															v-show="shoppingCartProducts[currentShop.id]?
 															shoppingCartProducts[currentShop.id].foodIdList?
-															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false">-</button>
+															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false"
+															@click = "removeProduct(item,v,i)">-</button>
 
 															<span v-show="shoppingCartProducts[currentShop.id]?
 															shoppingCartProducts[currentShop.id].foodIdList?
 															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false">
-																{{
-																shoppingCartProducts[currentShop.id]?
-																shoppingCartProducts[currentShop.id][item.id]?
-																shoppingCartProducts[currentShop.id][item.id]:0:0}}
+																{{item.foodNum}}
 															</span>
-															<button class="plus" @click='addToShopping(item)'>+</button>
+															<button class="plus" @click='showSelect(item,v,i)'>+</button>
 														</div>
 														<div v-show="item.foodPropertyList.length === 0?false:
 															shoppingCartProducts[currentShop.id]?
 															shoppingCartProducts[currentShop.id].foodIdList?
 															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?false:true:true:true">
-															<button class="blue-background" @click="showSelect(item)">选规格</button>
+															<button class="blue-background" @click="showSelect(item,v,i)">选规格</button>
 														</div>
 													</div>
 												</section>
@@ -105,6 +103,24 @@
 		    	</section>
 		    </el-tab-pane>
 		  </el-tabs>
+		</section>
+		<section class="shoppingcart">
+			<div class="shoppingcart-icon">
+				<el-badge :value="12" class="item">
+					<span>
+						<i></i>
+					</span>
+				</el-badge>
+			</div>
+			<div class="countPrice">
+				<div class="price">
+					<h1>￥999</h1>
+					<p>配送费￥5</p>
+				</div>
+				<button>
+					去结算
+				</button>
+			</div>
 		</section>
 		<mt-popup
 		  v-model="selectFoodType"
@@ -165,23 +181,29 @@
       productScroll:_.throttle((event) => {
       	console.log(event.srcElement.scrollTop)
       },100),
-      showSelect(e){
-      //读取多规格商品的具体类型
-    	this.selectArray.splice(0);
-    	e.foodPropertyList.forEach((e) => {
-    		let tempArray = new Array(e.foodPropertyDetail.length);
-    		tempArray.fill(false);
-    		tempArray[0] = true;
-    		this.selectArray.push(tempArray);
-    	});
-    	Object.assign(this.foodType,e);
-    	//计算商品默认状态价格
-    	let productTypePrice = 0;
-    	this.foodType.foodPropertyList.forEach((e) => {
-    		productTypePrice += e.foodPropertyDetail[0].price;
-    	})
-    	this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
-    	this.selectFoodType = true;
+      showSelect(product,productList,productListIndex){
+      	//读取多规格商品的具体类型
+      	if(product.foodPropertyList.length !== 0){
+		    	this.selectArray.splice(0);
+		    	product.foodPropertyList.forEach((e) => {
+		    		let tempArray = new Array(e.foodPropertyDetail.length);
+		    		tempArray.fill(false);
+		    		tempArray[0] = true;
+		    		this.selectArray.push(tempArray);
+		    	});
+		    	product.productListIndex = productListIndex;
+		    	product.productList = productList;
+		    	Object.assign(this.foodType,product);
+		    	//计算商品默认状态价格
+		    	let productTypePrice = 0;
+		    	this.foodType.foodPropertyList.forEach((e) => {
+		    		productTypePrice += e.foodPropertyDetail[0].price;
+		    	})
+		    	this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
+		    	this.selectFoodType = true;
+      	}else{
+      		this.addToShopping(product);
+      	}
 
       },
       changeSelect(i,index){
@@ -202,7 +224,6 @@
       },
       addToShopping(product=false){
       	//判断商品是否 为多规格商品 以判断是否需要计算价格
-      	if (product) {}
       	if (product) {
       		let foodType = '';
       		let foodNum = 1;
@@ -210,6 +231,8 @@
       		let {shopName,id:shopId} = this.currentShop; //当前店铺名称 店铺ID
       		let Data = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
       		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
+      		console.log(product)
+      		product.foodNum ++;
       		this.selectFoodType = false;
       	}else{
       		//判断购物车中是否存在 该店铺 及该食物
@@ -224,31 +247,26 @@
      	 	  let price = this.currentPopupProductPrice; //食物价格
       		let Data = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
       		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
+      		this.foodType.productList.foodList[this.foodType.productListIndex].foodNum ++;
       		this.selectFoodType = false;
       	}
       },
-		},
-		filters:{
-			computedProductNum(foodId,shoppingCartProducts,currentShop){
-				let productNum = 0;
-				if(shoppingCartProducts[currentShop.id] && shoppingCartProducts[currentShop.id].foodList){
-	      	shoppingCartProducts[currentShop.id].foodList.forEach((e,i) => {
-	      		if (e.foodId === foodId) {
-	      			productNum = e.foodNum
-	      		}
-	      	});
-	      	return productNum;
-				}else{
-					return 0;
-				}
-			}
 		},
 		created(){
 			//初始化时 通过店铺ID获取店铺商品
 			const id = this.currentShop.id;
 			getShopFoodTypeList({id}).then((res) =>{
-				console.log(res);
+				res.data.data.forEach((e,i) => {
+					e.foodList.forEach((e,i) => {
+						if (this.shoppingCartProducts[this.currentShop.id]?this.shoppingCartProducts[this.currentShop.id].foodIdList.has(e.id):false) {
+							e.foodNum = this.shoppingCartProducts[this.currentShop.id].foodIdList.get(e.id);
+						}else{
+							e.foodNum = 0;
+						}
+					})
+				})
 				this.shopFoods = res.data.data;	
+				console.log(this.shopFoods)
 			})
 			.catch((error) => {
 				console.log(error);
@@ -515,6 +533,54 @@
 								}
 							}
 						}
+					}
+				}
+			}
+		}
+		.shoppingcart{
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			background: #3d3d3f;
+			@include remCalc('height',160px);
+			@include remCalc('padding-left',350px);
+			.shoppingcart-icon{
+				position: absolute;
+				@include remCalc('left',50px);
+				@include remCalc('top',-50px);
+				div{
+					display: block;
+					background: #4a4a4a;
+					border-radius:50%;
+					@include remCalc('width',160px);
+					@include remCalc('height',160px);
+					@include remCalc('padding',20px);
+					span{
+						display: block;
+						width:100%;
+						height: 100%;
+						border-radius:50%;
+						background: $blue;
+						&:before{
+							content: "";
+							display: block;
+							width:40%;
+							height: 40%;
+							background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1OCA1OCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxmaWx0ZXIgaWQ9ImEiIHdpZHRoPSIyMDAlIiBoZWlnaHQ9IjIwMCUiIHg9Ii01MCUiIHk9Ii01MCUiIGZpbHRlclVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCI+PGZlT2Zmc2V0IGluPSJTb3VyY2VBbHBoYSIgcmVzdWx0PSJzaGFkb3dPZmZzZXRPdXRlcjEiLz48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIxLjUiIGluPSJzaGFkb3dPZmZzZXRPdXRlcjEiIHJlc3VsdD0ic2hhZG93Qmx1ck91dGVyMSIvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4wOCAwIiBpbj0ic2hhZG93Qmx1ck91dGVyMSIgcmVzdWx0PSJzaGFkb3dNYXRyaXhPdXRlcjEiLz48ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49InNoYWRvd01hdHJpeE91dGVyMSIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT48L2ZpbHRlcj48cGF0aCBpZD0iYiIgZD0iTTcuNjE0IDQuMDUxYy0xLjA2Ni4wODYtMS40NTItLjM5OC0xLjc1Mi0xLjU4NEM1LjU2MiAxLjI4LjMzIDUuODguMzMgNS44OGwzLjcxIDE5LjQ3NmMwIC4xNDgtMS41NiA3LjUxNS0xLjU2IDcuNTE1LS40ODkgMi4xOS4yOTIgNC4yNyAzLjU2IDQuMzIgMCAwIDM2LjkxNy4wMTcgMzYuOTIuMDQ3IDEuOTc5LS4wMTIgMi45ODEtLjk5NSAzLjAxMy0zLjAzOS4wMy0yLjA0My0xLjA0NS0yLjk3OC0yLjk4Ny0yLjk5M0w4LjgzIDMxLjE5MnMuODYtMy44NjUgMS4wNzctMy44NjVjMCAwLTUuNzg4LjEyMiAzMi4wNjUtMS45NTYuNjA2LS4wMzMgMi4wMTgtLjc2NCAyLjI5OC0xLjg0OCAxLjExMy00LjMxNyA0LjAwOC0xMy4yNiA0LjQ1OC0xNS42NC45MzItNC45MjUgMi4wNjEtOC41NTgtNC4yOC03LjQwNSAwIDAtMzUuNzY4IDMuNDg3LTM2LjgzMyAzLjU3M3oiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBmaWx0ZXI9InVybCgjYSkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMgMikiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUuMDM4IDcuODA4KSI+PG1hc2sgaWQ9ImMiIGZpbGw9IiNmZmYiPjx1c2UgeGxpbms6aHJlZj0iI2IiLz48L21hc2s+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYiIvPjxwYXRoIGZpbGw9IiMyMDczQzEiIGQ9Ik01My45NjIgNy43NzRsLTUuNzAxIDE5LjMwNS00MC43OCAxLjU3NHoiIG9wYWNpdHk9Ii4xIiBtYXNrPSJ1cmwoI2MpIi8+PC9nPjxwYXRoIHN0cm9rZT0iI0ZGRiIgc3Ryb2tlLXdpZHRoPSI2IiBkPSJNOS4zNzQgMTguNzIyUzcuODY4IDExLjI4MyA3LjMyMyA4LjcxQzYuNzc4IDYuMTM2IDUuODYgNS4zMyAzLjk3OCA0LjUyIDIuMDk2IDMuNzEzLjM2NyAyLjI4Ni4zNjcgMi4yODYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjQ2IiBjeT0iNTEiIHI9IjQiIGZpbGw9IiNGRkYiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjUxIiByPSI0IiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==) 50%  no-repeat;
+
+							@include all-center(absolute);
+							
+						}
+					}
+					.el-badge__content{
+						@include remCalc('font-size',30px);
+						@include remCalc('line-height',45px);
+						@include remCalc('padding',0,12px);
+						@include remCalc('height',45px);
+						@include remCalc('right',60px);
+						@include remCalc('top',20px);
+						@include remCalc('border-radius',20px);
 					}
 				}
 			}
