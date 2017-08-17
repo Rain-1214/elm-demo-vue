@@ -114,12 +114,66 @@
 			</div>
 			<div class="countPrice">
 				<div class="price">
-					<h1>￥999</h1>
-					<p>配送费￥5</p>
+					<div class="tb-center">
+						<h1>￥999</h1>
+						<p>配送费￥5</p>
+					</div>
 				</div>
 				<button>
 					去结算
 				</button>
+			</div>
+			<div class="shoppingcart-prodcut-list">
+				<header>
+					<h1>购物车</h1>	
+					<span>
+						清空
+						<i class="el-icon-delete"></i>
+					</span>
+				</header>
+				<article>	
+					<ul>
+						<li>
+							<div class="name">
+								名字名字名字名字名字
+							</div>
+							<div>
+								<span>￥999</span>
+								<span>
+									<button class="minus">-</button>
+									<span class="num">4</span>
+									<button class="plus">+</button>
+								</span>
+							</div>
+						</li>
+						<li>
+							<div class="name">
+								名字名字名字名字名字
+							</div>
+							<div>
+								<span>￥999</span>
+								<span>
+									<button class="minus">-</button>
+									<span class="num">4</span>
+									<button class="plus">+</button>
+								</span>
+							</div>
+						</li>
+						<li>
+							<div class="name">
+								名字名字名字名字名字
+							</div>
+							<div>
+								<span>￥999</span>
+								<span>
+									<button class="minus">-</button>
+									<span class="num">4</span>
+									<button class="plus">+</button>
+								</span>
+							</div>
+						</li>
+					</ul>
+				</article>
 			</div>
 		</section>
 		<mt-popup
@@ -168,7 +222,7 @@
 				selectFoodType:false, //多规格商品弹出框控制变量
 				selectArray:[], //多规格商品的已选择状态数组
 				foodType:{}, //多规格商品的类型对象
-				currentPopupProductPrice:0.00,
+				currentPopupProductPrice:0.00, //当前弹出框商品的价格
 			}
 		},
 		computed:{
@@ -544,7 +598,7 @@
 			width: 100%;
 			background: #3d3d3f;
 			@include remCalc('height',160px);
-			@include remCalc('padding-left',350px);
+			@include remCalc('padding-left',280px);
 			.shoppingcart-icon{
 				position: absolute;
 				@include remCalc('left',50px);
@@ -581,6 +635,97 @@
 						@include remCalc('right',60px);
 						@include remCalc('top',20px);
 						@include remCalc('border-radius',20px);
+					}
+				}
+			}
+			.countPrice{
+				display: flex;
+				.price{
+					flex:1;
+					.tb-center{
+						@include tb-center(relative);
+						h1{
+							color:#fff;
+						}
+						p{
+							color:#fff;
+						}
+					}
+				}
+				>button{
+					@include remCalc('width',240px);
+					@include remCalc('height',160px);
+					background: #4cd964;
+					outline: none;
+					border:none;
+					color: #fff;
+				}
+			}
+			.shoppingcart-prodcut-list{
+				position: absolute;
+				left: 0;
+				bottom: 100%;
+				background: #fff;
+				width:100%;
+				z-index: -1;
+				header{
+					background: #eceff1;
+					display: flex;
+					justify-content:space-between;
+					@include remCalc('padding',15px,30px);
+					h1{
+						border-left: 6px solid $blue;
+						@include remCalc('font-size',48px);
+						@include remCalc('padding-left',30px);
+					}
+				}
+				article{
+					@include remCalc('padding',30px,30px,80px,30px);
+					ul{
+						li{
+							display: flex;
+							justify-content:space-between;
+							.name{
+								max-width: 60%;
+								@include remCalc('font-size',52px);
+								@include remCalc('margin-bottom',20px);
+								@include ellipsis;
+							}
+							div{
+								>span{
+									color:$orange;
+									span{
+										text-align: center;
+										overflow: hidden;
+										@include remCalc('line-height',58px);
+										@include remCalc('margin-left',25px);
+										@include remCalc('margin-right',25px);
+										@include remCalc('font-size',42px);
+										@include remCalc('min-width',40px);
+										@include remCalc('max-width',100px);
+									}
+									.minus{
+										background: #fff;
+										border-radius: 50%;				
+										border:1px solid $blue;
+										color: $blue;			
+										@include remCalc('width',58px);
+										@include remCalc('height',58px);
+									}
+									.num{
+										color:#333;
+									}
+									.plus{
+										background: $blue;
+										border-radius: 50%;
+										color: #fff;
+										border:none;
+										@include remCalc('width',58px);
+										@include remCalc('height',58px);	
+									}
+								}
+							}
+						}
 					}
 				}
 			}
