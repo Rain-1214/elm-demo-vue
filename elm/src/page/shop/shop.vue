@@ -350,7 +350,7 @@
 			@include remCalc('padding',40px);
 			.close{
 				position: absolute;
-				@include remCalc('right',30px);
+				@include remCalc('right',31px);
 				@include remCalc('top',30px);
 			}
 			h1{
