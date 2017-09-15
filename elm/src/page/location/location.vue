@@ -22,7 +22,7 @@
 				{{k}}
 			</div>
 			<ul>
-				<li v-for="(e,i) in v" :key="e" @click="toSearchAddress(e.name)">
+				<li v-for="(e,i) in v" :key="e.name" @click="toSearchAddress(e.name)">
 					{{e.name}}
 				</li>
 			</ul>
@@ -88,7 +88,6 @@
 						const [latitude,longitude] = [31.1697816,121.55880439999999]//上海市浦东新区
 						this.$store.dispatch('getLocation',{latitude,longitude})
 						this.loadShow = false;
-
 					},{
 					  enableHighAccuracy: true, // 是否获取高精度结果  
 		        timeout: 5000, //超时,毫秒  

@@ -10,7 +10,7 @@
     </section>
     <section class="swiper-wrapper">
     	<mt-swipe :auto="0">
-    		<mt-swipe-item v-for="(v,i) in shopTypeList" :key = 'v'>
+    		<mt-swipe-item v-for="(v,i) in shopTypeList" :key = 'i'>
     			<div class="item-wrapper">
     				<div class="item" v-for="obj in v">
     					<img :src="obj.typeLogo">
@@ -274,6 +274,7 @@
 			    justify-content: space-between;
 			    .el-rate{
 			    	@include remCalc('height',40px);
+			    	@include remCalc('line-height',40px);
 			    }
 					.el-rate__icon{
 						@include remCalc('font-size',30px);
@@ -281,6 +282,7 @@
 					.el-rate__text{
 						@include remCalc('font-size',40px);
 						@include remCalc('margin-right',20px);
+						vertical-align: top;
 					}
 					>div{
 						display: flex;

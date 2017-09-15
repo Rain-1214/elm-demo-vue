@@ -29,4 +29,3 @@ new Vue({
   render: h => h(App)
 })
 
-//babel对象扩展符插件 npm install babel-plugin-transform-object-rest-spread    

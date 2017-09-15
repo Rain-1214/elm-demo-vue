@@ -10,7 +10,7 @@
     </div>
     <mt-cell title="当前定位城市" :value="currentLocation"></mt-cell>		
     <div class="list" v-for='(v,i) in addressArray'>
-	    <mt-cell :title="v.name" is-link :label="v.city + ',' + v.district" :key="v" @click.native="toHome(v)"></mt-cell>		
+	    <mt-cell :title="v.name" is-link :label="v.city + ',' + v.district" :key="v.name" @click.native="toHome(v)"></mt-cell>		
     </div>
 	</div>
 </template>

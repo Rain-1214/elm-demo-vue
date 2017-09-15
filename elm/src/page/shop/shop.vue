@@ -27,13 +27,7 @@
 		   		<section class="products" :style="{height:computedHeight}">
 						<div class="list">
 							<ul >
-								<li class="active">
-									热销
-								</li>
-								<li>
-									优惠
-								</li>	
-								<li v-for = "(v,i) in shopFoods">
+								<li :class='{"active":i===activeIndex}' v-for = "(v,i) in shopFoods" >
 									{{v.listName}}
 								</li>
 							</ul>
@@ -104,7 +98,7 @@
 		    </el-tab-pane>
 		  </el-tabs>
 		</section>
-		<section class="shoppingcart">
+		<section class="shoppingcart" v-show="false">
 			<div class="shoppingcart-icon">
 				<el-badge :value="12" class="item">
 					<span>
@@ -218,11 +212,24 @@
 				shopInfo:{},
 				tag:'product', //商品与评价切换
 				computedHeight:'', //商品组件高度
-				shopFoods:[], //店铺所有食物
+				shopFoods:[
+					{
+						description:"大家说好吃才好吃",
+						foodList:[],
+						listName:"热销",
+					},
+					{
+						description:"便宜才好吃",
+						foodList:[],
+						listName:"优惠",
+					},
+				], //店铺所有食物
 				selectFoodType:false, //多规格商品弹出框控制变量
 				selectArray:[], //多规格商品的已选择状态数组
 				foodType:{}, //多规格商品的类型对象
 				currentPopupProductPrice:0.00, //当前弹出框商品的价格
+				activeIndex:0,//当前侧边栏active显示的标识
+				foodTitleArray:[],//食品title向上距离的数组
 			}
 		},
 		computed:{
@@ -233,8 +240,12 @@
         console.log(tab, event);
       },
       productScroll:_.throttle((event) => {
-      	console.log(event.srcElement.scrollTop)
-      },100),
+      	console.log(event.srcElement.scrollTop);
+      	let tempArray = [...this.foodTitleArray];
+      	tempArray.push(event.srcElement.scrollTop).sort((a,b) => {return b - a});
+      	tempArray.sort((a,b) => {return b - a});
+      	this.activeIndex = tempArray.includeOf(event.srcElement.scrollTop);
+      },60),
       showSelect(product,productList,productListIndex){
       	//读取多规格商品的具体类型
       	if(product.foodPropertyList.length !== 0){
@@ -319,7 +330,17 @@
 						}
 					})
 				})
-				this.shopFoods = res.data.data;	
+				let tempArray = [];
+				res.data.data.forEach((e) => {
+					tempArray = [...tempArray,...e.foodList];
+				});
+				tempArray.sort((a,b) => { return b.countMonth-a.countMonth}).splice(5);
+				this.shopFoods[0].foodList = [...this.shopFoods[0].foodList,...tempArray];
+				this.shopFoods = [...this.shopFoods,...res.data.data];	
+				if (this.shopFoods[1].foodList.length === 0) {
+					this.shopFoods.splice(1,1);
+				}
+
 				console.log(this.shopFoods)
 			})
 			.catch((error) => {
@@ -331,7 +352,17 @@
 			let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
 			let headerHeight = document.querySelector('.shop-header').offsetHeight;
 			let tagHeight = document.querySelector('.el-tabs__header').offsetHeight;
-			this.computedHeight = (windowHeight - headerHeight - tagHeight) + "px";
+			this.computedHeight = (windowHeight - headerHeight - tagHeight) - 100 + "px";	
+			
+		
+		},
+		updated(){
+			this.foodTitleArray.splice(0);
+			let foodTitles = document.querySelectorAll('.product-wrapper p');
+			foodTitles.forEach((e) => {
+				this.foodTitleArray.push(e.offsetTop);
+			});
+			console.log(this.foodTitleArray);
 		}
 
 	}
