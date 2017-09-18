@@ -36,13 +36,6 @@ const mutations = {
 			if (eachFlag) {
 				state.shoppingCartProducts[shopId].foodIdList.set(foodId,1);
 				state.shoppingCartProducts[shopId].foodList.push({foodName,price,foodType,foodNum,foodId});
-
-				if (state.shoppingCartProducts[shopId].foodIdList.has(foodId)) {
-					let tempFoodNum = state.shoppingCartProducts[shopId].foodIdList.get(foodId);
-					state.shoppingCartProducts[shopId].foodIdList.set(foodId,++tempFoodNum); 
-				}else{
-					state.shoppingCartProducts[shopId].foodIdList.set(foodId,1); 
-				}
 			}
 		}else{
 			let tempObject = {};
@@ -53,7 +46,34 @@ const mutations = {
 			tempObject[shopId].foodList.push({foodName,price,foodType,foodNum,foodId}); //在选中商品数组当中添加当前商品
 			Object.assign(state.shoppingCartProducts,tempObject);
 		}
+	},
+	[type.REMOVE_FORM_SHOPPINGCART](state,{shopId,foodId,foodType=""}){
+		
+		state.shoppingCartProducts[shopId].foodList.forEach((e,i) => {
+			if (e.foodId === foodId && (e.foodType === foodType || foodType === 'always')) {
+				e.foodNum --;
+				if (e.foodNum === 0) {
+					state.shoppingCartProducts[shopId].foodList.splice(i,1);
+				}
+			}
+		});
+
+		let tempNum = state.shoppingCartProducts[shopId].foodIdList.get(foodId);
+		tempNum--;
+
+		// 判断购物车当中该商品是否为空
+		if (tempNum === 0) {
+			state.shoppingCartProducts[shopId].foodIdList.delete(foodId); 
+		}else{
+			state.shoppingCartProducts[shopId].foodIdList.set(foodId,tempNum); 
+		};
+		//  判断该商品是不是购物车当中最后一件商品
+		if (state.shoppingCartProducts[shopId].foodList.length === 0) {
+			delete state.shoppingCartProducts[shopId];
+		}
+
 	}
+
 
 }
 

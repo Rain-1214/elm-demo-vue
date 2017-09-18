@@ -1,6 +1,6 @@
-import Location from './page/location/location.vue'
+import Location from './page/location/Location.vue'
 import Home from './page/home/Home.vue'
-import Shop from './page/shop/shop.vue'
+import Shop from './page/shop/Shop.vue'
 
 export default{
 	mode: 'history',

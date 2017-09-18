@@ -6,12 +6,12 @@
 			</div>
 			<div class="shop-info">
 				<div class="img">
-					<img src="https://fuss10.elemecdn.com/4/0b/11f8b91e6001e9184236bc3e51354jpeg.jpeg?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/">
+					<img :src="currentShop.shopLogo">
 				</div>
 				<div class="txt">
-					<h1>克莉丝汀（上海莲安东路店）</h1>
-					<p>蜂鸟专送/31分钟送达/配送费￥5</p>
-					<p>公告：欢迎光临，用餐高峰期请提前下单，谢谢</p>
+					<h1>{{currentShop.shopName}}</h1>
+					<p>{{currentShop.shopProperty.hummingbird?"蜂鸟专送":"商家派送"}}/{{currentShop.time}}分钟送达/配送费￥{{currentShop.deliveryCost}}</p>
+					<p>公告：{{currentShop.shopNptice}}</p>
 					<i class="el-icon-arrow-right"></i>
 				</div>
 			</div>
@@ -27,7 +27,7 @@
 		   		<section class="products" :style="{height:computedHeight}">
 						<div class="list">
 							<ul >
-								<li :class='{"active":i===activeIndex}' v-for = "(v,i) in shopFoods" >
+								<li :class='{"active":i===activeIndex}' v-for = "(v,i) in shopFoods" @click='jumpToFood(i)'>
 									{{v.listName}}
 								</li>
 							</ul>
@@ -73,13 +73,13 @@
 															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false">
 																{{item.foodNum}}
 															</span>
-															<button class="plus" @click='showSelect(item,v,i)'>+</button>
+															<button class="plus" @click='showSelect(item,v,index)'>+</button>
 														</div>
 														<div v-show="item.foodPropertyList.length === 0?false:
 															shoppingCartProducts[currentShop.id]?
 															shoppingCartProducts[currentShop.id].foodIdList?
 															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?false:true:true:true">
-															<button class="blue-background" @click="showSelect(item,v,i)">选规格</button>
+															<button class="blue-background" @click="showSelect(item,v,index)">选规格</button>
 														</div>
 													</div>
 												</section>
@@ -98,7 +98,7 @@
 		    </el-tab-pane>
 		  </el-tabs>
 		</section>
-		<section class="shoppingcart" v-show="false">
+		<section id="shoppingCart">
 			<div class="shoppingcart-icon">
 				<el-badge :value="12" class="item">
 					<span>
@@ -117,57 +117,59 @@
 					去结算
 				</button>
 			</div>
-			<div class="shoppingcart-prodcut-list">
-				<header>
-					<h1>购物车</h1>	
-					<span>
-						清空
-						<i class="el-icon-delete"></i>
-					</span>
-				</header>
-				<article>	
-					<ul>
-						<li>
-							<div class="name">
-								名字名字名字名字名字
-							</div>
-							<div>
-								<span>￥999</span>
-								<span>
-									<button class="minus">-</button>
-									<span class="num">4</span>
-									<button class="plus">+</button>
-								</span>
-							</div>
-						</li>
-						<li>
-							<div class="name">
-								名字名字名字名字名字
-							</div>
-							<div>
-								<span>￥999</span>
-								<span>
-									<button class="minus">-</button>
-									<span class="num">4</span>
-									<button class="plus">+</button>
-								</span>
-							</div>
-						</li>
-						<li>
-							<div class="name">
-								名字名字名字名字名字
-							</div>
-							<div>
-								<span>￥999</span>
-								<span>
-									<button class="minus">-</button>
-									<span class="num">4</span>
-									<button class="plus">+</button>
-								</span>
-							</div>
-						</li>
-					</ul>
-				</article>
+			<div class="shoppingcart-prodcut-wrapper">
+				<div class="shoppingcart-prodcut-list">
+					<header>
+						<h1>购物车</h1>	
+						<span>
+							清空
+							<i class="el-icon-delete"></i>
+						</span>
+					</header>
+					<article>	
+						<ul>
+							<li>
+								<div class="name">
+									名字名字名字名字名字
+								</div>
+								<div>
+									<span>￥999</span>
+									<span>
+										<button class="minus">-</button>
+										<span class="num">4</span>
+										<button class="plus">+</button>
+									</span>
+								</div>
+							</li>
+							<li>
+								<div class="name">
+									名字名字名字名字名字
+								</div>
+								<div>
+									<span>￥999</span>
+									<span>
+										<button class="minus">-</button>
+										<span class="num">4</span>
+										<button class="plus">+</button>
+									</span>
+								</div>
+							</li>
+							<li>
+								<div class="name">
+									名字名字名字名字名字
+								</div>
+								<div>
+									<span>￥999</span>
+									<span>
+										<button class="minus">-</button>
+										<span class="num">4</span>
+										<button class="plus">+</button>
+									</span>
+								</div>
+							</li>
+						</ul>
+					</article>
+				</div>
 			</div>
 		</section>
 		<mt-popup
@@ -203,7 +205,8 @@
 	import * as _ from 'lodash';
 	import * as type from '../../store/mutation-types.js';
 	import {getShopFoodTypeList} from '../../api/shop.js';
-	import {mapGetters} from 'vuex'
+	import {mapGetters} from 'vuex';
+	import {Toast} from 'mint-ui';
 
 	export default{
 		name:'shop',
@@ -239,25 +242,36 @@
 			handleClick(tab, event) {
         console.log(tab, event);
       },
-      productScroll:_.throttle((event) => {
-      	console.log(event.srcElement.scrollTop);
+      productScroll:_.throttle(function(event) {
+      	// 滚动事件
       	let tempArray = [...this.foodTitleArray];
-      	tempArray.push(event.srcElement.scrollTop).sort((a,b) => {return b - a});
-      	tempArray.sort((a,b) => {return b - a});
-      	this.activeIndex = tempArray.includeOf(event.srcElement.scrollTop);
+      	tempArray.push(event.srcElement.scrollTop);
+      	tempArray.sort((a,b) => {return a - b});
+      	this.activeIndex = tempArray.indexOf(event.srcElement.scrollTop) - 1;
+      	// 矫正相等时的错误
+      	if (tempArray[this.activeIndex + 1] === tempArray[this.activeIndex + 2]) {
+      		this.activeIndex ++;
+      	}
       },60),
+      jumpToFood(i){
+      	document.querySelector('.product-wrapper').scrollTop = this.foodTitleArray[i];
+      },
       showSelect(product,productList,productListIndex){
       	//读取多规格商品的具体类型
       	if(product.foodPropertyList.length !== 0){
+
 		    	this.selectArray.splice(0);
+
 		    	product.foodPropertyList.forEach((e) => {
 		    		let tempArray = new Array(e.foodPropertyDetail.length);
 		    		tempArray.fill(false);
 		    		tempArray[0] = true;
 		    		this.selectArray.push(tempArray);
 		    	});
+
 		    	product.productListIndex = productListIndex;
 		    	product.productList = productList;
+
 		    	Object.assign(this.foodType,product);
 		    	//计算商品默认状态价格
 		    	let productTypePrice = 0;
@@ -296,7 +310,6 @@
       		let {shopName,id:shopId} = this.currentShop; //当前店铺名称 店铺ID
       		let Data = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
       		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
-      		console.log(product)
       		product.foodNum ++;
       		this.selectFoodType = false;
       	}else{
@@ -310,12 +323,33 @@
     		  let {foodName,id:foodId} = this.foodType; //食物名称 食物ID
       	  let {shopName,id:shopId} = this.currentShop; //当前店铺名称
      	 	  let price = this.currentPopupProductPrice; //食物价格
+
       		let Data = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
+
       		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
       		this.foodType.productList.foodList[this.foodType.productListIndex].foodNum ++;
       		this.selectFoodType = false;
       	}
       },
+      removeProduct(item,v,index){
+    		
+    		if (this.shoppingCartProducts[this.currentShop.id].foodList.filter((e) => {return e.foodId === item.id}).length !== 1) {
+      		Toast({
+					  message: '多规格商品请到购物车删除',
+					  duration: 5000,
+					  className:'big-font'
+					})
+      		return false;
+      	}
+  			console.log(item);	
+  			const shopId = this.currentShop.id;
+  			const foodId = item.id;
+  			const foodType = "always";
+  			let Data = {shopId,foodId,foodType};
+  			item.foodNum--;		
+  			this.$store.commit(type.REMOVE_FORM_SHOPPINGCART,Data);
+
+      }
 		},
 		created(){
 			//初始化时 通过店铺ID获取店铺商品
@@ -334,14 +368,17 @@
 				res.data.data.forEach((e) => {
 					tempArray = [...tempArray,...e.foodList];
 				});
-				tempArray.sort((a,b) => { return b.countMonth-a.countMonth}).splice(5);
+				//获取销量最多的5个 产品 推到热销里
+				tempArray.sort((a,b) => { return b.countMonth-a.countMonth }).splice(5);
 				this.shopFoods[0].foodList = [...this.shopFoods[0].foodList,...tempArray];
+
 				this.shopFoods = [...this.shopFoods,...res.data.data];	
+
+				// 如果没有优惠产品就讲优惠部分删除
 				if (this.shopFoods[1].foodList.length === 0) {
 					this.shopFoods.splice(1,1);
 				}
 
-				console.log(this.shopFoods)
 			})
 			.catch((error) => {
 				console.log(error);
@@ -353,16 +390,14 @@
 			let headerHeight = document.querySelector('.shop-header').offsetHeight;
 			let tagHeight = document.querySelector('.el-tabs__header').offsetHeight;
 			this.computedHeight = (windowHeight - headerHeight - tagHeight) - 100 + "px";	
-			
-		
 		},
 		updated(){
+			// 记录每一个title到组建顶部的距离
 			this.foodTitleArray.splice(0);
 			let foodTitles = document.querySelectorAll('.product-wrapper p');
 			foodTitles.forEach((e) => {
 				this.foodTitleArray.push(e.offsetTop);
 			});
-			console.log(this.foodTitleArray);
 		}
 
 	}
@@ -520,6 +555,7 @@
 					li{
 						@include remCalc('font-size',38px);
 						@include remCalc('padding',40px,30px);
+						border-left: 8px solid #ededed;
 						&.active{
 							background: #fff;
 							border-left: 8px solid $blue;
@@ -622,12 +658,13 @@
 				}
 			}
 		}
-		.shoppingcart{
+		#shoppingCart{
 			position: fixed;
 			bottom: 0;
 			left: 0;
 			width: 100%;
 			background: #3d3d3f;
+			z-index: 99;
 			@include remCalc('height',160px);
 			@include remCalc('padding-left',280px);
 			.shoppingcart-icon{
@@ -692,67 +729,76 @@
 					color: #fff;
 				}
 			}
-			.shoppingcart-prodcut-list{
-				position: absolute;
-				left: 0;
-				bottom: 100%;
-				background: #fff;
-				width:100%;
+			.shoppingcart-prodcut-wrapper{
+				height: 100vh;
+				width: 100vw;
+				background:rgba(0,0,0,0.4);
+				position: fixed;
 				z-index: -1;
-				header{
-					background: #eceff1;
-					display: flex;
-					justify-content:space-between;
-					@include remCalc('padding',15px,30px);
-					h1{
-						border-left: 6px solid $blue;
-						@include remCalc('font-size',48px);
-						@include remCalc('padding-left',30px);
+				top: 0;
+				left: 0;
+				.shoppingcart-prodcut-list{
+					position: absolute;
+					left: 0;
+					background: #fff;
+					width:100%;
+					z-index: -1;
+					@include remCalc('bottom',160px);
+					header{
+						background: #eceff1;
+						display: flex;
+						justify-content:space-between;
+						@include remCalc('padding',15px,30px);
+						h1{
+							border-left: 6px solid $blue;
+							@include remCalc('font-size',48px);
+							@include remCalc('padding-left',30px);
+						}
 					}
-				}
-				article{
-					@include remCalc('padding',30px,30px,80px,30px);
-					ul{
-						li{
-							display: flex;
-							justify-content:space-between;
-							.name{
-								max-width: 60%;
-								@include remCalc('font-size',52px);
-								@include remCalc('margin-bottom',20px);
-								@include ellipsis;
-							}
-							div{
-								>span{
-									color:$orange;
-									span{
-										text-align: center;
-										overflow: hidden;
-										@include remCalc('line-height',58px);
-										@include remCalc('margin-left',25px);
-										@include remCalc('margin-right',25px);
-										@include remCalc('font-size',42px);
-										@include remCalc('min-width',40px);
-										@include remCalc('max-width',100px);
-									}
-									.minus{
-										background: #fff;
-										border-radius: 50%;				
-										border:1px solid $blue;
-										color: $blue;			
-										@include remCalc('width',58px);
-										@include remCalc('height',58px);
-									}
-									.num{
-										color:#333;
-									}
-									.plus{
-										background: $blue;
-										border-radius: 50%;
-										color: #fff;
-										border:none;
-										@include remCalc('width',58px);
-										@include remCalc('height',58px);	
+					article{
+						@include remCalc('padding',30px,30px,80px,30px);
+						ul{
+							li{
+								display: flex;
+								justify-content:space-between;
+								.name{
+									max-width: 60%;
+									@include remCalc('font-size',52px);
+									@include remCalc('margin-bottom',20px);
+									@include ellipsis;
+								}
+								div{
+									>span{
+										color:$orange;
+										span{
+											text-align: center;
+											overflow: hidden;
+											@include remCalc('line-height',58px);
+											@include remCalc('margin-left',25px);
+											@include remCalc('margin-right',25px);
+											@include remCalc('font-size',42px);
+											@include remCalc('min-width',40px);
+											@include remCalc('max-width',100px);
+										}
+										.minus{
+											background: #fff;
+											border-radius: 50%;				
+											border:1px solid $blue;
+											color: $blue;			
+											@include remCalc('width',58px);
+											@include remCalc('height',58px);
+										}
+										.num{
+											color:#333;
+										}
+										.plus{
+											background: $blue;
+											border-radius: 50%;
+											color: #fff;
+											border:none;
+											@include remCalc('width',58px);
+											@include remCalc('height',58px);	
+										}
 									}
 								}
 							}

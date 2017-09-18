@@ -177,7 +177,7 @@
 		}
 	}
 	.swiper-wrapper{
-		@include remCalc("height",530px);
+		@include remCalc("height",470px);
 		.mint-swipe-indicator.is-active{
 			opacity: 1;
 			background: #000;
@@ -198,7 +198,7 @@
 				img{
 					display: block;
 					margin: 0 auto;
-					@include remCalc("width",180px);
+					width: 50%;
 				}
 			}
 		}
@@ -235,13 +235,14 @@
 					padding:5px;
 					display: flex;
 					justify-content:space-between;
+					align-items:center;
 					h2{
-						max-width: 3rem;
 						font-weight: bold;
 						@include ellipsis;
 						@include remCalc('height',96px);
 						@include remCalc('line-height',96px);
 						@include remCalc("font-size",50px);
+						@include remCalc("max-width",500px);
 						&.isbrand{
 							position: relative;
 							@include remCalc('padding-left',80px);
@@ -257,13 +258,16 @@
 						}
 					}
 					div{
+						display: flex;
 						span{
 							display: inline-block;
 							color:#c1c1c1;
+							border: 1px solid #c1c1c1;
 							@include remCalc('height',48px);
 							@include remCalc('width',48px);
 							@include remCalc('line-height',48px);
-							@include tb-center(relative);
+							@include remCalc('border-radius',10px);
+							@include remCalc('margin-right',5px);
 						}
 					}
 				}
