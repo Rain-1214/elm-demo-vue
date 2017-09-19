@@ -2,10 +2,15 @@
   "presets": [
     ["env", { "modules": false }]
   ],
-  "plugins": ["transform-object-rest-spread",["component", [
-    {
-      "libraryName": "element-ui",
-      "styleLibraryName": "theme-default"
-    }
-  ]]]
+  "plugins": [
+  	"transform-object-rest-spread",
+  	["component", [
+		    {
+		      "libraryName": "element-ui",
+		      "styleLibraryName": "theme-default"
+		    }
+	  	]
+	  ],
+
+	 ]
 }

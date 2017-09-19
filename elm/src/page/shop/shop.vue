@@ -1,203 +1,183 @@
 <template>
 	<div id="shop">
-		<section class="shop-header">
-			<div class="back" @click="$router.go(-1)">
-				<i class="el-icon-arrow-left"></i>
-			</div>
-			<div class="shop-info">
-				<div class="img">
-					<img :src="currentShop.shopLogo">
-				</div>
-				<div class="txt">
-					<h1>{{currentShop.shopName}}</h1>
-					<p>{{currentShop.shopProperty.hummingbird?"蜂鸟专送":"商家派送"}}/{{currentShop.time}}分钟送达/配送费￥{{currentShop.deliveryCost}}</p>
-					<p>公告：{{currentShop.shopNptice}}</p>
-					<i class="el-icon-arrow-right"></i>
-				</div>
-			</div>
-			<div class="activity">
-				<p>
-					<span class="green-background"> 新</span>新用户下单立减17.0元(不于其他活动叠加)
-				</p>
-			</div>
-		</section>
-		<section class="tag" >
-			<el-tabs v-model="tag" type="card" @tab-click="handleClick">
-		    <el-tab-pane label="商品" name="product">
-		   		<section class="products" :style="{height:computedHeight}">
-						<div class="list">
-							<ul >
-								<li :class='{"active":i===activeIndex}' v-for = "(v,i) in shopFoods" @click='jumpToFood(i)'>
-									{{v.listName}}
-								</li>
-							</ul>
+		<div class="shop-wrapper" >
+			<transition-group
+				name="header-animate"
+		    enter-active-class="animated fadeInDown"
+		    leave-active-class="animated fadeOutUp changePosition"
+			>
+				<section class="shop-header animated" key="1" v-show="shopHeaderShow">
+					<div class="back" @click="$router.go(-1)">
+						<i class="el-icon-arrow-left"></i>
+					</div>
+					<div class="shop-info">
+						<div class="img">
+							<img :src="currentShop.shopLogo">
 						</div>
-						<div class="product-wrapper" @scroll="productScroll($event)">
-							<ul>
-
-								<li v-for ="(v,i) in shopFoods">
-									<p>{{v.listName}}<span>{{v.description}}</span></p>		
-									<ul>
-										<li v-for ="(item,index) in v.foodList">
-											<div class="food-img">
-												<img :src="item.foodPic">
-											</div>
-											<div class="food-detail">
-												<header>
-													{{item.foodName}} 
-													<span 
-													class="yellow-border" 
-													v-if="item.foodPropertyList.length != 0">
-														多规格
-													</span>
-												</header>
-												<section class="gray">月售{{item.countMonth}}份 好评率{{item.goodEvaluate * 100}}%</section>
-												<section>{{item.foodInfo}}</section>
-												<section class="price">
-													<span>￥{{item.price}}</span>
-													<div class="pull-right">
-														<div v-show="item.foodPropertyList.length === 0?true:
-															shoppingCartProducts[currentShop.id]?
-															shoppingCartProducts[currentShop.id].foodIdList?
-															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false
-															">
-
-															<button class="minus" 
-															v-show="shoppingCartProducts[currentShop.id]?
-															shoppingCartProducts[currentShop.id].foodIdList?
-															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false"
-															@click = "removeProduct(item,v,i)">-</button>
-
-															<span v-show="shoppingCartProducts[currentShop.id]?
-															shoppingCartProducts[currentShop.id].foodIdList?
-															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?true:false:false:false">
-																{{item.foodNum}}
-															</span>
-															<button class="plus" @click='showSelect(item,v,index)'>+</button>
-														</div>
-														<div v-show="item.foodPropertyList.length === 0?false:
-															shoppingCartProducts[currentShop.id]?
-															shoppingCartProducts[currentShop.id].foodIdList?
-															shoppingCartProducts[currentShop.id].foodIdList.has(item.id)?false:true:true:true">
-															<button class="blue-background" @click="showSelect(item,v,index)">选规格</button>
-														</div>
-													</div>
-												</section>
-											</div>
+						<div class="txt">
+							<h1>{{currentShop.shopName}}</h1>
+							<p>{{currentShop.shopProperty.hummingbird?"蜂鸟专送":"商家派送"}}/{{currentShop.time}}分钟送达/配送费￥{{currentShop.deliveryCost}}</p>
+							<p>公告：{{currentShop.shopNptice}}</p>
+							<i class="el-icon-arrow-right"></i>
+						</div>
+					</div>
+					<div class="activity">
+						<p>
+							<span class="green-background"> 新</span>新用户下单立减17.0元(不于其他活动叠加)
+						</p>
+					</div>
+				</section>
+				<section class="tag" key="2">
+					<el-tabs v-model="tag" type="card" @tab-click="handleClick">
+				    <el-tab-pane label="商品" name="product">
+				   		<section class="products" :style="{height:computedHeight}">
+								<div class="list">
+									<ul >
+										<li :class='{"active":i===activeIndex}' v-for = "(v,i) in shopFoods" @click='jumpToFood(i)'>
+											{{v.listName}}
 										</li>
 									</ul>
-								</li>
-							</ul>
-						</div>
-					</section>	
-		    </el-tab-pane>
-		    <el-tab-pane label="评价" name="evaluate">
-		    	<section class="evaluate" :style="{'height':computedHeight}">
-		    		2222
-		    	</section>
-		    </el-tab-pane>
-		  </el-tabs>
-		</section>
-		<section id="shoppingCart">
-			<div class="shoppingcart-icon">
-				<el-badge :value="12" class="item">
-					<span>
-						<i></i>
-					</span>
-				</el-badge>
-			</div>
-			<div class="countPrice">
-				<div class="price">
-					<div class="tb-center">
-						<h1>￥999</h1>
-						<p>配送费￥5</p>
+								</div>
+								<div class="product-wrapper" @scroll="productScroll($event)">
+									<ul>
+
+										<li v-for ="(v,i) in shopFoods">
+											<p>{{v.listName}}<span>{{v.description}}</span></p>		
+											<ul>
+												<li v-for ="(item,index) in v.foodList">
+													<div class="food-img">
+														<img :src="item.foodPic">
+													</div>
+													<div class="food-detail">
+														<header>
+															{{item.foodName}} 
+															<span 
+															class="yellow-border" 
+															v-if="item.foodPropertyList.length != 0">
+																多规格
+															</span>
+														</header>
+														<section class="gray">月售{{item.countMonth}}份 好评率{{item.goodEvaluate * 100}}%</section>
+														<section>{{item.foodInfo}}</section>
+														<section class="price">
+															<span>￥{{item.price}}</span>
+															<div class="pull-right">
+																<div v-show="item.foodPropertyList.length === 0?true:
+																	shoppingCartProducts[currentShop.id]?
+																	shoppingCartProducts[currentShop.id].foodIdList?
+																	shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false
+																	">
+																	<button class="minus"
+																	v-show="shoppingCartProducts[currentShop.id]?
+																	shoppingCartProducts[currentShop.id].foodIdList?
+																	shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false"
+																	@click = "removeProduct(item,v,i)">-</button>
+
+																	<span v-show="shoppingCartProducts[currentShop.id]?
+																	shoppingCartProducts[currentShop.id].foodIdList?
+																	shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false">
+																		{{item.foodNum}}
+																	</span>
+																	<button class="plus" @click='showSelect(item,v,index)'>+</button>
+																</div>
+																<div v-show="item.foodPropertyList.length === 0?false:
+																	shoppingCartProducts[currentShop.id]?
+																	shoppingCartProducts[currentShop.id].foodIdList?
+																	!shoppingCartProducts[currentShop.id].foodIdList.has(item.id):true:true">
+																	<button class="blue-background" @click="showSelect(item,v,index)">选规格</button>
+																</div>
+															</div>
+														</section>
+													</div>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</section>	
+				    </el-tab-pane>
+				    <el-tab-pane label="评价" name="evaluate">
+				    	<section class="evaluate" :style="{'height':computedHeight}">
+				    		2222
+				    	</section>
+				    </el-tab-pane>
+				  </el-tabs>
+				</section>
+				<section id="shoppingCart" key="3">
+					<div class="shoppingcart-icon">
+						<el-badge :value="currentShopSelectedNum" class="item">
+							<span>
+								<i></i>
+							</span>
+						</el-badge>
 					</div>
-				</div>
-				<button>
-					去结算
-				</button>
-			</div>
-			<div class="shoppingcart-prodcut-wrapper">
-				<div class="shoppingcart-prodcut-list">
-					<header>
-						<h1>购物车</h1>	
-						<span>
-							清空
-							<i class="el-icon-delete"></i>
-						</span>
-					</header>
-					<article>	
-						<ul>
-							<li>
-								<div class="name">
-									名字名字名字名字名字
-								</div>
-								<div>
-									<span>￥999</span>
-									<span>
-										<button class="minus">-</button>
-										<span class="num">4</span>
-										<button class="plus">+</button>
-									</span>
-								</div>
-							</li>
-							<li>
-								<div class="name">
-									名字名字名字名字名字
-								</div>
-								<div>
-									<span>￥999</span>
-									<span>
-										<button class="minus">-</button>
-										<span class="num">4</span>
-										<button class="plus">+</button>
-									</span>
-								</div>
-							</li>
-							<li>
-								<div class="name">
-									名字名字名字名字名字
-								</div>
-								<div>
-									<span>￥999</span>
-									<span>
-										<button class="minus">-</button>
-										<span class="num">4</span>
-										<button class="plus">+</button>
-									</span>
-								</div>
-							</li>
-						</ul>
-					</article>
-				</div>
-			</div>
-		</section>
-		<mt-popup
-		  v-model="selectFoodType"
-		  popup-transition="popup-fade">
-		  <div class="foodtype">
-		  	<div class="close" @click = "selectFoodType = false">
-		  		<i class="el-icon-close"></i>
-		  	</div>
-		  	<h1 class="text-center">{{foodType.foodName}}</h1>
-		  	<template v-for="(v,i) in foodType.foodPropertyList">
-			  	<h2>{{v.typeName}}</h2>
-			  	<ul>
-			  		<li 
-			  		:class="{'active':selectArray[i][index]}" 
-			  		v-for="(item,index) in v.foodPropertyDetail"
-			  		@click="changeSelect(i,index)">
-			  			{{item.name}}
-			  		</li>
-			  	</ul>
-		  	</template>
-		  	<div class="last-price">
-		  		<span>￥ {{currentPopupProductPrice}}</span>
-		  		<el-button type="primary" @click = 'addToShopping()'>添加到购物车</el-button>
-		  	</div>
-		  </div>
-		</mt-popup>
-		
+					<div class="countPrice">
+						<div class="price" @click="shoppingCartDetailShow = !shoppingCartDetailShow">
+							<div class="tb-center">
+								<h1>￥999</h1>
+								<p>配送费￥5</p>
+							</div>
+						</div>
+						<button>
+							去结算
+						</button>
+					</div>
+					<div class="shoppingcart-prodcut-wrapper" v-show="shoppingCartDetailShow">
+						<div class="shoppingcart-prodcut-list">
+							<header>
+								<h1>购物车</h1>	
+								<span>
+									清空
+									<i class="el-icon-delete"></i>
+								</span>
+							</header>
+							<article>	
+								<ul>
+									<li>
+										<div class="name">
+											名字名字名字名字名字
+										</div>
+										<div>
+											<span>￥999</span>
+											<span>
+												<button class="minus">-</button>
+												<span class="num">4</span>
+												<button class="plus">+</button>
+											</span>
+										</div>
+									</li>
+								</ul>
+							</article>
+						</div>
+					</div>
+				</section>
+			</transition-group>
+			<mt-popup
+			  v-model="selectFoodType"
+			  popup-transition="popup-fade">
+			  <div class="foodtype">
+			  	<div class="close" @click = "selectFoodType = false">
+			  		<i class="el-icon-close"></i>
+			  	</div>
+			  	<h1 class="text-center">{{foodType.foodName}}</h1>
+			  	<template v-for="(v,i) in foodType.foodPropertyList">
+				  	<h2>{{v.typeName}}</h2>
+				  	<ul>
+				  		<li 
+				  		:class="{'active':selectArray[i][index]}" 
+				  		v-for="(item,index) in v.foodPropertyDetail"
+				  		@click="changeSelect(i,index)">
+				  			{{item.name}}
+				  		</li>
+				  	</ul>
+			  	</template>
+			  	<div class="last-price">
+			  		<span>￥ {{currentPopupProductPrice}}</span>
+			  		<el-button type="primary" @click = 'addToShopping()'>添加到购物车</el-button>
+			  	</div>
+			  </div>
+			</mt-popup>
+		</div>
 	</div>
 </template>
 <script>
@@ -233,6 +213,9 @@
 				currentPopupProductPrice:0.00, //当前弹出框商品的价格
 				activeIndex:0,//当前侧边栏active显示的标识
 				foodTitleArray:[],//食品title向上距离的数组
+				shoppingCartDetailShow:false,
+        currentShopSelectedNum:0,//当前店铺已选择的物品数量
+        shopHeaderShow:true,
 			}
 		},
 		computed:{
@@ -244,6 +227,12 @@
       },
       productScroll:_.throttle(function(event) {
       	// 滚动事件
+      	if (event.srcElement.scrollTop > 100 && this.shopHeaderShow) {
+      		this.shopHeaderShow = !this.shopHeaderShow;
+      	}else if(event.srcElement.scrollTop < 100 && !this.shopHeaderShow){
+      		this.shopHeaderShow = !this.shopHeaderShow;
+      	}
+
       	let tempArray = [...this.foodTitleArray];
       	tempArray.push(event.srcElement.scrollTop);
       	tempArray.sort((a,b) => {return a - b});
@@ -277,7 +266,7 @@
 		    	let productTypePrice = 0;
 		    	this.foodType.foodPropertyList.forEach((e) => {
 		    		productTypePrice += e.foodPropertyDetail[0].price;
-		    	})
+		    	});
 		    	this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
 		    	this.selectFoodType = true;
       	}else{
@@ -297,7 +286,7 @@
 		    	this.foodType.foodPropertyList.forEach((e,i) => {
 		    		let newtrueIndex = this.selectArray[i].indexOf(true);
 		    		productTypePrice += e.foodPropertyDetail[newtrueIndex].price;
-		    	})
+		    	});
 		    	this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
       	}
       },
@@ -330,6 +319,8 @@
       		this.foodType.productList.foodList[this.foodType.productListIndex].foodNum ++;
       		this.selectFoodType = false;
       	}
+    		this.currentShopSelectedNum++;
+
       },
       removeProduct(item,v,index){
     		
@@ -338,7 +329,7 @@
 					  message: '多规格商品请到购物车删除',
 					  duration: 5000,
 					  className:'big-font'
-					})
+					});
       		return false;
       	}
   			console.log(item);	
@@ -348,6 +339,7 @@
   			let Data = {shopId,foodId,foodType};
   			item.foodNum--;		
   			this.$store.commit(type.REMOVE_FORM_SHOPPINGCART,Data);
+    		this.currentShopSelectedNum--;
 
       }
 		},
@@ -363,7 +355,7 @@
 							e.foodNum = 0;
 						}
 					})
-				})
+				});
 				let tempArray = [];
 				res.data.data.forEach((e) => {
 					tempArray = [...tempArray,...e.foodList];
@@ -389,7 +381,15 @@
 			let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
 			let headerHeight = document.querySelector('.shop-header').offsetHeight;
 			let tagHeight = document.querySelector('.el-tabs__header').offsetHeight;
-			this.computedHeight = (windowHeight - headerHeight - tagHeight) - 100 + "px";	
+			this.computedHeight = (windowHeight  - tagHeight) - 100 + "px";	
+
+			let tempNumber = 0;
+			if (this.shoppingCartProducts[this.currentShop.id]) {
+				for(let [value,key] of this.shoppingCartProducts[this.currentShop.id].foodIdList){
+					tempNumber += key;
+				}
+			}
+			this.currentShopSelectedNum = tempNumber;
 		},
 		updated(){
 			// 记录每一个title到组建顶部的距离
@@ -398,6 +398,7 @@
 			foodTitles.forEach((e) => {
 				this.foodTitleArray.push(e.offsetTop);
 			});
+
 		}
 
 	}
@@ -410,7 +411,17 @@
 
 	#shop{
 		max-height: 100vh;
+		position: relative;
 		overflow: hidden;
+		.shop-wrapper{
+			position: relative;
+		}
+		.changePosition{
+			position: absolute;
+			width: 100%;
+		}
+		.header-animate-move{
+		}
 		.foodtype{
 			min-width: 80vw;
 			@include remCalc('padding',40px);
@@ -493,8 +504,8 @@
 						@include ellipsis;
 					}
 					p{
-						@include remCalc('font-size',30px)
-						@include remCalc('margin',10px,0)
+						@include remCalc('font-size',30px);
+						@include remCalc('margin',10px,0);
 						@include ellipsis;
 					}
 					i{
@@ -525,16 +536,16 @@
 					height: auto;
 					line-height: 1;
 					text-align: center;
-					@include remCalc('font-size',58px);
-					@include remCalc('padding',40px,0);
+					@include remCalc('font-size',42px);
+					@include remCalc('padding',30px,0);
 					&.is-active{
 						&:after{
 							content: "";
 							display: block;
 							background: $blue;
 							@include lr-center-transform(absolute);
-							@include remCalc('bottom',20px);
-							@include remCalc('width',116px);
+							@include remCalc('bottom',15px);
+							@include remCalc('width',100px);
 							@include remCalc('height',6px);
 						}
 					}
@@ -587,7 +598,7 @@
 								}
 								.food-detail{
 									flex:8;
-									@include remCalc('padding',30px,15px)
+									@include remCalc('padding',30px,15px);
 									header{
 										font-weight: bold;
 										@include remCalc('font-size',48px);
