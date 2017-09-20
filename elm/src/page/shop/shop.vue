@@ -1,157 +1,159 @@
 <template>
 	<div id="shop">
-		<div class="shop-wrapper" >
-			<transition-group
-				name="header-animate"
-		    enter-active-class="animated fadeInDown"
-		    leave-active-class="animated fadeOutUp changePosition"
-			>
-				<section class="shop-header animated" key="1" v-show="shopHeaderShow">
-					<div class="back" @click="$router.go(-1)">
-						<i class="el-icon-arrow-left"></i>
+		<div class="shop-wrapper" @click='createBlueBall($event)'>
+			<section class="shop-header ">
+				<div class="back" @click="$router.go(-1)">
+					<i class="el-icon-arrow-left"></i>
+				</div>
+				<div class="shop-info">
+					<div class="img">
+						<img :src="currentShop.shopLogo">
 					</div>
-					<div class="shop-info">
-						<div class="img">
-							<img :src="currentShop.shopLogo">
-						</div>
-						<div class="txt">
-							<h1>{{currentShop.shopName}}</h1>
-							<p>{{currentShop.shopProperty.hummingbird?"蜂鸟专送":"商家派送"}}/{{currentShop.time}}分钟送达/配送费￥{{currentShop.deliveryCost}}</p>
-							<p>公告：{{currentShop.shopNptice}}</p>
-							<i class="el-icon-arrow-right"></i>
-						</div>
-					</div>
-					<div class="activity">
+					<div class="txt">
+						<h1>{{currentShop.shopName}}</h1>
 						<p>
-							<span class="green-background"> 新</span>新用户下单立减17.0元(不于其他活动叠加)
+							{{currentShop.shopProperty.hummingbird?"蜂鸟专送":"商家派送"}}/{{currentShop.time}}分钟送达/配送费￥{{currentShop.deliveryCost}}
 						</p>
+						<p>公告：{{currentShop.shopNptice}}</p>
+						<i class="el-icon-arrow-right"></i>
 					</div>
-				</section>
-				<section class="tag" key="2">
-					<el-tabs v-model="tag" type="card" @tab-click="handleClick">
-				    <el-tab-pane label="商品" name="product">
-				   		<section class="products" :style="{height:computedHeight}">
-								<div class="list">
-									<ul >
-										<li :class='{"active":i===activeIndex}' v-for = "(v,i) in shopFoods" @click='jumpToFood(i)'>
-											{{v.listName}}
-										</li>
-									</ul>
-								</div>
-								<div class="product-wrapper" @scroll="productScroll($event)">
-									<ul>
-
-										<li v-for ="(v,i) in shopFoods">
-											<p>{{v.listName}}<span>{{v.description}}</span></p>		
-											<ul>
-												<li v-for ="(item,index) in v.foodList">
-													<div class="food-img">
-														<img :src="item.foodPic">
-													</div>
-													<div class="food-detail">
-														<header>
-															{{item.foodName}} 
-															<span 
-															class="yellow-border" 
-															v-if="item.foodPropertyList.length != 0">
-																多规格
-															</span>
-														</header>
-														<section class="gray">月售{{item.countMonth}}份 好评率{{item.goodEvaluate * 100}}%</section>
-														<section>{{item.foodInfo}}</section>
-														<section class="price">
-															<span>￥{{item.price}}</span>
-															<div class="pull-right">
-																<div v-show="item.foodPropertyList.length === 0?true:
-																	shoppingCartProducts[currentShop.id]?
-																	shoppingCartProducts[currentShop.id].foodIdList?
-																	shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false
-																	">
-																	<button class="minus"
-																	v-show="shoppingCartProducts[currentShop.id]?
-																	shoppingCartProducts[currentShop.id].foodIdList?
-																	shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false"
-																	@click = "removeProduct(item,v,i)">-</button>
-
-																	<span v-show="shoppingCartProducts[currentShop.id]?
-																	shoppingCartProducts[currentShop.id].foodIdList?
-																	shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false">
-																		{{item.foodNum}}
-																	</span>
-																	<button class="plus" @click='showSelect(item,v,index)'>+</button>
-																</div>
-																<div v-show="item.foodPropertyList.length === 0?false:
-																	shoppingCartProducts[currentShop.id]?
-																	shoppingCartProducts[currentShop.id].foodIdList?
-																	!shoppingCartProducts[currentShop.id].foodIdList.has(item.id):true:true">
-																	<button class="blue-background" @click="showSelect(item,v,index)">选规格</button>
-																</div>
-															</div>
-														</section>
-													</div>
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</div>
-							</section>	
-				    </el-tab-pane>
-				    <el-tab-pane label="评价" name="evaluate">
-				    	<section class="evaluate" :style="{'height':computedHeight}">
-				    		2222
-				    	</section>
-				    </el-tab-pane>
-				  </el-tabs>
-				</section>
-				<section id="shoppingCart" key="3">
-					<div class="shoppingcart-icon">
-						<el-badge :value="currentShopSelectedNum" class="item">
-							<span>
-								<i></i>
-							</span>
-						</el-badge>
-					</div>
-					<div class="countPrice">
-						<div class="price" @click="shoppingCartDetailShow = !shoppingCartDetailShow">
-							<div class="tb-center">
-								<h1>￥999</h1>
-								<p>配送费￥5</p>
+				</div>
+				<div class="activity">
+					<p>
+						<span class="green-background"> 新</span>新用户下单立减17.0元(不于其他活动叠加)
+					</p>
+				</div>
+			</section>
+			<section class="tag">
+				<el-tabs v-model="tag" type="card" @tab-click="handleClick">
+			    <el-tab-pane label="商品" name="product">
+			   		<section class="products" :style="{height:computedHeight}">
+							<div class="list">
+								<ul >
+									<li :class='{"active":i===activeIndex}' v-for = "(v,i) in shopFoods" @click='jumpToFood(i)'>
+										{{v.listName}}
+									</li>
+								</ul>
 							</div>
-						</div>
-						<button>
-							去结算
-						</button>
-					</div>
-					<div class="shoppingcart-prodcut-wrapper" v-show="shoppingCartDetailShow">
-						<div class="shoppingcart-prodcut-list">
-							<header>
-								<h1>购物车</h1>	
-								<span>
-									清空
-									<i class="el-icon-delete"></i>
-								</span>
-							</header>
-							<article>	
+							<div class="product-wrapper" @scroll="productScroll($event)">
 								<ul>
-									<li>
+
+									<li v-for ="(v,i) in shopFoods">
+										<p>{{v.listName}}<span>{{v.description}}</span></p>		
+										<ul>
+											<li v-for ="(item,index) in v.foodList">
+												<div class="food-img">
+													<img :src="item.foodPic">
+												</div>
+												<div class="food-detail">
+													<header>
+														{{item.foodName}} 
+														<span 
+														class="yellow-border" 
+														v-if="item.foodPropertyList.length != 0">
+															多规格
+														</span>
+													</header>
+													<section class="gray">月售{{item.countMonth}}份 好评率{{item.goodEvaluate * 100}}%</section>
+													<section>{{item.foodInfo}}</section>
+													<section class="price">
+														<span>￥{{item.price}}</span>
+														<div class="pull-right">
+															<div v-show="item.foodPropertyList.length === 0?true:
+																shoppingCartProducts[currentShop.id]?
+																shoppingCartProducts[currentShop.id].foodIdList?
+																shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false
+																">
+																<button class="minus"
+																v-show="shoppingCartProducts[currentShop.id]?
+																shoppingCartProducts[currentShop.id].foodIdList?
+																shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false"
+																@click = "removeProduct(item,v,i)">-</button>
+
+																<span v-show="shoppingCartProducts[currentShop.id]?
+																shoppingCartProducts[currentShop.id].foodIdList?
+																shoppingCartProducts[currentShop.id].foodIdList.has(item.id):false:false">
+																	{{item.foodNum}}
+																</span>
+																<button class="plus" @click='showSelect(item,v,index)'>+</button>
+															</div>
+															<div v-show="item.foodPropertyList.length === 0?false:
+																shoppingCartProducts[currentShop.id]?
+																shoppingCartProducts[currentShop.id].foodIdList?
+																!shoppingCartProducts[currentShop.id].foodIdList.has(item.id):true:true">
+																<button class="blue-background" @click="showSelect(item,v,index)">选规格</button>
+															</div>
+														</div>
+													</section>
+												</div>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</section>	
+			    </el-tab-pane>
+			    <el-tab-pane label="评价" name="evaluate">
+			    	<section class="evaluate" :style="{'height':computedHeight}">
+			    		2222
+			    	</section>
+			    </el-tab-pane>
+			  </el-tabs>
+			</section>
+			<section id="shoppingCart">
+				<div class="shoppingcart-icon">
+					<el-badge :value="currentShopSelectedNum" class="item">
+						<span>
+							<i></i>
+						</span>
+					</el-badge>
+				</div>
+				<div class="countPrice">
+					<div class="price" @click="shoppingCartDetailShow = !shoppingCartDetailShow">
+						<div class="tb-center">
+							<h1>￥999</h1>
+							<p>配送费￥5</p>
+						</div>
+					</div>
+					<button>
+						去结算
+					</button>
+				</div>
+				<div class="shoppingcart-prodcut-wrapper" 
+						 v-show="shoppingCartDetailShow"
+						 @click="shoppingCartDetailShow = !shoppingCartDetailShow">
+					<div class="shoppingcart-prodcut-list"
+							 @click.stop="">
+						<header>
+							<h1>购物车</h1>	
+							<span>
+								清空
+								<i class="el-icon-delete"></i>
+							</span>
+						</header>
+						<article>	
+							<ul>
+								<template v-if="shoppingCartProducts[currentShop.id]">
+									<li v-for="item in shoppingCartProducts[currentShop.id].foodList" >
 										<div class="name">
-											名字名字名字名字名字
+											{{item.foodName}} {{item.foodType}}
 										</div>
 										<div>
-											<span>￥999</span>
+											<span>￥{{item.price}}</span>
 											<span>
-												<button class="minus">-</button>
-												<span class="num">4</span>
-												<button class="plus">+</button>
+												<button class="minus" @click="removeProduct(item)">-</button>
+												<span class="num">{{item.foodNum}}</span>
+												<button class="plus" @click="addToShopping(item)">+</button>
 											</span>
 										</div>
 									</li>
-								</ul>
-							</article>
-						</div>
+								</template>
+								<li v-else>暂无商品</li>
+							</ul>
+						</article>
 					</div>
-				</section>
-			</transition-group>
+				</div>
+			</section>
 			<mt-popup
 			  v-model="selectFoodType"
 			  popup-transition="popup-fade">
@@ -184,6 +186,7 @@
 	
 	import * as _ from 'lodash';
 	import * as type from '../../store/mutation-types.js';
+	import Velocity from 'velocity-animate';
 	import {getShopFoodTypeList} from '../../api/shop.js';
 	import {mapGetters} from 'vuex';
 	import {Toast} from 'mint-ui';
@@ -192,10 +195,9 @@
 		name:'shop',
 		data(){
 			return {
-				shopInfo:{},
-				tag:'product', //商品与评价切换
-				computedHeight:'', //商品组件高度
-				shopFoods:[
+				tag:'product', 										//商品与评价切换
+				computedHeight:'',								//商品组件高度
+				shopFoods:[												//店铺食品List
 					{
 						description:"大家说好吃才好吃",
 						foodList:[],
@@ -206,16 +208,18 @@
 						foodList:[],
 						listName:"优惠",
 					},
-				], //店铺所有食物
-				selectFoodType:false, //多规格商品弹出框控制变量
-				selectArray:[], //多规格商品的已选择状态数组
-				foodType:{}, //多规格商品的类型对象
-				currentPopupProductPrice:0.00, //当前弹出框商品的价格
-				activeIndex:0,//当前侧边栏active显示的标识
-				foodTitleArray:[],//食品title向上距离的数组
-				shoppingCartDetailShow:false,
-        currentShopSelectedNum:0,//当前店铺已选择的物品数量
-        shopHeaderShow:true,
+				], 																//店铺所有食物
+				selectFoodType:false, 						//多规格商品弹出框控制变量
+				selectArray:[], 								  //多规格商品的已选择状态数组
+				foodType:{}, 										  //多规格商品的类型对象
+				currentPopupProductPrice:0.00,    //当前弹出框商品的价格
+				activeIndex:0,										//当前侧边栏active显示的标识
+				foodTitleArray:[],                //食品title向上距离的数组
+				shoppingCartDetailShow:false,     //购物车是否显示
+        currentShopSelectedNum:0,         //当前店铺已选择的物品数量
+        shopHeaderShow:true,							//头部是否显示
+        shopHeaderHeight:0,								//头部组建高度
+        createBlueBallFlag:false,
 			}
 		},
 		computed:{
@@ -226,13 +230,16 @@
         console.log(tab, event);
       },
       productScroll:_.throttle(function(event) {
-      	// 滚动事件
+      	// 判断是否需要隐藏头部
       	if (event.srcElement.scrollTop > 100 && this.shopHeaderShow) {
       		this.shopHeaderShow = !this.shopHeaderShow;
+      		this.leave();
       	}else if(event.srcElement.scrollTop < 100 && !this.shopHeaderShow){
       		this.shopHeaderShow = !this.shopHeaderShow;
+      		this.enter();
       	}
 
+      	// 滚动事件
       	let tempArray = [...this.foodTitleArray];
       	tempArray.push(event.srcElement.scrollTop);
       	tempArray.sort((a,b) => {return a - b});
@@ -244,6 +251,62 @@
       },60),
       jumpToFood(i){
       	document.querySelector('.product-wrapper').scrollTop = this.foodTitleArray[i];
+      },
+      // 头部动画
+      enter(){
+      	Velocity(document.querySelector('.tag'),"stop")
+      	Velocity(
+      		document.querySelector('.tag'),
+      		{ translateY: 0},
+      		{ duration: 1000, easing:"ease"}
+      		);
+      },
+      leave(){
+      	Velocity(document.querySelector('.tag'),"stop")
+      	Velocity(
+      		document.querySelector('.tag'),
+      		{ translateY: -this.shopHeaderHeight },
+      		{ duration: 1000, easing:"ease" } 
+      		);
+      },
+      // 添加时的动画
+      createBlueBall(event){
+      	if (this.createBlueBallFlag) {
+      		this.createBlueBallFlag = false;
+	      	let blueBall = document.createElement('div');
+	      	blueBall.className = 'blue-ball';
+	      	blueBall.style.top = event.y +"px";
+	      	blueBall.style.left = event.x + "px";
+	      	const shop = document.querySelector('.shop-wrapper');
+	      	shop.appendChild(blueBall);
+
+	      	let endTop = document.documentElement.clientHeight || document.body.clientHeight;
+	      	endTop = endTop - document.querySelector('.shoppingcart-icon').offsetLeft - (document.querySelector('.shoppingcart-icon').offsetWidth/2);
+	      	let endLeft = document.querySelector('.shoppingcart-icon').offsetLeft + (document.querySelector('.shoppingcart-icon').offsetWidth/2)
+
+	      	Velocity(
+	      		blueBall,
+	      		{
+	      			top:[endTop,[0.800, 0.170, 0.730, 0.575]],
+	      			left:[endLeft,[0.615, 0.800, 0.780, 0.915 ]]
+	      		},
+	      		{
+	      			duration:600,easing:"linear",
+	      			complete(){
+	      				Velocity(
+	      					document.querySelector('.shoppingcart-icon'),
+	      					{ scale:[ 1, 0.8, 1] },
+	      					{ 
+	      						duration: 1000,
+	      						easing:[ 100, 8]
+	      					}
+	      					);
+	      				shop.removeChild(blueBall);
+	      			}
+
+	      		}
+	      	);
+      	}
       },
       showSelect(product,productList,productListIndex){
       	//读取多规格商品的具体类型
@@ -292,6 +355,7 @@
       },
       addToShopping(product=false){
       	//判断商品是否 为多规格商品 以判断是否需要计算价格
+      	this.createBlueBallFlag = true;
       	if (product) {
       		let foodType = '';
       		let foodNum = 1;
@@ -318,21 +382,52 @@
       		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
       		this.foodType.productList.foodList[this.foodType.productListIndex].foodNum ++;
       		this.selectFoodType = false;
+
       	}
+
     		this.currentShopSelectedNum++;
 
       },
       removeProduct(item,v,index){
-    		
+      	// 如果是从购物车直接删除
+      	if (!Number.isInteger(index)) {
+	  			console.log(item)
+
+      		const shopId = this.currentShop.id;
+	  			const foodId = item.foodId;
+	  			const foodType = item.foodType;
+	  			let Data = {shopId,foodId,foodType};
+	  			console.log(Data)
+	  			this.$store.commit(type.REMOVE_FORM_SHOPPINGCART,Data);
+	    		this.currentShopSelectedNum--;
+
+	    		let tempFood;
+	    		for (let i = 0; i < this.shopFoods.length; i++) {
+	    			tempFood = this.shopFoods[i].foodList.find((value) => {
+	    				return value.id === foodId;
+	    			});
+
+	    			if (tempFood) {
+    					tempFood.foodNum--;
+    					console.log(this.shoppingCartProducts[this.currentShop.id].foodIdList)
+    					break;
+	    			}
+
+	    		}
+	    		return false;
+
+      	}
+
+    		// 检查要删除的商品是否是多规格商品并且在购物车当中并不是唯一一个件商品
     		if (this.shoppingCartProducts[this.currentShop.id].foodList.filter((e) => {return e.foodId === item.id}).length !== 1) {
       		Toast({
 					  message: '多规格商品请到购物车删除',
-					  duration: 5000,
+					  duration: 3000,
 					  className:'big-font'
 					});
       		return false;
       	}
-  			console.log(item);	
+      	console.log(item)
   			const shopId = this.currentShop.id;
   			const foodId = item.id;
   			const foodType = "always";
@@ -356,10 +451,12 @@
 						}
 					})
 				});
+
 				let tempArray = [];
 				res.data.data.forEach((e) => {
 					tempArray = [...tempArray,...e.foodList];
 				});
+
 				//获取销量最多的5个 产品 推到热销里
 				tempArray.sort((a,b) => { return b.countMonth-a.countMonth }).splice(5);
 				this.shopFoods[0].foodList = [...this.shopFoods[0].foodList,...tempArray];
@@ -382,7 +479,8 @@
 			let headerHeight = document.querySelector('.shop-header').offsetHeight;
 			let tagHeight = document.querySelector('.el-tabs__header').offsetHeight;
 			this.computedHeight = (windowHeight  - tagHeight) - 100 + "px";	
-
+			this.shopHeaderHeight = headerHeight;
+			// 记录当前店铺中有多少商品在购物车当中
 			let tempNumber = 0;
 			if (this.shoppingCartProducts[this.currentShop.id]) {
 				for(let [value,key] of this.shoppingCartProducts[this.currentShop.id].foodIdList){
@@ -415,12 +513,6 @@
 		overflow: hidden;
 		.shop-wrapper{
 			position: relative;
-		}
-		.changePosition{
-			position: absolute;
-			width: 100%;
-		}
-		.header-animate-move{
 		}
 		.foodtype{
 			min-width: 80vw;
@@ -468,6 +560,7 @@
 		}		
 		.shop-header{
 			background: $blue;
+			overflow: hidden;
 			@include remCalc('height',407px);
 			@include remCalc('padding',20px);
 			.back{
@@ -525,6 +618,7 @@
 			}
 		}
 		.tag{
+			background:#fff;
 			.el-tabs__header{
 				margin: 0;
 			}
@@ -578,6 +672,7 @@
 				flex:1;
 				height: 100%;
 				overflow-y: auto;
+				@include remCalc('padding-bottom',160px);
 				>ul{
 					>li{
 						>p{
@@ -817,6 +912,14 @@
 					}
 				}
 			}
+		}
+		.blue-ball{
+			background:$blue;
+			border-radius: 50%;
+			@include remCalc('width',50px);
+			@include remCalc('height',50px);
+			position: fixed;
+			z-index: 99;
 		}
 	}
 	

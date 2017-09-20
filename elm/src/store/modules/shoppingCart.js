@@ -30,12 +30,20 @@ const mutations = {
 					eachFlag = false;
 					e.foodNum ++; //如果有 就添加数量
 					let tempFoodNum = state.shoppingCartProducts[shopId].foodIdList.get(foodId);
-					state.shoppingCartProducts[shopId].foodIdList.set(foodId,++tempFoodNum); 
+					tempFoodNum++;
+					state.shoppingCartProducts[shopId].foodIdList.set(foodId,tempFoodNum); 
 				}
 			});
 			if (eachFlag) {
-				state.shoppingCartProducts[shopId].foodIdList.set(foodId,1);
-				state.shoppingCartProducts[shopId].foodList.push({foodName,price,foodType,foodNum,foodId});
+				if (state.shoppingCartProducts[shopId].foodIdList.has(foodId)) {
+					let tempFoodNum = state.shoppingCartProducts[shopId].foodIdList.get(foodId);
+					tempFoodNum ++;
+					state.shoppingCartProducts[shopId].foodIdList.set(foodId,tempFoodNum);
+					state.shoppingCartProducts[shopId].foodList.push({foodName,price,foodType,foodNum,foodId});
+				}else{
+					state.shoppingCartProducts[shopId].foodIdList.set(foodId,1);
+					state.shoppingCartProducts[shopId].foodList.push({foodName,price,foodType,foodNum,foodId});
+				}
 			}
 		}else{
 			let tempObject = {};
