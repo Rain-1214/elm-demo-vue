@@ -111,12 +111,25 @@
 				<div class="countPrice">
 					<div class="price" @click="shoppingCartDetailShow = !shoppingCartDetailShow">
 						<div class="tb-center">
-							<h1>￥999</h1>
-							<p>配送费￥5</p>
+							<h1>￥{{shoppingCartProducts[currentShop.id]?shoppingCartProducts[currentShop.id].totalPrice:0.00}}</h1>
+							<p>配送费￥{{currentShop.deliveryCost}}</p>
 						</div>
 					</div>
-					<button>
-						去结算
+					<button
+						:class="{
+							'green':shoppingCartProducts[currentShop.id]?
+							shoppingCartProducts[currentShop.id].totalPrice >= currentShop.startCost:false,
+							'deepgGrag':shoppingCartProducts[currentShop.id]?
+							shoppingCartProducts[currentShop.id].totalPrice < currentShop.startCost:true,
+						}"
+					>
+						{{
+							shoppingCartProducts[currentShop.id]?
+							shoppingCartProducts[currentShop.id].totalPrice < currentShop.startCost?
+							`还差${shoppingCartProducts[currentShop.id].totalPrice - currentShop.startCost}元起送`:
+							`去结算`:
+							`还差${currentShop.startCost}元起送`
+						}}
 					</button>
 				</div>
 				<div class="shoppingcart-prodcut-wrapper" 
@@ -126,7 +139,7 @@
 							 @click.stop="">
 						<header>
 							<h1>购物车</h1>	
-							<span>
+							<span @click ="removeAllProducts()">
 								清空
 								<i class="el-icon-delete"></i>
 							</span>
@@ -184,9 +197,9 @@
 </template>
 <script>
 	
-	import * as _ from 'lodash';
 	import * as type from '../../store/mutation-types.js';
 	import Velocity from 'velocity-animate';
+	import {throttle} from 'lodash';
 	import {getShopFoodTypeList} from '../../api/shop.js';
 	import {mapGetters} from 'vuex';
 	import {Toast} from 'mint-ui';
@@ -219,7 +232,7 @@
         currentShopSelectedNum:0,         //当前店铺已选择的物品数量
         shopHeaderShow:true,							//头部是否显示
         shopHeaderHeight:0,								//头部组建高度
-        createBlueBallFlag:false,
+        createBlueBallFlag:false,					//什么时候点击可以产生蓝色球的添加动画
 			}
 		},
 		computed:{
@@ -229,7 +242,7 @@
 			handleClick(tab, event) {
         console.log(tab, event);
       },
-      productScroll:_.throttle(function(event) {
+      productScroll:throttle(function(event) {
       	// 判断是否需要隐藏头部
       	if (event.srcElement.scrollTop > 100 && this.shopHeaderShow) {
       		this.shopHeaderShow = !this.shopHeaderShow;
@@ -272,7 +285,9 @@
       // 添加时的动画
       createBlueBall(event){
       	if (this.createBlueBallFlag) {
+      		// 关闭可生成状态
       		this.createBlueBallFlag = false;
+      		// 创建并添加蓝色球
 	      	let blueBall = document.createElement('div');
 	      	blueBall.className = 'blue-ball';
 	      	blueBall.style.top = event.y +"px";
@@ -280,10 +295,12 @@
 	      	const shop = document.querySelector('.shop-wrapper');
 	      	shop.appendChild(blueBall);
 
+	      	// 定位结束位置
 	      	let endTop = document.documentElement.clientHeight || document.body.clientHeight;
 	      	endTop = endTop - document.querySelector('.shoppingcart-icon').offsetLeft - (document.querySelector('.shoppingcart-icon').offsetWidth/2);
-	      	let endLeft = document.querySelector('.shoppingcart-icon').offsetLeft + (document.querySelector('.shoppingcart-icon').offsetWidth/2)
+	      	let endLeft = document.querySelector('.shoppingcart-icon').offsetLeft + (document.querySelector('.shoppingcart-icon').offsetWidth/2);
 
+	      	//创建球动画
 	      	Velocity(
 	      		blueBall,
 	      		{
@@ -293,9 +310,10 @@
 	      		{
 	      			duration:600,easing:"linear",
 	      			complete(){
+      					Velocity(document.querySelector('.shoppingcart-icon'),"stop");
 	      				Velocity(
 	      					document.querySelector('.shoppingcart-icon'),
-	      					{ scale:[ 1, 0.8, 1] },
+	      					{ scale:[ 1, 0.8] },
 	      					{ 
 	      						duration: 1000,
 	      						easing:[ 100, 8]
@@ -357,14 +375,33 @@
       	//判断商品是否 为多规格商品 以判断是否需要计算价格
       	this.createBlueBallFlag = true;
       	if (product) {
-      		let foodType = '';
-      		let foodNum = 1;
-      		let {foodName,price,id:foodId} = product; //食物名称 价格 ID
-      		let {shopName,id:shopId} = this.currentShop; //当前店铺名称 店铺ID
-      		let Data = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
-      		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
-      		product.foodNum ++;
-      		this.selectFoodType = false;
+      		// 判断是否从购物车添加
+      		if (Object.prototype.hasOwnProperty.call(product,"foodType")) {
+	      		product.foodNum++;
+	      		let foodId = product.foodId;
+	      		let tempFood;
+		    		for (let i = 0; i < this.shopFoods.length; i++) {
+		    			tempFood = this.shopFoods[i].foodList.find((value) => {
+		    				return value.id === foodId;
+		    			});
+
+		    			if (tempFood) {
+	    					tempFood.foodNum++;
+	    					break;
+		    			}
+		    		}
+		    		this.createBlueBallFlag = false;
+
+      		}else{
+	      		let foodType = '';
+	      		let foodNum = 1;
+	      		let {foodName,price,id:foodId} = product; //食物名称 价格 ID
+	      		let {shopName,id:shopId} = this.currentShop; //当前店铺名称 店铺ID
+	      		let Data = {foodName,shopId,price,shopName,foodType,foodId,foodNum};
+	      		this.$store.commit(type.ADD_TO_SHOPPINGCART,Data);
+	      		product.foodNum ++;
+	      		this.selectFoodType = false;
+      		}
       	}else{
       		//判断购物车中是否存在 该店铺 及该食物
       		let foodType = '';
@@ -427,7 +464,7 @@
 					});
       		return false;
       	}
-      	console.log(item)
+
   			const shopId = this.currentShop.id;
   			const foodId = item.id;
   			const foodType = "always";
@@ -436,6 +473,10 @@
   			this.$store.commit(type.REMOVE_FORM_SHOPPINGCART,Data);
     		this.currentShopSelectedNum--;
 
+      },
+      removeAllProducts(){
+      	let shopId = this.currentShop.id;
+  			this.$store.commit(type.REMOVE_ALL_PRODUCTS,shopId);
       }
 		},
 		created(){
@@ -472,6 +513,8 @@
 			.catch((error) => {
 				console.log(error);
 			})
+
+			
 		},
 		//计算 底部商品组件的高
 		mounted(){
@@ -483,11 +526,12 @@
 			// 记录当前店铺中有多少商品在购物车当中
 			let tempNumber = 0;
 			if (this.shoppingCartProducts[this.currentShop.id]) {
-				for(let [value,key] of this.shoppingCartProducts[this.currentShop.id].foodIdList){
-					tempNumber += key;
+				for(let [key,value] of this.shoppingCartProducts[this.currentShop.id].foodIdList){
+					tempNumber += value;
 				}
 			}
 			this.currentShopSelectedNum = tempNumber;
+
 		},
 		updated(){
 			// 记录每一个title到组建顶部的距离
@@ -829,10 +873,15 @@
 				>button{
 					@include remCalc('width',240px);
 					@include remCalc('height',160px);
-					background: #4cd964;
 					outline: none;
 					border:none;
 					color: #fff;
+					&.green{
+						background: #4cd964;
+					}
+					&.deepgGrag{
+						background:#535356;
+					}
 				}
 			}
 			.shoppingcart-prodcut-wrapper{
