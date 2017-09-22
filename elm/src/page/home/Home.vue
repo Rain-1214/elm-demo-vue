@@ -296,18 +296,5 @@
 			}
 		}
 	}
-	.mint-tab-item{
-		@include remCalc('padding',14px,0);
-		&.active{
-			color:$blue;
-		}
-		.mint-tab-item-icon{
-			@include remCalc('width',60px);
-			@include remCalc('height',60px);
-			@include remCalc('margin-bottom',20px);
-		}
-		.mint-tab-item-label{
-			@include remCalc('font-size',32px);
-		}
-	}
+	
 </style>

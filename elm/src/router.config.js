@@ -1,7 +1,8 @@
 import Location from './page/location/Location.vue'
 import Home from './page/home/Home.vue'
 import Shop from './page/shop/Shop.vue'
-import User from './page/user/user.vue'
+import User from './page/user/User.vue'
+import Login from './page/user/Login.vue'
 
 export default{
 	mode: 'history',
@@ -11,5 +12,6 @@ export default{
 		{ path: '/home', component: Home},
 		{ path: '/shop', component: Shop},
 		{ path: '/user', component: User},
+		{	path:'/login',	component: Login},
 	]
 }

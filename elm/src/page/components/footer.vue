@@ -3,19 +3,19 @@
 		<mt-tabbar>
 		  <mt-tab-item id="外卖" @click.native="$router.push('/home')">
 		    <img slot="icon" :src="src[0]">
-		    外卖
+		    <span :class="{'blue':active === 0}">外卖</span>
 		  </mt-tab-item>
 		  <mt-tab-item id="订单">
 		    <img slot="icon" :src="src[1]">
-		    发现
+		    <span :class="{'blue':active === 1}">发现</span>
 		  </mt-tab-item>
 		  <mt-tab-item id="发现">
 		    <img slot="icon" :src="src[2]">
-		    订单
+		    <span :class="{'blue':active === 2}">订单</span>
 		  </mt-tab-item>
 		  <mt-tab-item id="我的" @click.native="$router.push('/user')">
 		    <img slot="icon" :src="src[3]">
-		    我的
+		    <span :class="{'blue':active === 3}">我的</span>
 		  </mt-tab-item>
 		</mt-tabbar>
 	</div>

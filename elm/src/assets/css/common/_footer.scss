@@ -1,0 +1,17 @@
+@import "./responsive";
+@import './tool';
+
+.mint-tab-item{
+	@include remCalc-imp('padding',18px,0);
+	&.active{
+		color:$blue;
+	}
+	.mint-tab-item-icon{
+		@include remCalc('width',60px);
+		@include remCalc('height',60px);
+		@include remCalc('margin-bottom',20px);
+	}
+	.mint-tab-item-label{
+		@include remCalc('font-size',32px);
+	}
+}
