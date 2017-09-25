@@ -3,6 +3,7 @@ import Home from './page/home/Home.vue'
 import Shop from './page/shop/Shop.vue'
 import User from './page/user/User.vue'
 import Login from './page/user/Login.vue'
+import Register from './page/user/Register.vue'
 
 export default{
 	mode: 'history',
@@ -13,5 +14,6 @@ export default{
 		{ path: '/shop', component: Shop},
 		{ path: '/user', component: User},
 		{	path:'/login',	component: Login},
+		{ path:'/register', component:Register}
 	]
 }

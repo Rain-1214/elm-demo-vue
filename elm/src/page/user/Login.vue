@@ -9,47 +9,93 @@
 	    <section>
 	    	<el-input v-model="userName" placeholder="用户名"></el-input>
 	    </section>
-	   	<section>
-	   		<el-input v-model="password" placeholder="密码"></el-input>
+	   	<section class="code">
+	   		<div class="input">
+	   			<el-input v-model="password" :type="passwordType" placeholder="密码"></el-input>
+	   		</div>
+	   		<div class="code-img tb-center">
+	   			<mt-switch v-model="showPassword"></mt-switch>
+	   		</div>
 	   	</section>
 	   	<section class="code">
 	   		<div class="input">
 	   			<el-input v-model="code" placeholder="请输入验证码"></el-input>
 	   		</div>
 	   		<div class="code-img">
-	   			<img src="/ElmPro/User/getCode.do" alt="">
+	   			<img :src="`/ElmPro/User/getCode.do?${new Date()}`" v-once alt="">
 	   		</div>
 	   		<div class="change">
 	   			<p>看不清？</p>
-	   			<p class="blue" @click="change1()">换一张</p>
+	   			<p class="blue" @click="change()">换一张</p>
 	   		</div>
 	   	</section>
 	   	<section class="tips">
-	   		<p>温馨提示：未注册过的账号，登录时将自动注册</p>
-	   		<p>注册过的用户可凭账号密码登录</p>
+	   		<p>温馨提示：验证码不区分大小写</p>
+	   		<p>未注册的用户还请先去注册</p>
 	   	</section>
 	   	<section class="submit">
-	   		<el-button type="success">提交</el-button>
-	   		<router-link to="">立即注册</router-link>
-	   	</section>
-	   	<section>
+	   		<el-button type="success" @click.native="login()">提交</el-button>
+	   		<router-link to="/register">立即注册</router-link>
 	   	</section>
    	</article>
 	</div>
 </template>
 <script>
 	
+	import { userLogin } from '../../api/user.js';
+	import { SAVE_CURRENT_USER } from '../../store/mutation-types.js';
+	import { Toast } from 'mint-ui';
+ 
 	export default {
 		data() {
 			return {
 				userName:'',
 				password:'',
-				code:''
+				code:'',
+				ajaxFlag:true,
+				showPassword:false
+			}
+		},
+		computed:{
+			passwordType(){
+				return this.showPassword?"text":"password";
 			}
 		},
 		methods:{
-			change1(){
+			change(){
 				document.querySelector('.code-img img').src = '/ElmPro/User/getCode.do?' + new Date();
+			},
+			login(){
+				if (this.ajaxFlag) {
+					this.ajaxFlag = false;
+					const {userName,password,code} = this;
+					const data = {userName,password,code};
+					userLogin(data).then((res) => {
+						if (res.data.stateCode) {
+							Toast({
+							  message: res.data.message,
+							  duration: 1500,
+							  className:'big-font'
+							});
+							this.$store.commit(SAVE_CURRENT_USER,res.data.data);
+							this.$router.push('/user');
+							this.ajaxFlag = true;
+						}else{
+							Toast({
+							  message: res.data.message,
+							  duration: 3000,
+							  className:'big-font'
+							});
+							this.ajaxFlag = true;
+						}
+
+					})
+					.catch((error) => {
+						console.log(error)
+					})
+
+				}
+
 			}
 		},
 		created(){
@@ -94,6 +140,16 @@
 						@include remCalc('padding-left',25px);
 					}
 				}
+				.tb-center{
+					display: flex;
+					flex-direction:row;
+					flex-wrap:nowrap;
+					align-items:center;
+
+					.mint-switch{
+						zoom:2.5;
+					}
+				}
 			}
 			.tips{
 				@include remCalc('padding',20,30);
@@ -107,6 +163,7 @@
 				width: 100%;
 				border-bottom: none;
 				@include remCalc('padding',30);
+				@include clear;
 				button{
 					width: 100%;
 					@include remCalc('padding',30px,0);
