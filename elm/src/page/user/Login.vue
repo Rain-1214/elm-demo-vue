@@ -86,6 +86,9 @@
 							  duration: 3000,
 							  className:'big-font'
 							});
+							if (res.data.message === "验证码错误") {
+								this.change();
+							}
 							this.ajaxFlag = true;
 						}
 
@@ -110,7 +113,7 @@
 	#login{
 		.el-input__inner{
 			border: none;
-			@include remCalc('height',160px);
+			@include remCalc('height',140px);
 			@include remCalc('font-size',52px);
 			@include remCalc('padding-left',30px);
 		}
@@ -147,7 +150,7 @@
 					align-items:center;
 
 					.mint-switch{
-						zoom:2.5;
+						zoom:2;
 					}
 				}
 			}

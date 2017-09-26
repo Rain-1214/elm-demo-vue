@@ -2,7 +2,7 @@
 	<div id="user">
 		<mt-header title="我的"></mt-header>
     <section class="login">
-			<template v-if="!Object.hasOwnProperty.call(currentUser,`id`)">
+			<template v-if="!Object.hasOwnProperty.call(currentUser,`userName`)">
 	    	<div class="header-img">
 		    	<svg>
 		    		<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#avatar-default"></use>
@@ -68,74 +68,99 @@
 		<section class="list">
 			<mt-cell
 			  title="我的地址"
-			  to=""
-			  is-link>
+			  is-link
+			  @click.native= "showAddress()">
 			  <svg slot='icon'>
-					<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#address"></use>
+					<use xlink:href="#addressIcon"></use>
 				</svg>
 			</mt-cell>
 			<mt-cell
 			  title="积分商城"
-			  to=""
 			  is-link>
 			  <svg slot='icon'>
-					<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#point"></use>
+					<use xlink:href="#point"></use>
 				</svg>
 			</mt-cell>
 			<mt-cell
 			  title="下载饿了么APP"
-			  to=""
 			  is-link>
 			  <svg slot='icon'>
-					<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#download"></use>
+					<use xlink:href="#download"></use>
 				</svg>
 			</mt-cell>
 			<mt-cell
 			  title="绑定手机"
-			  to=""
-			  is-link>
+			  is-link
+			  v-if="currentUser.phoneNumber === ``">
 			  <svg slot='icon'>
-					<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#download"></use>
+					<use xlink:href="#download"></use>
 				</svg>
 			</mt-cell>
-			<mt-cell title="退出登录" v-if="Object.hasOwnProperty.call(currentUser,`id`)" @click.native = "logout()">
+			<mt-cell title="退出登录" v-if="Object.hasOwnProperty.call(currentUser,`userName`)" @click.native = "logout()">
 			  <svg slot='icon'>
-					<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#download"></use>
+					<use xlink:href="#download"></use>
 				</svg>
 			</mt-cell>
 		</section>
+		<mt-popup
+		  v-model="popupVisible"
+		  position="right"
+		  :modal="false"
+		  popup-transition="popup-fade">
+		  <my-address @close="popupVisible = false"></my-address>
+		</mt-popup>
 		<my-footer :active="3"></my-footer>
 	</div>
 </template>
 <script>
 	import Footer from '../components/footer.vue';
 	import { mapGetters } from 'vuex';
-	import { REMOVE_CURRENT_USER } from '../../store/mutation-types.js'
+	import * as type from '../../store/mutation-types.js';
 	import {Toast} from 'mint-ui';
+	import Address from './children/address.vue';
+
 
 	export default {
 		data(){
 			return {
-
+				popupVisible:false,
 			}
 		},
 		components:{
 			'my-footer':Footer,
+			'my-address':Address
 		},
 		computed:{
 			...mapGetters(['currentUser'])
 		},
 		methods:{
 			logout(){
-				this.$store.commit(REMOVE_CURRENT_USER);
+				this.$store.commit(type.REMOVE_CURRENT_USER);
 				Toast({
 		  		message: "退出成功",
 				  duration: 1500,
 				  className:'big-font'
 				})
+			},
+			showAddress(){
+				if (!this.currentUser.userName) {
+					Toast({
+			  		message: "请先登录",
+					  duration: 1500,
+					  className:'big-font'
+					})
+					return false;
+				}
+				this.popupVisible = true;
 			}
 		},
 		created(){
+			if (!this.currentUser.userName) {
+				if (localStorage.getItem('User') !== '') {
+					const User = JSON.parse(localStorage.getItem('User'));
+					this.$store.commit(type.SAVE_CURRENT_USER,User);
+				}
+			}
 		}
 	}
 </script>
@@ -210,10 +235,18 @@
 			}
 		}
 		.list{
-			.mint-cell{
+			.mint-cell-wrapper{
+				background:none;
 			}
 			.mint-cell-text{
 				@include remCalc('font-size',50px);
+			}
+			.mint-cell{
+				border-bottom: 1px solid #ccc;
+				max-height: 100%;
+				&:last-child{
+					background:none;
+				}
 			}
 			.mint-cell-allow-right::after{
 				@include remCalc('border-width',10px);
@@ -228,6 +261,13 @@
 				@include remCalc('width',50px);
 				@include remCalc('height',50px);
 			}
+		}
+		.mint-popup{
+			height: 100vh;
+			width: 100vw;
+			top: 0;
+			left: 0;
+			transform:none;
 		}
 	}
 </style>

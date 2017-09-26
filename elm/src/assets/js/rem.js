@@ -2,9 +2,9 @@ window.onload = () =>{
 	let windowWidth = window.innerWidth;
 	let rem;
 	if(windowWidth < 980) {
-		rem = (windowWidth/980) * 108;
+		rem = (windowWidth/980) * 94;
 	}else{
-		rem = 108;
+		rem = 94;
 	}
 	let html = document.getElementsByTagName('html')[0];
 	html.style.fontSize = rem + 'px';	
@@ -23,9 +23,9 @@ window.onload = () =>{
 		let windowWidth = window.innerWidth;
 		let rem;
 		if(windowWidth < 980) {
-			rem = (windowWidth/980) * 108;
+			rem = (windowWidth/980) * 94;
 		}else{
-			rem = 108;
+			rem = 94;
 		}
 		let html = document.getElementsByTagName('html')[0];
 		html.style.fontSize = rem + 'px';

@@ -14,6 +14,7 @@ import 'mint-ui/lib/style.css'
 import 'animate.css/animate.css'
 
 import './element-ui.js'
+import './assets/js/rem.js'
 
 
 Vue.use(MintUI);

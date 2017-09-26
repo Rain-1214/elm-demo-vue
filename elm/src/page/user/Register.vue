@@ -62,6 +62,14 @@
         callback()
       }
 
+      const checkPassword = (rule,value,callback) => {
+      	const reg = /^[0-9a-zA-Z_-]+$/;
+      	if (!reg.test(value)) {
+      		return callback(new Error('只能用数字、字母、下划线、中划线组成'));
+      	}
+      	callback();
+      }
+
       const checkUser = (rule,value,callback) => {
       	const reg = /^[0-9a-zA-Z_-]+$/;
       	if (!reg.test(value)) {
