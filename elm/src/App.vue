@@ -6,27 +6,28 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
-import * as types from './store/mutation-types.js';
-import svg from './page/components/svg.vue'
+import { mapGetters } from 'vuex';
+import * as types from './store/mutation-types';
+import svg from './page/components/svg.vue';
+
 export default {
   name: 'app',
-  computed:{
-  	...mapGetters(['tempAddress'])
+  computed: {
+    ...mapGetters(['tempAddress']),
   },
-  components:{
-    "svg-icon":svg
+  components: {
+    svgIcon: svg,
   },
-  created(){
-    let tempAddress = JSON.parse(sessionStorage.getItem('tempAddress'));
+  created() {
+    const tempAddress = JSON.parse(sessionStorage.getItem('tempAddress'));
     if (tempAddress) {
       this.$store.commit(types.ALERT_TEMPADDRESS,tempAddress);
     }
-  	if(!this.tempAddress.name){
-  		this.$router.push('/location')
-  	}
-  }
-}
+    if (!this.tempAddress.name) {
+      this.$router.push('/location');
+    }
+  },
+};
 </script>
 
 <style lang="scss">

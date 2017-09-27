@@ -1,32 +1,30 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import MintUI from 'mint-ui';
+import 'mint-ui/lib/style.css';
+import 'animate.css/animate.css';
+
+import App from './App.vue';
+import routerConfig from './router.config';
+
+import store from './store';
 
 
-import vueRouter from 'vue-router'
-import routerConfig from './router.config.js'
-
-import MintUI from 'mint-ui'
-
-import store from './store'
-
-import './assets/css/common.scss'
-import 'mint-ui/lib/style.css'
-import 'animate.css/animate.css'
-
-import './element-ui.js'
-import './assets/js/rem.js'
+import './element-ui';
+import './assets/js/rem';
+import './assets/css/common.scss';
 
 
 Vue.use(MintUI);
-Vue.use(vueRouter);
+Vue.use(VueRouter);
 
 
-const router = new vueRouter(routerConfig);
-
+const router = new VueRouter(routerConfig);
+/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   store,
-  render: h => h(App)
-})
+  render: h => h(App),
+});
 

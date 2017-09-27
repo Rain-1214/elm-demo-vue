@@ -1,29 +1,27 @@
-import * as type from '../mutation-types.js';
+import * as type from '../mutation-types';
 
 const state = {
-	currentShop:{},
-}
+  currentShop: {},
+};
 
 const getters = {
-	currentShop: state => state.currentShop,
-}
+  currentShop: state => state.currentShop,
+};
 
 const actions = {
 
-
-
-}
+};
 
 const mutations = {
 
-	[type.ALERT_CURRENTSHOP](state,shop){
-		Object.assign(state.currentShop,shop);
-	},
-}
+  [type.ALERT_CURRENTSHOP](state, shop) {
+    Object.assign(state.currentShop, shop);
+  },
+};
 
 export default {
-	state,
-	getters,
-	actions,
-	mutations
-}
+  state,
+  getters,
+  actions,
+  mutations,
+};

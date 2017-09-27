@@ -1,33 +1,35 @@
-window.onload = () =>{
-	let windowWidth = window.innerWidth;
-	let rem;
-	if(windowWidth < 980) {
-		rem = (windowWidth/980) * 94;
-	}else{
-		rem = 94;
-	}
-	let html = document.getElementsByTagName('html')[0];
-	html.style.fontSize = rem + 'px';	
+/* eslint-disable no-undef */
+window.onload = () => {
+  const windowWidth = window.innerWidth;
+  let rem;
+  if (windowWidth < 980) {
+    rem = (windowWidth / 980) * 94;
+  } else {
+    rem = 94;
+  }
+  const html = document.getElementsByTagName('html')[0];
+  html.style.fontSize = `${rem}px`;
 
-	//set meat viewport
-	let dpr = window.devicePixelRatio;
-	let meta = document.createElement('meta');
-	let initialScale = 1 / dpr;
-	let maximumScale = 1 / dpr;
-	let minimumScale = 1 / dpr;
-	meta.setAttribute('name', 'viewport');
-	meta.setAttribute('content', `width=device-width, user-scalable=no, initial-scale=${initialScale}, maximum-scale=${maximumScale}, minimum-scale=${minimumScale}`);
-	document.head.appendChild(meta);
-	
-	window.onresize = () => {
-		let windowWidth = window.innerWidth;
-		let rem;
-		if(windowWidth < 980) {
-			rem = (windowWidth/980) * 94;
-		}else{
-			rem = 94;
-		}
-		let html = document.getElementsByTagName('html')[0];
-		html.style.fontSize = rem + 'px';
-	}
-}
+  // set meat viewport
+  const dpr = window.devicePixelRatio;
+  const meta = document.createElement('meta');
+  const initialScale = 1 / dpr;
+  const maximumScale = 1 / dpr;
+  const minimumScale = 1 / dpr;
+  meta.setAttribute('name', 'viewport');
+  /* eslint-disable max-len */
+  meta.setAttribute('content', `width=device-width, user-scalable=no, initial-scale=${initialScale}, maximum-scale=${maximumScale}, minimum-scale=${minimumScale}`);
+  document.head.appendChild(meta);
+
+  window.onresize = () => {
+    const windowWidth = window.innerWidth;
+    let rem;
+    if (windowWidth < 980) {
+      rem = (windowWidth / 980) * 94;
+    } else {
+      rem = 94;
+    }
+    const html = document.getElementsByTagName('html')[0];
+    html.style.fontSize = `${rem}px`;
+  };
+};
