@@ -102,7 +102,7 @@
         }
       },
       // 获取所以店铺列表
-      async loadShopList(){
+      async loadShopList() {
         try {
           const res = await getShopList();
           res.data.data.forEach((e) => {

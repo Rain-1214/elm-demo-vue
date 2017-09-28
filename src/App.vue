@@ -19,9 +19,10 @@ export default {
     svgIcon: svg,
   },
   created() {
+    /* eslint-disable no-undef */
     const tempAddress = JSON.parse(sessionStorage.getItem('tempAddress'));
     if (tempAddress) {
-      this.$store.commit(types.ALERT_TEMPADDRESS,tempAddress);
+      this.$store.commit(types.ALERT_TEMPADDRESS, tempAddress);
     }
     if (!this.tempAddress.name) {
       this.$router.push('/location');

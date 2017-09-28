@@ -32,7 +32,7 @@
                 <ul >
                   <li :class='{"active":i===activeIndex}' 
                   v-for = "(v,i) in shopFoods" 
-                  :key="v"
+                  :key="i"
                   @click='jumpToFood(i)'>
                     {{v.listName}}
                   </li>
@@ -42,11 +42,11 @@
                 <ul>
 
                   <li v-for ="(v,i) in shopFoods"
-                      :key="v">
+                      :key="i">
                     <p>{{v.listName}}<span>{{v.description}}</span></p>		
                     <ul>
                       <li v-for ="(item,index) in v.foodList"
-                          :key="item">
+                          :key="index">
                         <div class="food-img">
                           <img :src="item.foodPic">
                         </div>
@@ -152,8 +152,8 @@
             <article>	
               <ul>
                 <template v-if="shoppingCartProducts[currentShop.id]">
-                  <li v-for="item in shoppingCartProducts[currentShop.id].foodList" 
-                      :key="item">
+                  <li v-for="(item,index) in shoppingCartProducts[currentShop.id].foodList" 
+                      :key="index">
                     <div class="name">
                       {{item.foodName}} {{item.foodType}}
                     </div>
@@ -182,12 +182,12 @@
           </div>
           <h1 class="text-center">{{foodType.foodName}}</h1>
           <template v-for="(v,i) in foodType.foodPropertyList" >
-            <h2 :key="v">{{v.typeName}}</h2>
-            <ul :key="v">
+            <h2 :key="i">{{v.typeName}}</h2>
+            <ul :key="i">
               <li :class="{'active':selectArray[i][index]}" 
               v-for="(item,index) in v.foodPropertyDetail"
               @click="changeSelect(i,index)"
-              :key="item">
+              :key="index">
                 {{item.name}}
               </li>
             </ul>
@@ -253,7 +253,7 @@
         if (event.srcElement.scrollTop > 100 && this.shopHeaderShow) {
           this.shopHeaderShow = !this.shopHeaderShow;
           this.leave();
-        } else if (event.srcElement.scrollTop < 100 && !this.shopHeaderShow){
+        } else if (event.srcElement.scrollTop < 100 && !this.shopHeaderShow) {
           this.shopHeaderShow = !this.shopHeaderShow;
           this.enter();
         }
@@ -474,6 +474,10 @@
     async created() {
       // 初始化时 通过店铺ID获取店铺商品
       const id = this.currentShop.id;
+      if (!id) {
+        this.$router.push('/home');
+        return;
+      }
       try {
         const res = await getShopFoodTypeList({ id });
         res.data.data.forEach((e) => {
@@ -524,7 +528,7 @@
       this.currentShopSelectedNum = tempNumber;
     },
     updated() {
-      // 记录每一个title到组建顶部的距离
+      // 记录每一个title到组件顶部的距离
       this.foodTitleArray.splice(0);
       const foodTitles = document.querySelectorAll('.product-wrapper p');
       foodTitles.forEach((e) => {

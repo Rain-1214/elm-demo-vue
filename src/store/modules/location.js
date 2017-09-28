@@ -16,15 +16,15 @@ const getters = {
 };
 
 const actions = {
-  getLocation({ commit, state }, location) {
-    analysisLocation(location).then((res) => {
+  async getLocation({ commit, state }, location) {
+    try {
+      const res = await analysisLocation(location);
       const { result: { addressComponent: { province: currentLocation } } } = JSON.parse(res.data.data);
       commit(types.ALERT_LOCATION, { currentLocation, ...location });
-    })
-      .catch((error) => {
-        console.log(error);
-        state.currentLocation = '未获取到地址请手动选择';
-      });
+    } catch (error) {
+      console.log(error);
+      state.currentLocation = '未获取到地址请手动选择';
+    }
   },
 };
 

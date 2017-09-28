@@ -11,7 +11,7 @@
     <mt-cell title="当前定位城市" :value="currentLocation"></mt-cell>		
     <div class="list" v-for='(v,i) in addressArray' 
     v-show="addressArray.length !== 0"
-    :key="v">
+    :key="v.name">
       <mt-cell :title="v.name" is-link :label="v.city + ',' + v.district" :key="v.name" @click.native="toHome(v)"></mt-cell>		
     </div>
     <div class="list" v-show="addressArray.length === 0 && searchNum !== 0">
@@ -59,12 +59,13 @@
           searchText = encodeURIComponent(searchText);
           currentLocation = encodeURIComponent(currentLocation);
 
-          data = { searchText, currentLocation }
+          data = { searchText, currentLocation };
         }
         // 请求解析地址
         try {
           const res = await searchAddress(data);
           this.addressArray = JSON.parse(res.data.data).result;
+          console.log(JSON.parse(res.data.data));
         } catch (e) {
           console.log(e);
         }

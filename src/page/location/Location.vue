@@ -11,13 +11,13 @@
         <p>热门城市</p>
       </div>
       <ul class="hot">
-        <li v-for="(e,i) in hotCity" :key="e" @click="toSearchAddress(e)">
+        <li v-for="(e,i) in hotCity" :key="i" @click="toSearchAddress(e)">
           {{e}}
         </li>
       </ul>		
     </div>
     
-    <div class="allCity" v-for='(v,k) in allCity' :key="v">
+    <div class="allCity" v-for='(v,k) in allCity' :key="k">
       <div class="title">
         {{k}}
       </div>

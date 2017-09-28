@@ -1,7 +1,19 @@
 # elm
-elm 是模仿饿了么的一个demo 应用 vue vuex vue-router webpack axios eslint(作死) 等等一系列技术吧
-目前还在制作当中 后台对应 java-elm-deom
+## 声明
+写着玩的 不要当真哈 不用于各种商业用途
+## 简介
+elm 是模仿饿了么的一个demo   
+技术栈 ==> vue vuex vue-router webpack axios eslint(作死) 等等  
  
+目前还在制作当中 后台对应 java-elm-deom  
+
+目前实现的功能   
+
+PS：无领导自学 过程比较艰辛 所以还希望各路大神指点。    
+
+PPS：QQ ==> 453430651 微信 ==> as453430651   
+
+
 * 搜索地址
 * 展示店铺列表（暂未实现按距离显示）
 * 展示店铺商品 
