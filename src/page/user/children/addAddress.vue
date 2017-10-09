@@ -36,7 +36,12 @@
           地址
         </div>
         <div class="input-wrapper">
-          <input type="text" v-model='form.addressName' placeholder="点击选择地址">
+          <input 
+          type="text" 
+          v-model='form.addressName' 
+          placeholder="点击选择地址"
+          readonly
+          @click="popupVisible = true">
         </div>
       </section>
       <section>
@@ -61,7 +66,7 @@
       position="right"
       :modal="false"
       popup-transition="popup-fade">
-      <my-map @close="popupVisible = false"></my-map>
+      <my-map @closeMap="responseAddress"></my-map>
     </mt-popup>
   </div>
 </template>
@@ -84,7 +89,7 @@
           lon: 0,
         },
         tag: ['家', '公司', '学校'],
-        popupVisible: true,
+        popupVisible: false,
       };
     },
     components: {
@@ -97,6 +102,13 @@
     methods: {
       close() {
         this.$emit('close');
+      },
+      responseAddress(address) {
+        this.popupVisible = false;
+        console.log(address);
+        this.form.addressName = address.city + address.district + address.name;
+        this.form.lat = address.location.lat;
+        this.form.lon = address.location.lng;
       },
     },
     created() {
