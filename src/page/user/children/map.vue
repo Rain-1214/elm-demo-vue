@@ -65,10 +65,12 @@
         const point = new BMap.Point(v.location.lng, v.location.lat);
         this.map.centerAndZoom(point, 22);
         const marker = new BMap.Marker(point);
+        const addressText = v.name;
+        const label = new BMap.Label(addressText);
+        marker.setLabel(label);
         this.map.addOverlay(marker);
         this.selectAddress = { ...this.selectAddress, ...v };
         this.searchResult.splice(0);
-        console.log(this.searchResult);
         this.btnShow = true;
       },
     },
@@ -86,14 +88,13 @@
       newScript.id = 'map2';
       document.querySelector('head').appendChild(newScript);
       /* eslint-disable no-multi-assign */
-      const _this = this;
+      const that = this;
       newScript.onload = newScript.onreadystatechange = function () {
-        console.log(this.readyState);
         if (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete') {
           const map = new BMap.Map('baiduMap');
-          map.centerAndZoom('上海', 12);
+          map.centerAndZoom(that.tempAddress.city, 12);
           map.enableDragging();
-          _this.map = map;
+          that.map = map;
           newScript.onload = newScript.onreadystatechange = null;
         }
       };
@@ -119,6 +120,7 @@
     #baiduMap{
       width: 100%;
       height: 100%;
+      zoom: 1.5;
     }
     .mapSearch{
       width: 90%;

@@ -53,6 +53,7 @@
         popupVisible: false,
         hotCity: [],
         allCity: {},
+        getLocationFromBrowser: true,
       };
     },
     computed: {
@@ -65,12 +66,14 @@
     methods: {
       toSearchAddress(address) {
         this.$store.commit(types.ALERT_LOCATION, { currentLocation: address, latitude: '', longitude: '' });
+        this.getLocationFromBrowser = false;
         this.popupVisible = true;
       },
 
       afreshDate() {
         this.$store.commit(types.ALERT_LOCATION, { currentLocation: '', latitude: '', longitude: '' });
         this.popupVisible = false;
+        this.getLocationFromBrowser = true;
         this.loadShow = true;
         this.loadLocation();
       },
@@ -80,18 +83,21 @@
           // 从浏览器获取地理位置
           /* eslint-disable no-undef */
           navigator.geolocation.getCurrentPosition((position) => {
-            const { latitude, longitude } = position.coords;
-            this.$store.dispatch('getLocation', { latitude, longitude });
-            this.loadShow = false;
-          }, (error) => {
+            if (this.getLocationFromBrowser) {
+              const { latitude, longitude } = position.coords;
+              this.$store.dispatch('getLocation', { latitude, longitude });
+              this.loadShow = false;
+            }
+          }, () => {
             // 没获取到用一个默认地址
-            console.log(error);
-            const [latitude, longitude] = [31.1697816, 121.55880439999999]; // 上海市浦东新区
-            this.$store.dispatch('getLocation', { latitude, longitude });
-            this.loadShow = false;
+            if (this.getLocationFromBrowser) {
+              const [latitude, longitude] = [31.1697816, 121.55880439999999]; // 上海市浦东新区
+              this.$store.dispatch('getLocation', { latitude, longitude });
+              this.loadShow = false;
+            }
           }, {
             enableHighAccuracy: true, // 是否获取高精度结果  
-            timeout: 5000, // 超时,毫秒  
+            timeout: 3000, // 超时,毫秒  
             maximumAge: 0, // 可以接受多少毫秒的缓存位置  
           });
         } else {

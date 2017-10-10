@@ -12,7 +12,6 @@ import store from './store';
 
 import './element-ui';
 import './assets/js/rem';
-import * as tool from './tool/tool';
 import './assets/css/common.scss';
 
 
@@ -27,7 +26,4 @@ new Vue({
   router,
   store,
   render: h => h(App),
-  created() {
-    tool.add(1, 2, 3, 4);
-  },
 });

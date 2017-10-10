@@ -6,65 +6,52 @@
       </section>
     </mt-header>
     <article>
-      <section>
-        <div class="text">
-          姓名
-        </div>
-        <div class="input-wrapper">
-          <input type="text" v-model="form.userName" placeholder="姓名">
-        </div>
-      </section> 
-      <section>
-        <div class="text">
-          性别
-        </div>
-        <div class="input-wrapper">
-          <div class="active">先生</div>
-          <div>女士</div>
-        </div>
-      </section>
-      <section>
-        <div class="text">
-          电话
-        </div>
-        <div class="input-wrapper">
-          <input type="text" v-model="form.phoneNumber" placeholder="电话">
-        </div>
-      </section>
-      <section>
-        <div class="text">
-          地址
-        </div>
-        <div class="input-wrapper">
-          <input 
-          type="text" 
-          v-model='form.addressName' 
-          placeholder="点击选择地址"
-          readonly
-          @click="popupVisible = true">
-        </div>
-      </section>
-      <section>
-        <div class="text">
-          门牌号
-        </div>
-        <div class="input-wrapper">
-          <input type="text" v-model='form.addressDetail' placeholder="输入详细地址">
-        </div>
-      </section>
-      <section>
-        <div class="text">
-          标签
-        </div>
-        <div class="input-wrapper">
-          <div v-for='v in tag' :key="v">{{v}}</div>
-        </div>
-      </section>
+      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
+        <el-form-item prop="userName" label="姓名" >
+          <el-input v-model="form.userName" placeholder="姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" >
+          <div 
+            v-for="(v,i) in sex" 
+            @click="sexActive.fill(false).splice(i,1,true)"
+            class="tagBox"
+            :class="{'active':sexActive[i]}"
+            :key="i">
+              {{ v }}
+          </div>
+        </el-form-item>
+        <el-form-item prop="phoneNumber" label="电话" >
+          <el-input v-model="form.phoneNumber" placeholder="电话"></el-input>
+        </el-form-item>
+        <el-form-item prop="addressName" label="地址" >
+          <el-input 
+          v-model="form.addressName" 
+          placeholder="请点击选择地址" 
+          @click.native="popupVisible = true"
+          readonly></el-input>
+        </el-form-item>
+        <el-form-item prop="addressDetail" label="详细地址" >
+          <el-input v-model="form.addressDetail" placeholder="哪座、几层、门牌号等等"></el-input>
+        </el-form-item>
+        <el-form-item label="标签" >
+          <div 
+            class='tagBox'
+            :class="{'active': tagActive[i]}" 
+            :key="v"
+            v-for='(v,i) in tag' 
+            @click="tagActive[i] ? tagActive.splice(i,1,false) : tagActive.fill(false).splice(i,1,true)">
+              {{ v }}
+          </div>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="submit" type="success" @click="submit()">提交</el-button>
+        </el-form-item>
+      </el-form>
     </article>
     <mt-popup
       v-model="popupVisible"
-      position="right"
       :modal="false"
+      position="right"
       popup-transition="popup-fade">
       <my-map @closeMap="responseAddress"></my-map>
     </mt-popup>
@@ -75,12 +62,11 @@
   import Map from './map.vue';
 
   export default {
-
     data() {
       return {
         form: {
-          userName: '',
           sex: '1',
+          userName: '',
           phoneNumber: '',
           addressName: '',
           addressDetail: '',
@@ -89,7 +75,28 @@
           lon: 0,
         },
         tag: ['家', '公司', '学校'],
+        tagActive: [false, false, false],
+        sex: ['先生', '女士'],
+        sexActive: [true, false],
         popupVisible: false,
+        rules: {
+          userName: [
+            { required: true, message: '姓名不能为空', trigger: 'blur,change' },
+            { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur,change' },
+          ],
+          phoneNumber: [
+            { required: true, message: '手机号码不能为空', trigger: 'blur,change' },
+            { min: 11, max: 11, message: '手机号码不合法', trigger: 'blur,change' },
+          ],
+          addressName: [
+            { required: true, message: '地址名称必须选择', trigger: 'blur,change' },
+            { min: 1, max: 16, message: '长度在 1 到 40 个字符', trigger: 'blur,change' },
+          ],
+          addressDetail: [
+            { required: true, message: '地址详情不可为空', trigger: 'blur,change' },
+            { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur,change' },
+          ],
+        },
       };
     },
     components: {
@@ -103,12 +110,17 @@
       close() {
         this.$emit('close');
       },
+      // 接受已经选择的地址
       responseAddress(address) {
         this.popupVisible = false;
-        console.log(address);
-        this.form.addressName = address.city + address.district + address.name;
-        this.form.lat = address.location.lat;
-        this.form.lon = address.location.lng;
+        if (address.city != null) {
+          this.form.addressName = address.city + address.district + address.name;
+          this.form.lat = address.location.lat;
+          this.form.lon = address.location.lng;
+        }
+      },
+      submit() {
+        
       },
     },
     created() {
@@ -125,37 +137,45 @@
 
   #addAddress{
     article{
-      section{
-        display: flex;
-        border-bottom: 1px solid #ccc;
-        @include remCalc('padding',40px);
-        .text{
-          @include remCalc('width',240px);
-          @include remCalc('font-size',58px);
+      @include remCalc('padding',40px,20px);
+      label{
+        @include remCalc('height',110px);
+        @include remCalc('line-height',66px);
+        @include remCalc('padding',22px,24px,22px,0);
+        @include remCalc('font-size',40px);
+        @include remCalc-imp('width',220px);
+      }
+      input{
+        @include remCalc('height',110px);
+        @include remCalc('font-size',40px);
+      }
+      .tagBox{
+        display: inline-block;
+        border: 1px solid #ccc;
+        color: #ccc;
+        @include remCalc('border-radius',10px);
+        @include remCalc('padding',15px,25px);
+        @include remCalc('margin-right',20px);
+        @include remCalc('height',110px);
+        @include remCalc('line-height',80px);
+        &.active{
+          border-color:$blue;
+          color: $blue;
         }
-        .input-wrapper{
-          flex:1;
-          input{
-            display: block;
-            width: 100%;
-            border: none;
-            line-height: 1;
-            height: 100%;
-            @include remCalc('font-size',48px);
-            @include remCalc('padding',0,15px);
-          }
-          div{
-            display: inline-block;
-            border: 1px solid #ccc;
-            @include remCalc('font-size',42px);
-            @include remCalc('padding',15px,30px);
-            @include remCalc('border-radius',5px);
-            @include remCalc('margin-right',30px);
-            &.active{
-              border-color:$blue;
-              color: $blue;
-            }
-          }
+      }
+      .el-form-item{
+        @include remCalc('margin-bottom',50px);
+      }
+      .el-form-item__error{
+        @include remCalc('font-size',32px);
+      }
+      .el-form-item__content{
+        @include remCalc-imp('margin-left',220px);
+      }
+      .el-button{
+        @include remCalc('padding',30px,40px);
+        span{
+          @include remCalc('font-size',50px);
         }
       }
     }

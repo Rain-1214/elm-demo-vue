@@ -39,7 +39,7 @@
          <p>温馨提示：验证码不区分大小写</p>
        </section>
        <section class="submit">
-         <el-button type="success" @click.native="submit()">立即注册</el-button>
+         <el-button type="success" @click.native="submit('form')">立即注册</el-button>
        </section>
      </article> 	
   </div>
@@ -138,33 +138,40 @@
         /* eslint-disable no-undef */
         document.querySelector('.code-img img').src = `/ElmPro/User/getCode.do?${new Date()}`;
       },
-      async submit() {
+      submit(formName) {
         if (this.ajaxFlag) {
           this.ajaxFlag = false;
-          const { userName, password, safetyQuestion, safetyAnswer, code } = this.form;
-          const data = { userName, password, safetyQuestion, safetyAnswer, code };
-          try {
-            const res = await register(data);
-            if (res.data.stateCode) {
-              Toast({
-                message: res.data.message,
-                duration: 3000,
-                className: 'big-font',
-              });
-              this.$store.commit(SAVE_CURRENT_USER, res.data.data);
-              this.$router.push('/user');
-              this.ajaxFlag = true;
+          this.$refs[formName].validate(async (valid) => {
+            if (valid) {
+              const { userName, password, safetyQuestion, safetyAnswer, code } = this.form;
+              const data = { userName, password, safetyQuestion, safetyAnswer, code };
+              try {
+                const res = await register(data);
+                if (res.data.stateCode) {
+                  Toast({
+                    message: res.data.message,
+                    duration: 3000,
+                    className: 'big-font',
+                  });
+                  this.$store.commit(SAVE_CURRENT_USER, res.data.data);
+                  this.$router.push('/user');
+                  this.ajaxFlag = true;
+                } else {
+                  Toast({
+                    message: res.data.message,
+                    duration: 3000,
+                    className: 'big-font',
+                  });
+                  this.ajaxFlag = true;
+                }
+              } catch (e) {
+                console.log(error);
+              }
             } else {
-              Toast({
-                message: res.data.message,
-                duration: 3000,
-                className: 'big-font',
-              });
+              console.log('error submit!!');
               this.ajaxFlag = true;
             }
-          } catch (e) {
-            console.log(error);
-          }
+          });
         }
       },
     },
