@@ -92,7 +92,7 @@
           ],
           addressName: [
             { required: true, message: '地址名称必须选择', trigger: 'blur,change' },
-            { min: 1, max: 16, message: '长度在 1 到 40 个字符', trigger: 'blur,change' },
+            { min: 1, max: 40, message: '长度在 1 到 40 个字符', trigger: 'blur,change' },
           ],
           addressDetail: [
             { required: true, message: '地址详情不可为空', trigger: 'blur,change' },
@@ -113,7 +113,7 @@
       close() {
         this.$emit('close');
       },
-      // 接受已经选择的地址
+      // 接收已经选择的地址
       responseAddress(address) {
         this.popupVisible = false;
         if (address.city != null) {
@@ -122,13 +122,19 @@
           this.form.lng = address.location.lng;
         }
       },
+      // 添加地址
       submit(formName) {
         if (this.ajaxFlag) {
           this.ajaxFlag = false;
           this.$refs[formName].validate(async (valid) => {
             if (valid) {
-              const { id: userId } = this.currentUser;
+              const { id: userId } = this.currentUser; // 当前用户ID
               const data = this.form;
+              const tagIndex = this.tagActive.includes(true) ? this.tagActive.indexOf(true) : false; // 判断是否选择了标签
+              if (tagIndex || tagIndex === 0) {
+                data.tag = this.tag[tagIndex];
+              }
+              data.sex = this.sexActive.includes(true) ? this.tagActive.indexOf(true) + 1 : 1; // 判断选择的性别
               data.userId = userId;
               try {
                 const res = await addAddress(data);
@@ -149,10 +155,6 @@
           });
         }
       },
-    },
-    created() {
-    },
-    mounted() {
     },
   };
 </script>

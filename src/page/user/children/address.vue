@@ -9,11 +9,14 @@
       <section v-for="v in currentUser.address" :key="v.id">
         <h1>
           <span class="name">{{v.userName}}</span>
-          <span class="sex">{{v.sex === 1?"先生":v.sex === 2?"女士":""}}</span>
+          <span class="sex">{{v.sex === 1?"先生":v.sex === 2?"女士":"先生/女士"}}</span>
           <span class="phoneNumber">{{v.phoneNumber}}</span>
         </h1>
         <h2>
-          <span class="tag" v-show="v.tag !== ''">{{v.tag}}</span>
+          <span 
+          class="tag" 
+          :style="tagBackGround(v.tag)"
+          v-show="v.tag !== ''">{{v.tag}}</span>
           <p :class="{'hastag':v.tag !== ''}">{{v.addressName}} {{v.addressDetail}}</p>
         </h2>
         <i class="el-icon-delete2" @click="removeAddress(v)"></i>
@@ -59,6 +62,19 @@
     methods: {
       close() {
         this.$emit('close');
+      },
+      tagBackGround(tag) {
+        switch (tag) {
+          case '家': return {
+            'backgroundColor':'#26a2ff',
+          };
+          case '公司': return {
+            'backgroundColor': '#70bc46',
+          };
+          default : return {
+            'backgroundColor': '#f60',
+          };
+        }
       },
       async afreshAddress() {
         this.popupVisible = false;

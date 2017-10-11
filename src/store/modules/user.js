@@ -35,6 +35,7 @@ const mutations = {
   },
   [type.AFRESH_ADDRESS](state, addressArray) {
     state.user.address = [...addressArray];
+    localStorage.setItem('User', JSON.stringify(state.user));
   },
 };
 
