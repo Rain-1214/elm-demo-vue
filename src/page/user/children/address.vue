@@ -16,6 +16,7 @@
           <span class="tag" v-show="v.tag !== ''">{{v.tag}}</span>
           <p :class="{'hastag':v.tag !== ''}">{{v.addressName}} {{v.addressDetail}}</p>
         </h2>
+        <i class="el-icon-delete2" @click="removeAddress(v)"></i>
         <i class="el-icon-edit"></i>
       </section>
     </article>
@@ -29,13 +30,16 @@
       popup-transition="popup-fade">
       <add-address 
       :currentAddress = "currentAddress"
-      @close="popupVisible = false"></add-address>
+      @close="afreshAddress()"></add-address>
     </mt-popup>
   </div>
 </template>
 <script>
   import { mapGetters } from 'vuex';
+  import { MessageBox } from 'element-ui';
+  import { Toast } from 'mint-ui';
   import addAddress from './addAddress.vue';
+  import { deleteAddress } from '../../../api/user';
 
   export default {
 
@@ -55,6 +59,32 @@
     methods: {
       close() {
         this.$emit('close');
+      },
+      async afreshAddress() {
+        this.popupVisible = false;
+        this.$store.dispatch('afreshAddress');
+      },
+      removeAddress(address) {
+        MessageBox.confirm('是否要删除当前地址?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(async () => {
+          const data = { addressId: address.id };
+          try {
+            const res = await deleteAddress(data);
+            Toast({
+              message: res.data.message,
+              duration: 1500,
+              className: 'big-font',
+            });
+            if (res.data.stateCode) {
+              this.$store.dispatch('afreshAddress');
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        });
       },
     },
     created() {
@@ -124,6 +154,9 @@
           right: 10px;
           @include remCalc('font-size',55px);
           @include tb-center(absolute);
+          &.el-icon-delete2{
+            @include remCalc('right',100px);
+          }
         }
       }
     }

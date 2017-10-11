@@ -44,7 +44,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button class="submit" type="success" @click="submit()">提交</el-button>
+          <el-button class="submit" type="success" @click="submit('form')">提交</el-button>
         </el-form-item>
       </el-form>
     </article>
@@ -59,20 +59,22 @@
 </template>
 <script>
   import { mapGetters } from 'vuex';
+  import { Toast } from 'mint-ui';
+  import { addAddress } from '../../../api/user';
   import Map from './map.vue';
 
   export default {
     data() {
       return {
         form: {
-          sex: '1',
+          sex: 1,
           userName: '',
           phoneNumber: '',
           addressName: '',
           addressDetail: '',
           tag: '',
           lat: 0,
-          lon: 0,
+          lng: 0,
         },
         tag: ['家', '公司', '学校'],
         tagActive: [false, false, false],
@@ -97,6 +99,7 @@
             { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur,change' },
           ],
         },
+        ajaxFlag: true,
       };
     },
     components: {
@@ -116,11 +119,35 @@
         if (address.city != null) {
           this.form.addressName = address.city + address.district + address.name;
           this.form.lat = address.location.lat;
-          this.form.lon = address.location.lng;
+          this.form.lng = address.location.lng;
         }
       },
-      submit() {
-        
+      submit(formName) {
+        if (this.ajaxFlag) {
+          this.ajaxFlag = false;
+          this.$refs[formName].validate(async (valid) => {
+            if (valid) {
+              const { id: userId } = this.currentUser;
+              const data = this.form;
+              data.userId = userId;
+              try {
+                const res = await addAddress(data);
+                Toast({
+                  message: res.data.message,
+                  duration: 1500,
+                  className: 'big-font',
+                });
+                if (res.data.stateCode) {
+                  this.$emit('close');
+                }
+              } catch (error) {
+                console.log(error);
+              } finally {
+                this.ajaxFlag = true;
+              }
+            }
+          });
+        }
       },
     },
     created() {

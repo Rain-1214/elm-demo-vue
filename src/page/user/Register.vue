@@ -155,17 +155,17 @@
                   });
                   this.$store.commit(SAVE_CURRENT_USER, res.data.data);
                   this.$router.push('/user');
-                  this.ajaxFlag = true;
                 } else {
                   Toast({
                     message: res.data.message,
                     duration: 3000,
                     className: 'big-font',
                   });
-                  this.ajaxFlag = true;
                 }
               } catch (e) {
                 console.log(error);
+              } finally {
+                this.ajaxFlag = true;
               }
             } else {
               console.log('error submit!!');

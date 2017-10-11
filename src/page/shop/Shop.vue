@@ -230,7 +230,7 @@
         ], // 店铺所有食物
         selectFoodType: false, // 多规格商品弹出框显示控制变量
         selectArray: [], // 多规格商品的已选择状态数组
-        foodType: {}, // 多规格商品的类型对象
+        foodType: {}, // 当前弹出的多规格商品的类型对象
         currentPopupProductPrice: 0.00, // 当前弹出框商品的价格
         activeIndex: 0, // 当前侧边栏active显示的标识
         foodTitleArray: [], // 食品title距离顶部的距离的数组
@@ -375,7 +375,7 @@
             const newtrueIndex = this.selectArray[i].indexOf(true);
             productTypePrice += e.foodPropertyDetail[newtrueIndex].price;
           });
-          this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
+          this.currentPopupProductPrice = this.foodType.price + productTypePrice;
         }
       },
       addToShopping(product = false) {
@@ -442,14 +442,13 @@
 
             if (tempFood) {
               tempFood.foodNum -= 1;
-              console.log(this.shoppingCartProducts[this.currentShop.id].foodIdList);
               break;
             }
           }
           return;
         }
         // 检查要删除的商品是否是多规格商品并且在购物车当中并不是唯一一个件商品
-        if (this.shoppingCartProducts[this.currentShop.id].foodList.filter((e) => {return e.foodId === item.id}).length !== 1) {
+        if (this.shoppingCartProducts[this.currentShop.id].foodList.filter((e) => e.foodId === item.id).length !== 1) {
           Toast({
             message: '多规格商品请到购物车删除',
             duration: 3000,
