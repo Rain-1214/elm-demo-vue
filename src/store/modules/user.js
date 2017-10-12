@@ -14,7 +14,6 @@ const actions = {
     try {
       const userId = state.user.id;
       const res = await getUserAddress({ userId });
-      console.log(res);
       commit(type.AFRESH_ADDRESS, res.data.data);
     } catch (error) {
       console.log(error);

@@ -65,7 +65,6 @@
         try {
           const res = await searchAddress(data);
           this.addressArray = JSON.parse(res.data.data).result;
-          console.log(JSON.parse(res.data.data));
         } catch (e) {
           console.log(e);
         }

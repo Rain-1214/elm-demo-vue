@@ -78,7 +78,6 @@
         try {
           const res = await checkUserName({ userName: value });
           if (res.data.stateCode) {
-            console.log(res);
             callback();
           } else {
             callback(new Error('用户名已存在'));
@@ -168,7 +167,6 @@
                 this.ajaxFlag = true;
               }
             } else {
-              console.log('error submit!!');
               this.ajaxFlag = true;
             }
           });

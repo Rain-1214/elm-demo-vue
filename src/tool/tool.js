@@ -1,21 +1,6 @@
 // 常量
 const MAX_ARRAY_INDEX = (2 ** 53) - 1;
 
-// 常用属性
-const ArrayProto = Array.prototype;
-const ObjProto = Object.prototype;
-const SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
-
-// 常用方法
-const push = ArrayProto.push;
-const slice = ArrayProto.slice;
-const toString = ObjProto.toString;
-const hasOwnProperty = ObjProto.hasOwnProperty;
-
-// 原生方法
-const nativeKeys = Object.keys;
-const nativeCreate = Object.create;
-
 const tag = {
   arrayTag: '[object Array]',
   boolTag: '[object Boolean]',
@@ -96,6 +81,23 @@ export const isMap = (value) => value != null && getValueTag(value) === tag.mapT
 
 export const isSet = (value) => value != null && getValueTag(value) === tag.setTag;
 
+export const floatToInt = (value) => {
+  if (!(isNumber(value) && `${value}`.indexOf('.') !== -1)) {
+    return {
+      floatInt: value,
+      floatDecimal: '',
+      allInteger: value,
+      times: 1,
+    };
+  }
+  const floatString = `${value}`;
+  const floatDecimal = floatString.split('.')[1];
+  const floatInt = floatString.split('.')[0];
+  const allInteger = Number.parseInt(floatInt + floatDecimal, 10);
+  const times = 10 ** (floatDecimal.length);
+  return { floatInt, floatDecimal, allInteger, times };
+};
+
 /**
  * 
  * @param {Array|Object} list 需要便利的目标
@@ -114,7 +116,7 @@ export const each = (list, iteratee, context) => {
       iteratee(list[i], i, list);
     }
   } else {
-    const keys = nativeKeys(list);
+    const keys = Object.keys(list);
     for (let i = 0; i <= keys.length; i++) {
       iteratee(list[keys[i]], keys[i], list);
     }
@@ -122,3 +124,36 @@ export const each = (list, iteratee, context) => {
   return list;
 };
 
+export const floatComputeAddorMul = (sign, ...valueArray) => valueArray.reduce((sum, currentValue) => {
+  if (!isNumber(currentValue)) {
+    return sum;
+  }
+  sum = floatToInt(sum);
+  currentValue = floatToInt(currentValue);
+  console.log(sum, currentValue);
+  switch (sign) {
+    case '+': if (sum.times === currentValue.times) {
+      return ((sum.allInteger + currentValue.allInteger) / sum.times);
+    }
+      return sum.times > currentValue.times ? ((sum.allInteger + (currentValue.allInteger * (sum.times / currentValue.times))) / sum.times)
+        : ((currentValue.allInteger + (sum.allInteger * (currentValue.times / sum.times))) / currentValue.times);
+    default : return (sum.allInteger * currentValue.allInteger) / (sum.times * currentValue.times);
+  }
+}, 0);
+
+export const floatComputeSuborDiv = (sign, firstvalue, ...valueArray) => valueArray.reduce((sum, currentValue) => {
+  if (!isNumber(currentValue)) {
+    return sum;
+  }
+  sum = floatToInt(sum);
+  currentValue = floatToInt(currentValue);
+  console.log(sum, currentValue);
+  switch (sign) {
+    case '-': if (sum.times === currentValue.times) {
+      return ((sum.allInteger - currentValue.allInteger) / sum.times);
+    }
+      return sum.times > currentValue.times ? ((sum.allInteger - (currentValue.allInteger * (sum.times / currentValue.times))) / sum.times)
+        : ((currentValue.allInteger - (sum.allInteger * (currentValue.times / sum.times))) / currentValue.times);
+    default : return (sum.allInteger / currentValue.allInteger) * (sum.times / currentValue.times);
+  }
+}, firstvalue);

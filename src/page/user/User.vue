@@ -103,7 +103,6 @@
         </svg>
       </mt-cell>
     </section>
-   
     <my-footer :active="3"></my-footer>
   </div>
 </template>
@@ -165,10 +164,10 @@
     .login{
       background-image: linear-gradient(90deg,#0af,#0085ff);
       color: #fff;
-      @include remCalc('padding',60px);	    
       display: flex;
       flex-direction:row;
       flex-wrap:nowrap;
+      @include remCalc('padding',60px);	    
       .header-img{
         background:#fff;
         border-radius: 50%;

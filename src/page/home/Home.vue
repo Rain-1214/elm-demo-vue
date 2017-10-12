@@ -226,7 +226,7 @@
             @include remCalc('height',96px);
             @include remCalc('line-height',96px);
             @include remCalc("font-size",50px);
-            @include remCalc("max-width",500px);
+            @include remCalc("max-width",650px);
             &.isbrand{
               position: relative;
               @include remCalc('padding-left',80px);

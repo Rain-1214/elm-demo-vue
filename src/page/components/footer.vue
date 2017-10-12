@@ -40,7 +40,6 @@
     },
     props: ['active'],
     mounted() {
-      console.log(this.active);
       this.imgSrc.forEach((e, i) => {
         if (i === this.active) {
           this.src.push(e[1]);

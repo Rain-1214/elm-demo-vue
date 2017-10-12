@@ -11,3 +11,5 @@ export const addAddress = (data) => axios.post('/ElmPro/User/addAddress.do', dat
 export const getUserAddress = (data) => axios.post('/ElmPro/User/findAddressByUserId.do', data); // 获取用户的所有地址
 
 export const deleteAddress = (data) => axios.post('/ElmPro/User/deleteAddressById.do', data); // 删除地址 
+
+export const editAddress = (data) => axios.post('/ElmPro/User/editAddressById.do', data); // 修改地址

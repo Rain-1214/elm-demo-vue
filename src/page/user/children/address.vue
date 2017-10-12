@@ -20,7 +20,7 @@
           <p :class="{'hastag':v.tag !== ''}">{{v.addressName}} {{v.addressDetail}}</p>
         </h2>
         <i class="el-icon-delete2" @click="removeAddress(v)"></i>
-        <i class="el-icon-edit"></i>
+        <i class="el-icon-edit" @click="editAddress(v)"></i>
       </section>
     </article>
     <aside @click ="popupVisible = true">
@@ -33,6 +33,7 @@
       popup-transition="popup-fade">
       <add-address 
       :currentAddress = "currentAddress"
+      :addOrEdit = "addOrEdit"
       @close="afreshAddress()"></add-address>
     </mt-popup>
   </div>
@@ -41,8 +42,8 @@
   import { mapGetters } from 'vuex';
   import { MessageBox } from 'element-ui';
   import { Toast } from 'mint-ui';
-  import addAddress from './addAddress.vue';
   import { deleteAddress } from '../../../api/user';
+  import addAddress from './addAddress.vue';
 
   export default {
 
@@ -51,6 +52,7 @@
         addressWrapperHeight: 0,
         popupVisible: false,
         currentAddress: {},
+        addOrEdit: 'add',
       };
     },
     computed: {
@@ -66,19 +68,25 @@
       tagBackGround(tag) {
         switch (tag) {
           case '家': return {
-            'backgroundColor':'#26a2ff',
+            backgroundColor: '#26a2ff',
           };
           case '公司': return {
-            'backgroundColor': '#70bc46',
+            backgroundColor: '#70bc46',
           };
           default : return {
-            'backgroundColor': '#f60',
+            backgroundColor: '#f60',
           };
         }
       },
-      async afreshAddress() {
+      afreshAddress() {
         this.popupVisible = false;
+        this.addOrEdit = 'add';
         this.$store.dispatch('afreshAddress');
+      },
+      editAddress(address) {
+        this.currentAddress = { ...this.currentAddress, ...address };
+        this.addOrEdit = 'edit';
+        this.popupVisible = true;
       },
       removeAddress(address) {
         MessageBox.confirm('是否要删除当前地址?', '提示', {
@@ -114,7 +122,6 @@
       const headerHeight = document.querySelector('.mint-header').offsetHeight;
       const bottomHeight = document.querySelector('aside').offsetHeight;
       this.addressWrapperHeight = windowHeight - headerHeight - bottomHeight;
-      console.log(this.currentUser);
     },
   };
 </script>
@@ -171,6 +178,7 @@
           @include remCalc('font-size',55px);
           @include tb-center(absolute);
           &.el-icon-delete2{
+            color: red;
             @include remCalc('right',100px);
           }
         }
@@ -195,6 +203,10 @@
     .mint-popup{
       width: 100vw;
       height: 100vh;
+      left: 0;
+      top: 0;
+      position: fixed;
+      transform:none;
     }
   }
 

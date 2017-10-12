@@ -209,6 +209,7 @@
   import { Toast } from 'mint-ui';
   import * as type from '../../store/mutation-types';
   import { getShopFoodTypeList } from '../../api/shop';
+  import { floatComputeAddorMul } from '../../tool/tool';
 
   export default{
     name: 'shop',
@@ -354,9 +355,9 @@
           // 计算商品默认状态价格
           let productTypePrice = 0;
           this.foodType.foodPropertyList.forEach((e) => {
-            productTypePrice += e.foodPropertyDetail[0].price;
+            productTypePrice = floatComputeAddorMul('+', productTypePrice, e.foodPropertyDetail[0].price);
           });
-          this.currentPopupProductPrice = this.foodType.price + productTypePrice; 
+          this.currentPopupProductPrice = floatComputeAddorMul('+', this.foodType.price, productTypePrice);
           this.selectFoodType = true;
         } else {
           this.addToShopping(product);
@@ -373,9 +374,9 @@
           let productTypePrice = 0;
           this.foodType.foodPropertyList.forEach((e, i) => {
             const newtrueIndex = this.selectArray[i].indexOf(true);
-            productTypePrice += e.foodPropertyDetail[newtrueIndex].price;
+            productTypePrice = floatComputeAddorMul('+', productTypePrice, e.foodPropertyDetail[newtrueIndex].price);
           });
-          this.currentPopupProductPrice = this.foodType.price + productTypePrice;
+          this.currentPopupProductPrice = floatComputeAddorMul('+', this.foodType.price, productTypePrice);
         }
       },
       addToShopping(product = false) {

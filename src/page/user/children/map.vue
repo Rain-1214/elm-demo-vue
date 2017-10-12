@@ -60,7 +60,6 @@
         this.$emit('closeMap', this.selectAddress);
       },
       showAddressOnMap(v) {
-        /* eslint-disable no-undef */
         this.map.clearOverlays();
         const point = new BMap.Point(v.location.lng, v.location.lat);
         this.map.centerAndZoom(point, 22);

@@ -60,11 +60,18 @@
 <script>
   import { mapGetters } from 'vuex';
   import { Toast } from 'mint-ui';
-  import { addAddress } from '../../../api/user';
+  import { addAddress, editAddress } from '../../../api/user';
   import Map from './map.vue';
 
   export default {
     data() {
+      const checkPhoneNumber = (rule, value, callback) => {
+        const reg = /^1[34578][0-9]{9}$/;
+        if (!reg.test(value)) {
+          callback(new Error('手机号码不合法'));
+        }
+        callback();
+      };
       return {
         form: {
           sex: 1,
@@ -88,7 +95,7 @@
           ],
           phoneNumber: [
             { required: true, message: '手机号码不能为空', trigger: 'blur,change' },
-            { min: 11, max: 11, message: '手机号码不合法', trigger: 'blur,change' },
+            { validator: checkPhoneNumber, trigger: 'blur,change' },
           ],
           addressName: [
             { required: true, message: '地址名称必须选择', trigger: 'blur,change' },
@@ -105,7 +112,20 @@
     components: {
       myMap: Map,
     },
-    props: ['currentAddress'],
+    props: ['currentAddress', 'addOrEdit'],
+    watch: {
+      currentAddress() {
+        this.form = Object.assign({}, this.form, this.currentAddress);
+        const sex = this.form.sex - 1;
+        const tag = this.form.tag;
+        const sexFlag = this.sexActive[sex] ? void 0 : this.sexActive.fill(false).splice(sex, 1, true);
+        this.tag.forEach((e, i) => {
+          if (e === tag) {
+            this.tagActive.fill(false).splice(i, 1, true);
+          }
+        });
+      },
+    },
     computed: {
       ...mapGetters(['currentUser']),
     },
@@ -131,13 +151,11 @@
               const { id: userId } = this.currentUser; // 当前用户ID
               const data = this.form;
               const tagIndex = this.tagActive.includes(true) ? this.tagActive.indexOf(true) : false; // 判断是否选择了标签
-              if (tagIndex || tagIndex === 0) {
-                data.tag = this.tag[tagIndex];
-              }
-              data.sex = this.sexActive.includes(true) ? this.tagActive.indexOf(true) + 1 : 1; // 判断选择的性别
+              data.tag = (tagIndex || tagIndex === 0) ? this.tag[tagIndex] : '';
+              data.sex = this.sexActive.includes(true) ? this.sexActive.indexOf(true) + 1 : 1; // 判断选择的性别
               data.userId = userId;
               try {
-                const res = await addAddress(data);
+                const res = this.addOrEdit === 'add' ? await addAddress(data) : await editAddress(data);
                 Toast({
                   message: res.data.message,
                   duration: 1500,
@@ -151,11 +169,14 @@
               } finally {
                 this.ajaxFlag = true;
               }
+            } else {
+              this.ajaxFlag = true;
             }
           });
         }
       },
     },
+
   };
 </script>
 

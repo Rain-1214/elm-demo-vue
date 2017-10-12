@@ -1,4 +1,5 @@
 import * as type from '../mutation-types';
+import { floatComputeAddorMul, floatComputeSuborDiv } from '../../tool/tool';
 
 const state = {
   shoppingCartProducts: {},
@@ -6,7 +7,6 @@ const state = {
 
 const getters = {
   shoppingCartProducts: state => state.shoppingCartProducts,
-
 };
 
 const actions = {
@@ -29,7 +29,7 @@ const mutations = {
           let tempFoodNum = state.shoppingCartProducts[shopId].foodIdList.get(foodId);
           tempFoodNum += 1;
           state.shoppingCartProducts[shopId].foodIdList.set(foodId, tempFoodNum);
-          state.shoppingCartProducts[shopId].totalPrice += e.price;
+          state.shoppingCartProducts[shopId].totalPrice = floatComputeAddorMul('+', state.shoppingCartProducts[shopId].totalPrice, e.price);
         }
       });
       if (eachFlag) {
@@ -39,12 +39,12 @@ const mutations = {
           state.shoppingCartProducts[shopId].foodIdList.set(foodId, tempFoodNum);
           const data = { foodName, price, foodType, foodNum, foodId };
           state.shoppingCartProducts[shopId].foodList.push(data);
-          state.shoppingCartProducts[shopId].totalPrice += price;
+          state.shoppingCartProducts[shopId].totalPrice = floatComputeAddorMul('+', state.shoppingCartProducts[shopId].totalPrice, price);
         } else {
           state.shoppingCartProducts[shopId].foodIdList.set(foodId, 1);
           const data = { foodName, price, foodType, foodNum, foodId };
           state.shoppingCartProducts[shopId].foodList.push(data);
-          state.shoppingCartProducts[shopId].totalPrice += price;
+          state.shoppingCartProducts[shopId].totalPrice = floatComputeAddorMul('+', state.shoppingCartProducts[shopId].totalPrice, price);
         }
       }
     } else {
@@ -63,7 +63,7 @@ const mutations = {
     state.shoppingCartProducts[shopId].foodList.forEach((e, i) => {
       if (e.foodId === foodId && (e.foodType === foodType || foodType === 'always')) {
         e.foodNum -= 1;
-        state.shoppingCartProducts[shopId].totalPrice -= e.price;
+        state.shoppingCartProducts[shopId].totalPrice = floatComputeSuborDiv('-', state.shoppingCartProducts[shopId].totalPrice, e.price);
         if (e.foodNum === 0) {
           state.shoppingCartProducts[shopId].foodList.splice(i, 1);
         }
