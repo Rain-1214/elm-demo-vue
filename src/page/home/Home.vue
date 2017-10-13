@@ -59,7 +59,7 @@
           </div>
           <div class="shop-price">
             <div class="gray">
-              ￥{{v.startCost}}元起送 / 配送费￥{{v.deliveryCost}} / ￥{{v.averageUserCost}}/人
+              ￥{{v.startCost}}元起送 / 配送费￥{{v.deliveryCost}} 
             </div>
             <div>
               <span class="gray">{{(v.distance/1000).toFixed(2) + "Km"}}</span> / <span class="blue">{{v.time}}分钟</span>
@@ -146,22 +146,22 @@
   @import '../../assets/css/common/responsive';
   @import '../../assets/css/common/public';
   .headAddress{
-    @include remCalc("padding",4px,8px);
+    @include remCalc("padding",2px,4px);
     @include ellipsis;
   }
   .search{
     background: $blue;
-    @include remCalc("padding",30px,20px);
+    @include remCalc("padding",10px,10px);
     input{
       width: 100%;
       border: none;
-      @include remCalc("height",120px);
-      @include remCalc("border-radius",60px);
-      @include remCalc("padding",0,50px);
+      @include remCalc("height",30px);
+      @include remCalc("border-radius",30px);
+      @include remCalc("padding",0,25px);
     }
   }
   .swiper-wrapper{
-    @include remCalc("height",470px);
+    @include remCalc("height",150px);
     .mint-swipe-indicator.is-active{
       opacity: 1;
       background: #000;
@@ -170,14 +170,14 @@
       display: flex;
       flex-direction:row;
       flex-wrap:wrap;
-      padding-top: 8px;
+      padding-top: 4px;
       // flex-flow:row wrap;
       // justify-content:flex-start;
       .item{
         width: 25%;
         p{
           text-align: center;
-          @include remCalc("margin",10px,0);
+          @include remCalc("margin",5px,0);
         }
         img{
           display: block;
@@ -190,14 +190,14 @@
   .grayLine{
     width: 100%;
     background: #e5e5e5;
-    @include remCalc("height",30px);
+    @include remCalc("height",15px);
   }
   .shop-wrapper{
     .title{
       border-bottom: 1px solid #e5e5e5;
       h2{
         font-weight: bold;
-        @include remCalc("padding",10px,20px);
+        @include remCalc("padding",5px,10px);
       }
     }
     .shop{
@@ -206,38 +206,38 @@
       flex-wrap:nowrap;
       justify-content: space-between;
       .img{
-        padding:15px;
+        padding:5px;
         img{
-          @include remCalc('height',240px);
-          @include remCalc('width',240px);
+          @include remCalc('height',60px);
+          @include remCalc('width',60px);
         }
       }
       .shop-detail{
         flex:1;
-        @include remCalc('padding-right',20px);
+        @include remCalc('padding-right',10px);
         .shopList-header{
-          padding:5px;
           display: flex;
           justify-content:space-between;
           align-items:center;
           h2{
             font-weight: bold;
             @include ellipsis;
-            @include remCalc('height',96px);
-            @include remCalc('line-height',96px);
-            @include remCalc("font-size",50px);
-            @include remCalc("max-width",650px);
+            @include remCalc('height',30px);
+            @include remCalc('line-height',30px);
+            @include remCalc("font-size",14px);
+            @include remCalc("max-width",160px);
             &.isbrand{
               position: relative;
-              @include remCalc('padding-left',80px);
+              @include remCalc('padding-left',30px);
               &:before{
                 content:"品牌";
                 display: inline-block;
                 left:0;
-                line-height: 1;
+                vertical-align: middle;
                 @extend .yellow-background;
+                @include remCalc('font-size',12px);
+                @include remCalc('line-height',12px);
                 @include tb-center(absolute);
-
               }
             }
           }
@@ -247,11 +247,14 @@
               display: inline-block;
               color:#c1c1c1;
               border: 1px solid #c1c1c1;
-              @include remCalc('height',48px);
-              @include remCalc('width',48px);
-              @include remCalc('line-height',48px);
-              @include remCalc('border-radius',10px);
-              @include remCalc('margin-right',5px);
+              text-align: center;
+              vertical-align: middle;
+              @include remCalc('border-width',1px);
+              @include remCalc('height',18px);
+              @include remCalc('width',18px);
+              @include remCalc('border-radius',5px);
+              @include remCalc('margin-right',2.5px);
+              @include remCalc('font-size',12px);
             }
           }
         }
@@ -260,34 +263,54 @@
           flex-direction:row;
           flex-wrap:nowrap;
           justify-content: space-between;
-          .el-rate{
-            @include remCalc('height',40px);
-            @include remCalc('line-height',40px);
-          }
           .el-rate__icon{
-            @include remCalc('font-size',30px);
+            @include remCalc('font-size',12px);
+            @include remCalc('margin-right',0);
           }
           .el-rate__text{
-            @include remCalc('font-size',40px);
-            @include remCalc('margin-right',20px);
-            vertical-align: top;
+            @include remCalc('font-size',12px);
+            vertical-align:middle;
           }
           >div{
             display: flex;
             >p{
-              @include remCalc('font-size',30px)
+              display: flex;
+              transform:scale(0.8);
+              align-items: start;
+              @include remCalc('font-size',12px);
             }
             .blue-border{
-              @include remCalc('margin-right',8px)
+              @include remCalc('margin-right',2px)
+            }
+            &:first-child{
+              display: flex;
+              transform: scale(0.9);
+              margin-left: -0.4rem;
+            }
+            &:last-child{
+              display: flex;
+              transform: scale(0.7);
+              margin-right: -0.8rem;
             }
           }
         }
         .shop-price{
           display: flex;
           justify-content:space-between;
-          @include remCalc('margin-top',20px);
           >div,>div span{
-            @include remCalc('font-size',30px);
+            @include remCalc('font-size',12px);
+          }
+          >div{
+            &:first-child{
+              display: flex;
+              transform: scale(0.7);
+              margin-left: -1rem;
+            }
+            &:last-child{
+              display: flex;
+              transform: scale(0.7);
+              margin-right: -0.8rem;
+            }
           }
         }
       }

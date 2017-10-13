@@ -143,6 +143,7 @@
       this.loadLocation();
       this.loadHotCity();
       this.loadAllCity();
+      alert(document.documentElement.clientWidth);
     },
     components: {
       'search-Address': SearchAddress,
@@ -153,12 +154,12 @@
   @import "../../assets/css/common/tool";
   @import "../../assets/css/common/responsive";
   .allCity{
-    @include remCalc('margin-top',20px);
+    @include remCalc('margin-top',10px);
     .title{
       border-top: 1px solid #e5e5e5;
       border-bottom: 1px solid #e5e5e5;
-      @include remCalc('padding',10px,20px);
-      @include remCalc('font-size',45px);
+      @include remCalc('padding',5px,10px);
+      @include remCalc('font-size',16px);
     }
     ul{
       @include clear;
@@ -173,8 +174,8 @@
         text-align: center;
         border-right:1px solid #e5e5e5;
         border-bottom:1px solid #e5e5e5;
-        @include remCalc('padding',30px,0px);
-        @include remCalc('font-size',36px);
+        @include remCalc('padding',8px,0px);
+        @include remCalc('font-size',12px);
         @include ellipsis;
         &:nth-child(5n){
           border-right:none;

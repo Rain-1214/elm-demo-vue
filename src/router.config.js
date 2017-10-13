@@ -5,6 +5,7 @@ import User from './page/user/User.vue';
 import Login from './page/user/Login.vue';
 import Register from './page/user/Register.vue';
 import Address from './page/user/children/address.vue';
+import ForgetPassword from './page/user/forgetPassword.vue';
 
 export default{
   mode: 'history',
@@ -14,8 +15,9 @@ export default{
     { path: '/home', component: Home },
     { path: '/shop', component: Shop },
     { path: '/user', component: User },
+    { path: '/user/address', component: Address },
     { path: '/login', component: Login },
     { path: '/register', component: Register },
-    { path: '/user/address', component: Address },
+    { path: '/forgetPassword', component: ForgetPassword },
   ],
 };

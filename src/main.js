@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import MintUI from 'mint-ui';
 import 'mint-ui/lib/style.css';
 import 'animate.css/animate.css';
+import './assets/js/rem';
 
 import App from './App.vue';
 import routerConfig from './router.config';
@@ -11,7 +12,6 @@ import store from './store';
 
 
 import './element-ui';
-import './assets/js/rem';
 import './assets/css/common.scss';
 
 

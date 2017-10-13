@@ -11,7 +11,7 @@ a,p,ul,li,dd,dt,dl,span,h1,h2,h3,h4,h5,h6,p,div{
   font-family: "Microsoft YaHei","微软雅黑","Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB",Arial,sans-serif;
   list-style-type: none;
   font-weight: normal;
-  @include remCalc('font-size',40px)
+  @include remCalc('font-size',12px)
 }
 
 input{
@@ -21,75 +21,59 @@ input{
 *, *:after, *:before { box-sizing: border-box; }
 
 h1,.h1{
-  @include remCalc('font-size',40px);
+  @include remCalc('font-size',20px);
 }
 h2,.h2{
-  @include remCalc('font-size',36px);
+  @include remCalc('font-size',18px);
 }
 h3,.h3{
-  @include remCalc('font-size',32px);
+  @include remCalc('font-size',16px);
 }
 h4,.h4{
-  @include remCalc('font-size',26px);
+  @include remCalc('font-size',13px);
 }
 h5,.h5{
-  @include remCalc('font-size',24px);
+  @include remCalc('font-size',12px);
 }
-
-.mint-header{
-  @include remCalc-imp('height',120px);
-  .mint-header-title{
-    @include remCalc('font-size',50px);
-  } 
-}
-
 .mint-cell{
-  @include remCalc-imp('height',120px);
-
-  .mint-cell-wrapper{
-    @include remCalc('font-size',32px);
-    @include remCalc-imp('height',120px);
-  }
-  .mint-cell-label{
-    @include remCalc('font-size',24px);
-  }
+  @include remCalc('min-height',40px);
 }
 
 .blue-border{
   border:1px solid $blue;
   color: $blue;
-  @include remCalc('border-radius',3px);
-  @include remCalc('padding',4px);
-  @include remCalc('font-size',30px)
+  @include remCalc('border-radius',1px);
+  @include remCalc('padding',2px);
+  @include remCalc('font-size',12px)
 }
 .blue-background{
   background: $blue;
   color: #fff;
-  @include remCalc('border-radius',3px);
-  @include remCalc('font-size',30px)
-  @include remCalc('padding',4px);
+  @include remCalc('border-radius',1px);
+  @include remCalc('font-size',12px);
+  @include remCalc('padding',2px);
 }
 .green-background{
   background: $green;
   color: #fff;
-  @include remCalc('border-radius',3px);
-  @include remCalc('font-size',30px)
-  @include remCalc('padding',4px);
+  @include remCalc('border-radius',1px);
+  @include remCalc('font-size',12px);
+  @include remCalc('padding',2px);
 }
 
 .yellow-background{
   background: $yellow;
   color: #333;
-  @include remCalc('border-radius',3px);
-  @include remCalc('font-size',30px)
-  @include remCalc('padding',4px);
+  @include remCalc('border-radius',1px);
+  @include remCalc('font-size',12px);
+  @include remCalc('padding',2px);
 }
 .yellow-border{
   border:1px solid $yellow;
   color: $yellow;
-  @include remCalc('border-radius',3px);
-  @include remCalc('padding',4px);
-  @include remCalc('font-size',30px)
+  @include remCalc('border-radius',1px);
+  @include remCalc('padding',2px);
+  @include remCalc('font-size',12px)
 }
 
 .text-center{
@@ -103,10 +87,4 @@ h5,.h5{
 }
 .lightgray{
   color: #ddd
-}
-.big-font{
-  max-width: 90%;
-  span{
-    @include remCalc-imp('font-size',50px);
-  }
 }

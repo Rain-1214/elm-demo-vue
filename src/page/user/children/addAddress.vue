@@ -6,7 +6,7 @@
       </section>
     </mt-header>
     <article>
-      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item prop="userName" label="姓名" >
           <el-input v-model="form.userName" placeholder="姓名"></el-input>
         </el-form-item>
@@ -187,45 +187,24 @@
 
   #addAddress{
     article{
-      @include remCalc('padding',40px,20px);
-      label{
-        @include remCalc('height',110px);
-        @include remCalc('line-height',66px);
-        @include remCalc('padding',22px,24px,22px,0);
-        @include remCalc('font-size',40px);
-        @include remCalc-imp('width',220px);
+      @include remCalc('padding',15px,10px);
+      .el-form-item__error{
+        @include remCalc('font-size',12px);
       }
-      input{
-        @include remCalc('height',110px);
-        @include remCalc('font-size',40px);
+      .tagBox,.el-input__inner{
+        @include remCalc('height',36px);
+        @include remCalc('line-height',22px);
       }
       .tagBox{
         display: inline-block;
         border: 1px solid #ccc;
         color: #ccc;
-        @include remCalc('border-radius',10px);
-        @include remCalc('padding',15px,25px);
-        @include remCalc('margin-right',20px);
-        @include remCalc('height',110px);
-        @include remCalc('line-height',80px);
+        @include remCalc('border-radius',5px);
+        @include remCalc('padding',7px,12px);
+        @include remCalc('margin-right',10px);
         &.active{
           border-color:$blue;
           color: $blue;
-        }
-      }
-      .el-form-item{
-        @include remCalc('margin-bottom',50px);
-      }
-      .el-form-item__error{
-        @include remCalc('font-size',32px);
-      }
-      .el-form-item__content{
-        @include remCalc-imp('margin-left',220px);
-      }
-      .el-button{
-        @include remCalc('padding',30px,40px);
-        span{
-          @include remCalc('font-size',50px);
         }
       }
     }

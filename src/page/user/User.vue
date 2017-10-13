@@ -167,13 +167,13 @@
       display: flex;
       flex-direction:row;
       flex-wrap:nowrap;
-      @include remCalc('padding',60px);	    
+      @include remCalc('padding',10px);	    
       .header-img{
         background:#fff;
         border-radius: 50%;
         overflow: hidden;
-        @include remCalc('width',200px);
-        @include remCalc('height',200px);
+        @include remCalc('width',80px);
+        @include remCalc('height',80px);
         svg{
           width: 100%;
           height: 100%;
@@ -185,12 +185,12 @@
       }
       .user-info{
         .center{
-          @include remCalc('padding-left',80px);
-          @include remCalc('padding-top',20px);
+          @include remCalc('padding-left',10px);
+          @include remCalc('padding-top',15px);
           h1{
             font-weight: bold;
             color: #fff;
-            @include remCalc('font-size',80px);
+            @include remCalc('font-size',20px);
           }									
           h2{
             color: #fff;
@@ -198,10 +198,10 @@
               margin-right: 5px;
               position: relative;
               top: 5px;
-              @include remCalc('width',30px);
-              @include remCalc('height',50px);
+              @include remCalc('width',12px);
+              @include remCalc('height',18px);
             }
-            @include remCalc('font-size',50px);
+            @include remCalc('font-size',14px);
           }
         }
       }
@@ -210,28 +210,25 @@
       display: flex;
       flex-direction:row;
       flex-wrap:nowrap;
-      @include remCalc('padding',30px,0);
+      @include remCalc('padding',5px,0);
       >div{
         width: 50%;
         svg{
           display: block;
           margin: 0 auto;
-          @include remCalc('width',100px);
-          @include remCalc('height',100px);
+          @include remCalc('width',30px);
+          @include remCalc('height',30px);
         }
         h2{
           text-align: center;
-          @include remCalc('font-size',50px);
-          @include remCalc('margin-top',15px);
+          @include remCalc('font-size',14px);
+          @include remCalc('margin-top',5px);
         }
       }
     }
     .list{
       .mint-cell-wrapper{
         background:none;
-      }
-      .mint-cell-text{
-        @include remCalc('font-size',50px);
       }
       .mint-cell{
         border-bottom: 1px solid #ccc;
@@ -240,18 +237,12 @@
           background:none;
         }
       }
-      .mint-cell-allow-right::after{
-        @include remCalc('border-width',10px);
-        @include remCalc('width',30px);
-        @include remCalc('height',30px);
-        border-bottom: none !important;
-        border-left: none !important;
-      }
+     
       svg{
         position: relative;
-        @include remCalc('top',13px);
-        @include remCalc('width',50px);
-        @include remCalc('height',50px);
+        @include remCalc('top',5px);
+        @include remCalc('width',16px);
+        @include remCalc('height',16px);
       }
     }
     .mint-popup{

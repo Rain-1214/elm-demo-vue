@@ -14,7 +14,7 @@
     :key="v.name">
       <mt-cell :title="v.name" is-link :label="v.city + ',' + v.district" :key="v.name" @click.native="toHome(v)"></mt-cell>		
     </div>
-    <div class="list" v-show="addressArray.length === 0 && searchNum !== 0">
+    <div v-show="addressArray.length === 0 && searchNum !== 0">
       <mt-cell title="没有找到相关地址，请尝试更换关键词"></mt-cell>		
     </div>
   </div>
@@ -85,16 +85,19 @@
 
   .searchInput{
     background: $blue;
-    padding:15px 0;
+    @include remCalc('padding',10px,0);
     input{
       width: 90%;
       display: block;
       margin: 0 auto;
       border:none;
       outline: none;
-      @include remCalc('height',80px);
-      @include remCalc('border-radius',40px);
-      @include remCalc('padding',0px,30px);
+      @include remCalc('height',30px);
+      @include remCalc('border-radius',20px);
+      @include remCalc('padding',0px,15px);
     }
+  }
+  .mint-cell:last-child{
+    background: none !important;
   }
 </style>

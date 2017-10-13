@@ -40,8 +40,7 @@
 </template>
 <script>
   import { mapGetters } from 'vuex';
-  import { MessageBox } from 'element-ui';
-  import { Toast } from 'mint-ui';
+  import { Toast, MessageBox } from 'mint-ui';
   import { deleteAddress } from '../../../api/user';
   import addAddress from './addAddress.vue';
 
@@ -138,17 +137,17 @@
       section{
         background:#fff;
         position: relative;
-        @include remCalc('padding',30px);
+        @include remCalc('padding',10px);
         @include remCalc('margin-bottom',5px);
         h1{
           @include remCalc('margin-bottom',5px);
           .name{
             font-weight: bold;
-            @include remCalc('font-size',56px);
+            @include remCalc('font-size',16px);
           }
           .sex{
             color: #bdbcbc;
-            @include remCalc('font-size',48px);
+            @include remCalc('font-size',14px);
           }
           .phoneNumber{
             color: #bdbcbc;
@@ -160,26 +159,26 @@
             max-width: 90%;
             @include ellipsis;
             &.hastag{
-              @include remCalc('padding-left',85px);
+              @include remCalc('padding-left',35px);
             }
           }
           .tag{
             position: absolute;
             background:red;
             color: #fff;
-            @include remCalc('font-size',30px);
-            @include remCalc('padding',5px);
+            @include remCalc('font-size',12px);
+            @include remCalc('padding',2px);
           }
         }
         i{
           color: #bdbcbc;
           position: absolute;
           right: 10px;
-          @include remCalc('font-size',55px);
+          @include remCalc('font-size',18px);
           @include tb-center(absolute);
           &.el-icon-delete2{
             color: red;
-            @include remCalc('right',100px);
+            @include remCalc('right',30px);
           }
         }
       }
@@ -190,13 +189,13 @@
       left: 0;
       width: 100%;
       border-top: 1px solid #ccc;
-      @include remCalc('height',200px);
+      @include remCalc('height',50px);
       p{
         display: block;
         width: 100%;
         text-align: center;
         color: $blue;
-        @include remCalc('font-size',60px);
+        @include remCalc('font-size',20px);
         @include tb-center(absolute);
       }
     }

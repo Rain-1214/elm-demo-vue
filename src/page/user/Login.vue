@@ -35,6 +35,7 @@
        </section>
        <section class="submit">
          <el-button type="success" @click.native="login()">提交</el-button>
+         <router-link to="/forgetPassword">忘记密码</router-link>
          <router-link to="/register">立即注册</router-link>
        </section>
      </article>
@@ -111,22 +112,19 @@
   #login{
     .el-input__inner{
       border: none;
-      @include remCalc('height',140px);
-      @include remCalc('font-size',52px);
-      @include remCalc('padding-left',30px);
+      @include remCalc('padding-left',10px);
     }
     article{
-      @include remCalc('padding',20px,0);
+      @include remCalc('padding',10px,0);
       section{
         border-bottom: 1px solid #ccc;
       }
       .code{
         display: flex;
         .input{
-          flex:1;
         }
         .code-img{
-          @include remCalc('width',300px);
+          @include remCalc('width',120px);
           position: relative;
           img{
             width: 80%;
@@ -135,10 +133,9 @@
           }
         }
         .change{
-          @include remCalc('width',230px);
-          @include remCalc('padding-top',25px);
+          @include remCalc('width',130px);
           p{
-            @include remCalc('padding-left',25px);
+            @include remCalc('padding-left',10px);
           }
         }
         .tb-center{
@@ -147,13 +144,10 @@
           flex-wrap:nowrap;
           align-items:center;
 
-          .mint-switch{
-            zoom:2;
-          }
         }
       }
       .tips{
-        @include remCalc('padding',20,30);
+        @include remCalc('padding',10);
         border-bottom: none;
         p{
           line-height: 1.5;
@@ -163,18 +157,19 @@
       .submit{
         width: 100%;
         border-bottom: none;
-        @include remCalc('padding',30);
+        @include remCalc('padding',10);
         @include clear;
         button{
           width: 100%;
-          @include remCalc('padding',30px,0);
+          @include remCalc('padding',10px,0);
           span{
-            @include remCalc('font-size',52px);
+            @include remCalc('font-size',16px);
           }
         }
         a{
           float: right;
           @include remCalc('margin-top',10px);
+          @include remCalc('margin-right',10px);
         }
       }
     }

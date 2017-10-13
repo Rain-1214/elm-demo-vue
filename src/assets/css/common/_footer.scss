@@ -2,16 +2,16 @@
 @import './tool';
 
 .mint-tab-item{
-	@include remCalc-imp('padding',18px,0);
+	@include remCalc-imp('padding',8px,0);
 	&.active{
 		color:$blue;
 	}
 	.mint-tab-item-icon{
-		@include remCalc('width',60px);
-		@include remCalc('height',60px);
-		@include remCalc('margin-bottom',20px);
+		@include remCalc('width',15px);
+		@include remCalc('height',15px);
+		@include remCalc('margin-bottom',5px);
 	}
 	.mint-tab-item-label{
-		@include remCalc('font-size',32px);
+		@include remCalc('font-size',12px);
 	}
 }
