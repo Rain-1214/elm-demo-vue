@@ -13,3 +13,9 @@ export const getUserAddress = (data) => axios.post('/ElmPro/User/findAddressByUs
 export const deleteAddress = (data) => axios.post('/ElmPro/User/deleteAddressById.do', data); // 删除地址 
 
 export const editAddress = (data) => axios.post('/ElmPro/User/editAddressById.do', data); // 修改地址
+
+export const getUserSafetyQuestion = (data) => axios.post('/ElmPro/User/getUserSafetyQuestion.do', data); // 获取安全问题
+
+export const checkUserSafetyQuestion = (data) => axios.post('/ElmPro/User/checkUserSafetyQuestion.do', data); // 对比安全问题答案
+
+export const setNewPassword = (data) => axios.post('/ElmPro/User/setNewPassword.do', data);

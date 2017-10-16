@@ -131,17 +131,17 @@
             {{
               shoppingCartProducts[currentShop.id]?
               shoppingCartProducts[currentShop.id].totalPrice < currentShop.startCost?
-              `还差${shoppingCartProducts[currentShop.id].totalPrice - currentShop.startCost}元起送`:
+              `还差${currentShop.startCost - shoppingCartProducts[currentShop.id].totalPrice}元起送`:
               `去结算`:
               `还差${currentShop.startCost}元起送`
             }}
           </button>
         </div>
         <div class="shoppingcart-prodcut-wrapper" 
-             v-show="shoppingCartDetailShow"
-             @click="shoppingCartDetailShow = !shoppingCartDetailShow">
+              v-show="shoppingCartDetailShow"
+              @click="shoppingCartDetailShow = !shoppingCartDetailShow">
           <div class="shoppingcart-prodcut-list"
-               @click.stop="/* eslint-disable */">
+                @click.stop="">
             <header>
               <h1>购物车</h1>	
               <span @click ="removeAllProducts()">
@@ -515,7 +515,7 @@
       const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
       const headerHeight = document.querySelector('.shop-header').offsetHeight;
       const tagHeight = document.querySelector('.el-tabs__header').offsetHeight;
-      this.computedHeight = `${(windowHeight - tagHeight) - 100}px`;
+      this.computedHeight = `${(windowHeight - tagHeight) - 40}px`;
       this.shopHeaderHeight = headerHeight;
       // 记录当前店铺中有多少商品在购物车当中
       let tempNumber = 0;
@@ -552,26 +552,26 @@
     }
     .foodtype{
       min-width: 80vw;
-      @include remCalc('padding',40px);
+      @include remCalc('padding',10px);
       .close{
         position: absolute;
-        @include remCalc('right',31px);
-        @include remCalc('top',30px);
+        @include remCalc('right',10px);
+        @include remCalc('top',10px);
       }
       h1{
-        @include remCalc('font-size',60px);
+        @include remCalc('font-size',20px);
       }
       h2{
-        @include remCalc('font-size',50px);
-        margin-bottom: 20px;
-        margin-top: 20px;
+        @include remCalc('font-size',14px);
+        margin-bottom: 5px;
+        margin-top: 5px;
       }
       ul{
         display: flex;
         li{
-          @include remCalc('padding',15px,30px);
-          @include remCalc('border-radius',50px);
-          @include remCalc('margin-right',20px);
+          @include remCalc('padding',5px,10px);
+          @include remCalc('border-radius',15px);
+          @include remCalc('margin-right',5px);
           &.active{
             color:$blue;
             border: 1px solid $blue;
@@ -586,24 +586,24 @@
         justify-content: space-between;
         >span{
           color:#f60;
-          @include remCalc('font-size',60px);
+          @include remCalc('font-size',15px);
 
         }
         button{
-          @include remCalc('padding',30px)
+          @include remCalc('padding',10px)
         }
       }
     }		
     .shop-header{
       background: $blue;
       overflow: hidden;
-      @include remCalc('height',407px);
-      @include remCalc('padding',20px);
+      @include remCalc('height',145px);
+      @include remCalc('padding',10px);
       .back{
         color: #fff;
-        @include remCalc('margin-bottom',20px);
+        @include remCalc('margin-bottom',10px);
         i{
-          @include remCalc('font-size',48px);
+          @include remCalc('font-size',14px);
         }
       }
       .shop-info{
@@ -611,34 +611,35 @@
         flex-direction:row;
         flex-wrap:nowrap;
         .img{
-          @include remCalc('width',240px);
+          flex: 1;
+          flex: 0 0 20%;
           img{
-            width: 100%;
+            max-width: 100%;
           }
         }
         .txt{
-          display: flex;
+          flex: 1;
+          flex: 0 0 80%;
           flex-direction:column;
-          flex:1;
           color: #fff;
           position: relative;
-          @include remCalc('padding-left',40px);
+          @include remCalc('padding-left',5px);
           h1,p{
             display: block;
           }
           h1{
             font-weight: bold;
-            @include remCalc('font-size',52px);
-            @include remCalc('margin-bottom',20px);
+            @include remCalc('font-size',16px);
+            @include remCalc('margin-bottom',10px);
             @include ellipsis;
           }
           p{
-            @include remCalc('font-size',30px);
-            @include remCalc('margin',10px,0);
-            @include ellipsis;
+            max-width: 100%;
+            @include remCalc('font-size',12px);
+            @include remCalc('margin',5px,0);
           }
           i{
-            @include remCalc('right',20px);
+            @include remCalc('right',0px);
             @include tb-center(absolute);
           }
         }
@@ -666,17 +667,17 @@
           height: auto;
           line-height: 1;
           text-align: center;
-          @include remCalc('font-size',42px);
-          @include remCalc('padding',30px,0);
+          @include remCalc('font-size',16px);
+          @include remCalc('padding',10px,0);
           &.is-active{
             &:after{
               content: "";
               display: block;
               background: $blue;
               @include lr-center-transform(absolute);
-              @include remCalc('bottom',15px);
-              @include remCalc('width',100px);
-              @include remCalc('height',6px);
+              @include remCalc('bottom',2px);
+              @include remCalc('width',40px);
+              @include remCalc('height',2px);
             }
           }
         }
@@ -690,16 +691,15 @@
         height: 100%;
         overflow-y: auto;
         background: #ededed;
-        @include remCalc('width',240px);
-
+        @include remCalc('width',80px);
         ul{
           li{
-            @include remCalc('font-size',38px);
-            @include remCalc('padding',40px,30px);
-            border-left: 8px solid #ededed;
+            @include remCalc('font-size',14px);
+            @include remCalc('padding',10px,5px);
+            border-left: 4px solid #ededed;
             &.active{
               background: #fff;
-              border-left: 8px solid $blue;
+              border-left: 4px solid $blue;
             }
           }
         }
@@ -708,46 +708,50 @@
         flex:1;
         height: 100%;
         overflow-y: auto;
-        @include remCalc('padding-bottom',160px);
+        @include remCalc('padding-bottom',50px);
         >ul{
           >li{
             >p{
               background: #f1f1f1;
-              @include remCalc('padding',26px,42px);
-              @include remCalc('font-size',36px);
+              @include remCalc('padding',5px);
+              @include remCalc('font-size',14px);
               span{
                 color: #999;
-                @include remCalc('font-size',28px);
+                @include remCalc('font-size',12px);
               }
             }
             >ul{
               >li{
                 display: flex;
+                padding:5px;
                 .food-img{
                   flex:2;
-                  @include remCalc('padding',30px)
+                  @include remCalc('padding',5px);
+                  img{
+                    max-width: 100%;
+                  }
                 }
                 .food-detail{
-                  flex:8;
-                  @include remCalc('padding',30px,15px);
+                  flex:6;
+                  @include remCalc('padding',5px);
                   header{
                     font-weight: bold;
-                    @include remCalc('font-size',48px);
+                    @include remCalc('font-size',16px);
                     span{
                       float: right;
-                      @include remCalc('padding-left',30px);
-                      @include remCalc('padding-right',30px);
-                      @include remCalc('border-radius',30px);
+                      @include remCalc('padding-left',15px);
+                      @include remCalc('padding-right',15px);
+                      @include remCalc('border-radius',15px);
                     }
                   }
                   section{
-                    margin:10px 0;
+                    margin:2px 0;
                     &.gray{
                       color: #666;
                     }
                     >span{
                       color: #f60;
-                      @include remCalc('font-size',42px);
+                      @include remCalc('font-size',12px);
                     }
                   }
                   .price{
@@ -761,10 +765,10 @@
                       span{
                         text-align: center;
                         overflow: hidden;
-                        @include remCalc('line-height',58px);
-                        @include remCalc('margin-left',25px);
-                        @include remCalc('margin-right',25px);
-                        @include remCalc('font-size',42px);
+                        @include remCalc('line-height',20px);
+                        @include remCalc('margin-left',5px);
+                        @include remCalc('margin-right',5px);
+                        @include remCalc('font-size',12px);
                         @include remCalc('min-width',40px);
                         @include remCalc('max-width',100px);
                       }
@@ -773,23 +777,23 @@
                         border-radius: 50%;				
                         border:1px solid $blue;
                         color: $blue;			
-                        @include remCalc('width',58px);
-                        @include remCalc('height',58px);
+                        @include remCalc('width',20px);
+                        @include remCalc('height',20px);
                       }
                       .plus{
                         background: $blue;
                         border-radius: 50%;
                         color: #fff;
                         border:none;
-                        @include remCalc('width',58px);
-                        @include remCalc('height',58px);	
+                        @include remCalc('width',20px);
+                        @include remCalc('height',20px);	
                       }
                       .blue-background{
                         border:none;
                         outline: none;
-                        @include remCalc('padding-left',30px);
-                        @include remCalc('padding-right',30px);
-                        @include remCalc('border-radius',30px);
+                        @include remCalc('padding-left',15px);
+                        @include remCalc('padding-right',15px);
+                        @include remCalc('border-radius',15px);
                       }
                     }
                   }
@@ -807,19 +811,19 @@
       width: 100%;
       background: #3d3d3f;
       z-index: 99;
-      @include remCalc('height',160px);
-      @include remCalc('padding-left',280px);
+      @include remCalc('height',50px);
+      @include remCalc('padding-left',80px);
       .shoppingcart-icon{
         position: absolute;
-        @include remCalc('left',50px);
-        @include remCalc('top',-50px);
+        @include remCalc('left',10px);
+        @include remCalc('top',-10px);
         div{
           display: block;
           background: #4a4a4a;
           border-radius:50%;
-          @include remCalc('width',160px);
-          @include remCalc('height',160px);
-          @include remCalc('padding',20px);
+          @include remCalc('width',50px);
+          @include remCalc('height',50px);
+          @include remCalc('padding',6px);
           span{
             display: block;
             width:100%;
@@ -838,13 +842,8 @@
             }
           }
           .el-badge__content{
-            @include remCalc('font-size',30px);
-            @include remCalc('line-height',45px);
-            @include remCalc('padding',0,12px);
-            @include remCalc('height',45px);
-            @include remCalc('right',60px);
-            @include remCalc('top',20px);
-            @include remCalc('border-radius',20px);
+            @include remCalc('right',20px);
+            @include remCalc('top',10px);
           }
         }
       }
@@ -863,8 +862,8 @@
           }
         }
         >button{
-          @include remCalc('width',240px);
-          @include remCalc('height',160px);
+          @include remCalc('width',80px);
+          @include remCalc('height',50px);
           outline: none;
           border:none;
           color: #fff;
@@ -881,70 +880,72 @@
         width: 100vw;
         background:rgba(0,0,0,0.4);
         position: fixed;
-        z-index: -1;
-        top: 0;
+        bottom: 0;
         left: 0;
+        z-index: -1;
         .shoppingcart-prodcut-list{
           position: absolute;
           left: 0;
           background: #fff;
           width:100%;
           z-index: -1;
-          @include remCalc('bottom',160px);
+          @include remCalc('bottom',50px);
           header{
             background: #eceff1;
             display: flex;
             justify-content:space-between;
-            @include remCalc('padding',15px,30px);
+            @include remCalc('padding',5px,10px);
             h1{
               border-left: 6px solid $blue;
-              @include remCalc('font-size',48px);
-              @include remCalc('padding-left',30px);
+              @include remCalc('font-size',18px);
+              @include remCalc('padding-left',10px);
             }
           }
           article{
-            @include remCalc('padding',30px,30px,80px,30px);
+            @include remCalc('padding',10px,10px,20px,10px);
             ul{
               li{
                 display: flex;
                 justify-content:space-between;
                 .name{
                   max-width: 60%;
-                  @include remCalc('font-size',52px);
-                  @include remCalc('margin-bottom',20px);
+                  @include remCalc('font-size',14px);
+                  @include remCalc('margin-bottom',5px);
                   @include ellipsis;
                 }
                 div{
                   >span{
                     color:$orange;
+                    vertical-align: middle;
                     span{
                       text-align: center;
                       overflow: hidden;
-                      @include remCalc('line-height',58px);
-                      @include remCalc('margin-left',25px);
-                      @include remCalc('margin-right',25px);
-                      @include remCalc('font-size',42px);
-                      @include remCalc('min-width',40px);
-                      @include remCalc('max-width',100px);
+                      @include remCalc('line-height',20px);
+                      @include remCalc('margin-left',5px);
+                      @include remCalc('margin-right',5px);
+                      @include remCalc('font-size',14px);
+                      @include remCalc('min-width',20px);
+                      @include remCalc('max-width',40px);
                     }
                     .minus{
                       background: #fff;
                       border-radius: 50%;				
                       border:1px solid $blue;
                       color: $blue;			
-                      @include remCalc('width',58px);
-                      @include remCalc('height',58px);
+                      @include remCalc('width',20px);
+                      @include remCalc('height',20px);
                     }
                     .num{
                       color:#333;
+                      @include remCalc('width',20px);
                     }
                     .plus{
                       background: $blue;
                       border-radius: 50%;
                       color: #fff;
                       border:none;
-                      @include remCalc('width',58px);
-                      @include remCalc('height',58px);	
+                      @include remCalc('width',20px);
+                      @include remCalc('height',20px);	
                     }
                   }
                 }
@@ -957,8 +958,8 @@
     .blue-ball{
       background:$blue;
       border-radius: 50%;
-      @include remCalc('width',50px);
-      @include remCalc('height',50px);
+      @include remCalc('width',10px);
+      @include remCalc('height',10px);
       position: fixed;
       z-index: 99;
     }

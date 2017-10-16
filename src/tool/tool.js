@@ -153,7 +153,7 @@ export const floatComputeSuborDiv = (sign, firstvalue, ...valueArray) => valueAr
       return ((sum.allInteger - currentValue.allInteger) / sum.times);
     }
       return sum.times > currentValue.times ? ((sum.allInteger - (currentValue.allInteger * (sum.times / currentValue.times))) / sum.times)
-        : ((currentValue.allInteger - (sum.allInteger * (currentValue.times / sum.times))) / currentValue.times);
+        : (((sum.allInteger * (currentValue.times / sum.times)) - currentValue.allInteger) / currentValue.times);
     default : return (sum.allInteger / currentValue.allInteger) * (sum.times / currentValue.times);
   }
 }, firstvalue);

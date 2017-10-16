@@ -143,7 +143,6 @@
       this.loadLocation();
       this.loadHotCity();
       this.loadAllCity();
-      alert(document.documentElement.clientWidth);
     },
     components: {
       'search-Address': SearchAddress,

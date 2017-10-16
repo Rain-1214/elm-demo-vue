@@ -119,30 +119,29 @@
     #baiduMap{
       width: 100%;
       height: 100%;
-      zoom: 1.5;
     }
     .mapSearch{
       width: 90%;
       z-index: 9999;
       left: 0;
       @include lr-center-transform(fixed);
-      @include remCalc('top',180px);
+      @include remCalc('top',60px);
       input{
         width: 100%;
         border:none;
-        @include remCalc('border-radius',100px);
-        @include remCalc('height',100px);
-        @include remCalc('padding',0,40px);
+        @include remCalc('border-radius',40px);
+        @include remCalc('height',40px);
+        @include remCalc('padding',0,20px);
       }
       ul{
         display: block;
         width: 100%;
         background: #fff;
-        @include remCalc('height',1209px);
+        @include remCalc('height',400px);
         overflow-y: scroll;
         li{
           border-bottom:1px solid #ccc;
-          @include remCalc('padding',20px,40px);
+          @include remCalc('padding',5px,10px);
           p{
             color: #ccc;
           }
@@ -156,13 +155,13 @@
       z-index: 9999;
       left: 0;
       @include lr-center-transform(fixed);
-      @include remCalc('bottom',180px);
+      @include remCalc('bottom',40px);
       button{
-        @include remCalc('padding',25px,85px);
+        @include remCalc('padding',10px,40px);
         @include remCalc('border-radius',102px);
         @include lr-center-transform(relative);
         span{
-          @include remCalc('font-size',52px);
+          @include remCalc('font-size',20px);
         }
       }
     }
