@@ -82,20 +82,18 @@
               });
               this.$store.commit(SAVE_CURRENT_USER, res.data.data);
               this.$router.push('/user');
-              this.ajaxFlag = true;
             } else {
               Toast({
                 message: res.data.message,
                 duration: 3000,
                 className: 'big-font',
               });
-              if (res.data.message === '验证码错误') {
-                this.change();
-              }
-              this.ajaxFlag = true;
+              this.change();
             }
           } catch (e) {
             console.log(e);
+          } finally {
+            this.ajaxFlag = true;
           }
         }
       },

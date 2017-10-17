@@ -62,7 +62,7 @@
       showAddressOnMap(v) {
         this.map.clearOverlays();
         const point = new BMap.Point(v.location.lng, v.location.lat);
-        this.map.centerAndZoom(point, 22);
+        this.map.centerAndZoom(point, 20);
         const marker = new BMap.Marker(point);
         const addressText = v.name;
         const label = new BMap.Label(addressText);
@@ -137,7 +137,7 @@
         display: block;
         width: 100%;
         background: #fff;
-        @include remCalc('height',400px);
+        @include remCalc('height',350px);
         overflow-y: scroll;
         li{
           border-bottom:1px solid #ccc;

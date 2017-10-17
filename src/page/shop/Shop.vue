@@ -121,6 +121,7 @@
             </div>
           </div>
           <button
+            @click="toComfirmOrder()"
             :class="{
               'green':shoppingCartProducts[currentShop.id]?
               shoppingCartProducts[currentShop.id].totalPrice >= currentShop.startCost:false,
@@ -131,7 +132,7 @@
             {{
               shoppingCartProducts[currentShop.id]?
               shoppingCartProducts[currentShop.id].totalPrice < currentShop.startCost?
-              `还差${currentShop.startCost - shoppingCartProducts[currentShop.id].totalPrice}元起送`:
+              `还差${ floatCompute(currentShop.startCost, shoppingCartProducts[currentShop.id].totalPrice)}元起送`:
               `去结算`:
               `还差${currentShop.startCost}元起送`
             }}
@@ -209,7 +210,7 @@
   import { Toast } from 'mint-ui';
   import * as type from '../../store/mutation-types';
   import { getShopFoodTypeList } from '../../api/shop';
-  import { floatComputeAddorMul } from '../../tool/tool';
+  import { floatComputeAddorMul, floatComputeSuborDiv } from '../../tool/tool';
 
   export default{
     name: 'shop',
@@ -243,11 +244,14 @@
       };
     },
     computed: {
-      ...mapGetters(['shoppingCartProducts', 'currentShop']),
+      ...mapGetters(['shoppingCartProducts', 'currentShop', 'currentUser']),
     },
     methods: {
       handleClick(tab, event) {
         console.log(tab, event);
+      },
+      floatCompute(value, otherValue) {
+        return floatComputeSuborDiv('-', value, otherValue);
       },
       productScroll: throttle(function (event) {
         // 判断是否需要隐藏头部
@@ -470,6 +474,22 @@
         const shopId = this.currentShop.id;
         this.$store.commit(type.REMOVE_ALL_PRODUCTS, shopId);
       },
+      toComfirmOrder() {
+        const currentShopInshoppingCart = this.shoppingCartProducts[this.currentShop.id];
+        if (currentShopInshoppingCart && Object.prototype.hasOwnProperty.call(currentShopInshoppingCart, 'totalPrice')) {
+          if (currentShopInshoppingCart.totalPrice > this.currentShop.startCost) {
+            if (Object.prototype.hasOwnProperty.call(this.currentUser, 'id')) {
+              this.$router.push('/confirmOrder');
+            } else if (localStorage.getItem('User') !== '') {
+              const User = JSON.parse(localStorage.getItem('User'));
+              this.$store.commit(type.SAVE_CURRENT_USER, User);
+              this.$router.push('/confirmOrder');
+            } else {
+              Toast('您还没有登录,请先去登录');
+            }
+          }
+        }
+      },
     },
     async created() {
       // 初始化时 通过店铺ID获取店铺商品
@@ -630,13 +650,12 @@
           h1{
             font-weight: bold;
             @include remCalc('font-size',16px);
-            @include remCalc('margin-bottom',10px);
+            @include remCalc('margin-bottom',5px);
             @include ellipsis;
           }
           p{
-            max-width: 100%;
             @include remCalc('font-size',12px);
-            @include remCalc('margin',5px,0);
+            @include remCalc('margin',2px,0);
           }
           i{
             @include remCalc('right',0px);
@@ -902,7 +921,9 @@
             }
           }
           article{
+            overflow-y:scroll;
             @include remCalc('padding',10px,10px,20px,10px);
+            @include remCalc('max-height',220px);
             ul{
               li{
                 display: flex;

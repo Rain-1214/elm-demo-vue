@@ -91,7 +91,6 @@
         MessageBox.confirm('是否要删除当前地址?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
         }).then(async () => {
           const data = { addressId: address.id };
           try {
@@ -107,6 +106,8 @@
           } catch (error) {
             console.log(error);
           }
+        }).catch((e) => {
+          console.log(e);
         });
       },
     },
@@ -132,6 +133,11 @@
 
   #address{
     background:#f4f4f4;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     >article{
       overflow-y: scroll;
       section{
@@ -166,8 +172,10 @@
             position: absolute;
             background:red;
             color: #fff;
+            text-align: center;
             @include remCalc('font-size',12px);
-            @include remCalc('padding',2px);
+            @include remCalc('padding',0,2px);
+            @include remCalc('width',30px);
           }
         }
         i{

@@ -130,7 +130,6 @@ export const floatComputeAddorMul = (sign, ...valueArray) => valueArray.reduce((
   }
   sum = floatToInt(sum);
   currentValue = floatToInt(currentValue);
-  console.log(sum, currentValue);
   switch (sign) {
     case '+': if (sum.times === currentValue.times) {
       return ((sum.allInteger + currentValue.allInteger) / sum.times);
@@ -147,7 +146,6 @@ export const floatComputeSuborDiv = (sign, firstvalue, ...valueArray) => valueAr
   }
   sum = floatToInt(sum);
   currentValue = floatToInt(currentValue);
-  console.log(sum, currentValue);
   switch (sign) {
     case '-': if (sum.times === currentValue.times) {
       return ((sum.allInteger - currentValue.allInteger) / sum.times);

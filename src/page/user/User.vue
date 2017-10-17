@@ -104,11 +104,12 @@
       </mt-cell>
     </section>
     <my-footer :active="3"></my-footer>
+    <router-view></router-view>
   </div>
 </template>
 <script>
   import { mapGetters } from 'vuex';
-  import { Toast } from 'mint-ui';
+  import { Toast, MessageBox } from 'mint-ui';
   import Footer from '../components/footer.vue';
   import * as type from '../../store/mutation-types';
 
@@ -126,11 +127,17 @@
     },
     methods: {
       logout() {
-        this.$store.commit(type.REMOVE_CURRENT_USER);
-        Toast({
-          message: '退出成功',
-          duration: 1500,
-          className: 'big-font',
+        MessageBox.confirm('是否要退出登录?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(() => {
+          this.$store.commit(type.REMOVE_CURRENT_USER);
+          Toast({
+            message: '退出成功',
+            duration: 1500,
+          });
+        }).catch((e) => {
+          console.log(e);
         });
       },
       showAddress() {
