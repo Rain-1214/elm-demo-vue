@@ -16,16 +16,7 @@ export default{
     { path: '/', redirect: '/location' },
     { path: '/location', component: Location },
     { path: '/home', component: Home },
-    {
-      path: '/shop',
-      component: Shop,
-      children: [
-        {
-          path: 'selectAddress',
-          component: OrderSelectAddress,
-        },
-      ],
-    },
+    { path: '/shop', component: Shop },
     {
       path: '/user',
       component: User,
@@ -39,7 +30,23 @@ export default{
     { path: '/login', component: Login },
     { path: '/register', component: Register },
     { path: '/forgetPassword', component: ForgetPassword },
-    { path: '/confirmOrder', component: confirmOrder },
+    {
+      path: '/confirmOrder',
+      component: confirmOrder,
+      children: [
+        {
+          path: 'selectAddress',
+          component: OrderSelectAddress,
+          children: [
+            {
+              path: 'addAddress',
+              component: Address,
+            },
+          ],
+        },
+      ],
+    },
     { path: '/order', component: Order },
+    { path: '*', redirect: '/home' },
   ],
 };

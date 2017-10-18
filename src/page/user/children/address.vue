@@ -197,6 +197,7 @@
       left: 0;
       width: 100%;
       border-top: 1px solid #ccc;
+      background: #fff;
       @include remCalc('height',50px);
       p{
         display: block;

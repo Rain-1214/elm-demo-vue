@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <my-loading v-show="isLoading"></my-loading>
     <router-view></router-view>
     <svg-icon></svg-icon>
   </div>
@@ -9,14 +10,16 @@
 import { mapGetters } from 'vuex';
 import * as types from './store/mutation-types';
 import svg from './page/components/svg.vue';
+import Loading from './page/components/Loading.vue';
 
 export default {
   name: 'app',
   computed: {
-    ...mapGetters(['tempAddress']),
+    ...mapGetters(['tempAddress', 'isLoading']),
   },
   components: {
     svgIcon: svg,
+    myLoading: Loading,
   },
   created() {
     /* eslint-disable no-undef */

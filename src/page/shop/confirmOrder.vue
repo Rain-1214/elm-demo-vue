@@ -7,15 +7,31 @@
     </mt-header>
     <article>
       <section class="address">
-        <h2>
-          <router-link to='/shop/selectAddress'>
-            <svg>
-              <use xlink:href="#addressIcon"></use>
-            </svg>
-            请选择地址
+        <router-link to='/confirmOrder/selectAddress'>
+          <template v-if="!Object.prototype.hasOwnProperty.call(address, 'id')">
+            <h2>
+              <svg>
+                <use xlink:href="#addressIcon"></use>
+              </svg>
+              请选择地址
+              <i class="el-icon-arrow-right"></i>
+            </h2>
+          </template>
+          <template v-else>
+            <h4>
+              收货地址
+            </h4>
+            <p>
+              <span class="name">{{address.userName}}</span>
+              <span class="sex">{{address.sex === 1?"先生":address.sex === 2?"女士":"先生/女士"}}</span>
+              <span class="phoneNumber">{{address.phoneNumber}}</span>
+            </p>
+            <p>
+              {{address.addressName}} {{address.addressDetail}}
+            </p>
             <i class="el-icon-arrow-right"></i>
-          </router-link>
-        </h2>
+          </template>
+        </router-link>
       </section>
       <section class="arrived-time">
         <div>
@@ -85,11 +101,19 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-
+      address: {},
     };
   },
   computed: {
-    ...mapGetters(['currentShop', 'shoppingCartProducts']),
+    ...mapGetters(['currentShop', 'currentUser', 'shoppingCartProducts']),
+  },
+  watch: {
+    $route() {
+      const hasOwn = Object.prototype.hasOwnProperty;
+      if (hasOwn.call(this.$route.query, 'addressIndex')) {
+        this.address = { ...this.address, ...this.currentUser.address[this.$route.query.addressIndex] };
+      }
+    },
   },
   created() {
     const hasOwn = Object.prototype.hasOwnProperty;
@@ -107,8 +131,10 @@ export default {
     .address{
       border-bottom: 1px solid #ccc;
       @include remCalc('padding',5px);
+      position: relative;
       h2{
         position: relative;
+        color: $blue;
         @include remCalc('padding',20px,10px);
         svg{
           position: relative;
@@ -120,6 +146,24 @@ export default {
           @include remCalc('right',10px);
           @include tb-center(absolute);
         }
+      }
+      h4{
+        font-weight: bold;
+        color: #333;
+      }
+      p{
+        color: #333;
+        span.name{
+          @include remCalc('font-size',16px);
+          font-weight: bold;
+        }
+        .sex,.phoneNumber{
+          color: #333;
+        }
+      }
+      i{
+        right: 10px;
+        @include tb-center(absolute);
       }
     }
     .arrived-time{
@@ -156,6 +200,15 @@ export default {
         li{
           display: flex;
           justify-content: space-between;
+          div{
+            span{
+              &:last-child{
+                display: inline-block;
+                text-align: right;
+                @include remCalc('width',70px);
+              }
+            }
+          }
           &.orange{
             span{
               color: #f60;

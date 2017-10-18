@@ -308,10 +308,9 @@
           shop.appendChild(blueBall);
 
           // 定位结束位置
-          let endTop = document.documentElement.clientHeight || document.body.clientHeight;
+          const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
           const shoppingcartIcon = document.querySelector('.shoppingcart-icon');
-
-          endTop = endTop - shoppingcartIcon.offsetLeft - (shoppingcartIcon.offsetWidth / 2);
+          const endTop = windowHeight - shoppingcartIcon.offsetLeft - (shoppingcartIcon.offsetWidth / 2);
           const endLeft = shoppingcartIcon.offsetLeft + (shoppingcartIcon.offsetWidth / 2);
 
           // 创建球动画
@@ -342,8 +341,9 @@
         }
       },
       showSelect(product, productList, productListIndex) {
-        // 读取多规格商品的具体类型
+        // 判断商品是否是多规格商品，不是就直接执行添加操作
         if (product.foodPropertyList.length !== 0) {
+          // 初始化多规格商品弹出框的选项数据
           this.selectArray.splice(0);
           product.foodPropertyList.forEach((e) => {
             const tempArray = new Array(e.foodPropertyDetail.length);
@@ -352,10 +352,8 @@
             this.selectArray.push(tempArray);
           });
 
-          product.productListIndex = productListIndex;
-          product.productList = productList;
-
-          Object.assign(this.foodType, product);
+          // 将当前商品在所有商品的位置记录 以便以后使用
+          Object.assign(this.foodType, productList, { productListIndex });
           // 计算商品默认状态价格
           let productTypePrice = 0;
           this.foodType.foodPropertyList.forEach((e) => {
@@ -386,10 +384,16 @@
       addToShopping(product = false) {
         // 判断商品是否 为多规格商品 以判断是否需要计算价格
         this.createBlueBallFlag = true;
+        const { shopName, id: shopId } = this.currentShop; // 当前店铺名称
+        const foodNum = 1;
+        let foodType = '';
+
         if (product) {
           // 判断是否从购物车添加
           if (Object.prototype.hasOwnProperty.call(product, 'foodType')) {
-            product.foodNum += 1;
+            const data = { shopName, shopId, ...product };
+            this.$store.commit(type.ADD_TO_SHOPPINGCART, data);
+            
             const foodId = product.foodId;
             let tempFood;
             for (let i = 0; i < this.shopFoods.length; i += 1) {
@@ -402,30 +406,24 @@
             }
             this.createBlueBallFlag = false;
           } else {
-            const foodType = '';
-            const foodNum = 1;
+            // 普通商品添加
             const { foodName, price, id: foodId } = product; // 食物名称 价格 ID
-            const { shopName, id: shopId } = this.currentShop; // 当前店铺名称 店铺ID
             const Data = { foodName, shopId, price, shopName, foodType, foodId, foodNum };
             this.$store.commit(type.ADD_TO_SHOPPINGCART, Data);
             product.foodNum += 1;
             this.selectFoodType = false;
           }
         } else {
-          // 判断购物车中是否存在 该店铺 及该食物
-          let foodType = '';
-          const foodNum = 1;
+          // 多规格商品在弹出框中调用的添加,获取选择的商品类型
           this.foodType.foodPropertyList.forEach((element, index) => {
             const trueIndex = this.selectArray[index].indexOf(true);
             foodType += `[${element.foodPropertyDetail[trueIndex].name}]`;
           });
           const { foodName, id: foodId } = this.foodType; // 食物名称 食物ID
-          const { shopName, id: shopId } = this.currentShop; // 当前店铺名称
           const price = this.currentPopupProductPrice; // 食物价格
-
           const Data = { foodName, shopId, price, shopName, foodType, foodId, foodNum };
-
           this.$store.commit(type.ADD_TO_SHOPPINGCART, Data);
+
           this.foodType.productList.foodList[this.foodType.productListIndex].foodNum += 1;
           this.selectFoodType = false;
         }
@@ -433,9 +431,9 @@
       },
       removeProduct(item, v, index) {
         // 如果是从购物车直接删除
+        const shopId = this.currentShop.id;
+        const foodId = item.foodId;
         if (!Number.isInteger(index)) {
-          const shopId = this.currentShop.id;
-          const foodId = item.foodId;
           const foodType = item.foodType;
           const Data = { shopId, foodId, foodType };
           this.$store.commit(type.REMOVE_FORM_SHOPPINGCART, Data);
@@ -462,8 +460,6 @@
           return;
         }
 
-        const shopId = this.currentShop.id;
-        const foodId = item.id;
         const foodType = 'always';
         const Data = { shopId, foodId, foodType };
         item.foodNum -= 1;
@@ -475,6 +471,7 @@
         this.$store.commit(type.REMOVE_ALL_PRODUCTS, shopId);
       },
       toComfirmOrder() {
+        // 生成订单检测 当前店铺是否有商品在购物车当中,所购买的物品是否够起始配送费用,当前用户是否登录,未登录检测是否有缓存登录信息
         const currentShopInshoppingCart = this.shoppingCartProducts[this.currentShop.id];
         if (currentShopInshoppingCart && Object.prototype.hasOwnProperty.call(currentShopInshoppingCart, 'totalPrice')) {
           if (currentShopInshoppingCart.totalPrice > this.currentShop.startCost) {
@@ -500,6 +497,7 @@
       }
       try {
         const res = await getShopFoodTypeList({ id });
+        // 检测购物车当中是否有该商品以初始化商品数量
         res.data.data.forEach((e) => {
           e.foodList.forEach((e) => {
             if (this.shoppingCartProducts[this.currentShop.id] ?
