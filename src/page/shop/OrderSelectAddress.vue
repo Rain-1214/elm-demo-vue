@@ -26,6 +26,7 @@
         </router-link>
       </section>
     </article>
+    
     <router-view></router-view>
   </div>
 </template>
@@ -35,7 +36,6 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-
     };
   },
   computed: {
@@ -54,6 +54,9 @@ export default {
           backgroundColor: '#f60',
         };
       }
+    },
+    handleConfirm(value) {
+      console.log(value);
     },
   },
 };

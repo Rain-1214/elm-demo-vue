@@ -9,6 +9,7 @@ import ForgetPassword from './page/user/forgetPassword.vue';
 import confirmOrder from './page/shop/confirmOrder.vue';
 import Order from './page/order/Order.vue';
 import OrderSelectAddress from './page/shop/OrderSelectAddress.vue';
+import Redpacket from './page/redpacket/Redpacket.vue';
 
 export default{
   mode: 'history',
@@ -47,6 +48,7 @@ export default{
       ],
     },
     { path: '/order', component: Order },
+    { path: '/redpacket', component: Redpacket },
     { path: '*', redirect: '/home' },
   ],
 };

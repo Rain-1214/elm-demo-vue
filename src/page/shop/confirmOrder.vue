@@ -33,12 +33,13 @@
           </template>
         </router-link>
       </section>
-      <section class="arrived-time">
+      <section class="arrived-time"  @click="showTimePicker()">
         <div>
           <h2>送达时间</h2>
         </div>
         <div>
-          <p>尽快送达 | 预计 12:00</p>
+          <p v-show="pickerValue == arrivedTime">尽快送达 | 预计 {{pickerValue}}</p>
+          <p v-show="pickerValue != arrivedTime">预计 {{pickerValue}}</p>
           <p>
             <span class="blue-background">蜂鸟专送</span>
           </p>
@@ -92,16 +93,29 @@
         <el-button type="success">确认下单</el-button>
       </div>
     </aside>
+    <mt-datetime-picker
+      ref="picker"
+      type="time"
+      v-model="pickerValue"
+      :startHour="startHour"
+      @confirm="handleConfirm">
+    </mt-datetime-picker>
     <router-view></router-view>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import { Toast } from 'mint-ui';
 
 export default {
   data() {
     return {
       address: {},
+      arrivedTime: '',
+      pickerValue: '14:05',
+      startHour: 0,
+      startMinute: 0,
+      timeInterval: {},
     };
   },
   computed: {
@@ -115,11 +129,42 @@ export default {
       }
     },
   },
+  methods: {
+    computedArrivedTime() {
+      const { time: tempTime } = this.currentShop;
+      const minute = tempTime % 60;
+      const hour = (tempTime - minute) / 60;
+      const currentHour = new Date().getHours();
+      const currentMnute = new Date().getMinutes();
+      this.startHour = currentMnute + minute >= 60 ? currentHour + hour + 1 : currentHour + hour;
+      this.startMinute = currentMnute + minute >= 60 ? (currentMnute + minute) - 60 : currentMnute + minute;
+      const startHourString = this.startHour < 10 ? `0${this.startHour}` : `${this.startHour}`;
+      const startMinuteString = this.startMinute < 10 ? `0${this.startMinute}` : `${this.startMinute}`;
+      this.pickerValue = `${startHourString}:${startMinuteString}`;
+      this.arrivedTime = this.pickerValue;
+    },
+    handleConfirm(value) {
+      const minute = value.split(':')[1];
+      if (minute < this.startMinute) {
+        Toast(`选择配送时间不能小于${this.arrivedTime}`);
+        this.pickerValue = this.arrivedTime;
+      }
+    },
+    showTimePicker() {
+      this.$refs.picker.open();
+    },
+  },
   created() {
     const hasOwn = Object.prototype.hasOwnProperty;
     if (!hasOwn.call(this.currentShop, 'id') || !hasOwn.call(this.shoppingCartProducts, this.currentShop.id)) {
       this.$router.push('/home');
     }
+    this.computedArrivedTime();
+    const time = setInterval(this.computedArrivedTime, 1000);
+    this.timeInterval = time;
+  },
+  beforeDestroy() {
+    clearInterval(this.timeInterval);
   },
 };
 </script>
@@ -159,7 +204,7 @@ export default {
         }
         .sex,.phoneNumber{
           color: #333;
-        }
+        } 
       }
       i{
         right: 10px;

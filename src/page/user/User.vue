@@ -53,10 +53,12 @@
     </section>
     <section class="hongbao">
       <div>
-        <svg>
-          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#luckybag"></use>
-        </svg>	
-        <h2>优惠</h2>
+        <router-link to="/redpacket">
+          <svg>
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#luckybag"></use>
+          </svg>	
+          <h2>优惠</h2>
+        </router-link>
       </div>
       <div>
         <svg>
@@ -228,6 +230,7 @@
         }
         h2{
           text-align: center;
+          color: #333;
           @include remCalc('font-size',14px);
           @include remCalc('margin-top',5px);
         }
