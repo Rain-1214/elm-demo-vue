@@ -8,7 +8,7 @@
     <article>
       <section class="address">
         <router-link to='/confirmOrder/selectAddress'>
-          <template v-if="!Object.prototype.hasOwnProperty.call(address, 'id')">
+          <template v-if="!Object.prototype.hasOwnProperty.call(order.address, 'id')">
             <h2>
               <svg>
                 <use xlink:href="#addressIcon"></use>
@@ -22,12 +22,12 @@
               收货地址
             </h4>
             <p>
-              <span class="name">{{address.userName}}</span>
-              <span class="sex">{{address.sex === 1?"先生":address.sex === 2?"女士":"先生/女士"}}</span>
-              <span class="phoneNumber">{{address.phoneNumber}}</span>
+              <span class="name">{{order.address.userName}}</span>
+              <span class="sex">{{order.address.sex === 1?"先生":order.address.sex === 2?"女士":"先生/女士"}}</span>
+              <span class="phoneNumber">{{order.address.phoneNumber}}</span>
             </p>
             <p>
-              {{address.addressName}} {{address.addressDetail}}
+              {{order.address.addressName}} {{order.address.addressDetail}}
             </p>
             <i class="el-icon-arrow-right"></i>
           </template>
@@ -38,8 +38,8 @@
           <h2>送达时间</h2>
         </div>
         <div>
-          <p v-show="pickerValue == arrivedTime">尽快送达 | 预计 {{pickerValue}}</p>
-          <p v-show="pickerValue != arrivedTime">预计 {{pickerValue}}</p>
+          <p v-show="order.pickerValue == arrivedTime">尽快送达 | 预计 {{order.pickerValue}}</p>
+          <p v-show="order.pickerValue != arrivedTime">预计 {{order.pickerValue}}</p>
           <p>
             <span class="blue-background">蜂鸟专送</span>
           </p>
@@ -61,27 +61,28 @@
           </li>
           <li class="orange">
             <div>
-              商品名
+              满减优惠
             </div>
             <div>
-              <span>个数</span>
-              <span>价格</span>
+              <span>{{`-${fullMinus}`}}</span>
             </div>
           </li>
           <li class="orange">
             <div>总计</div>
             <div>
-              <span>￥99999.99</span>
+              <span>￥{{order.payPrice}}</span>
             </div>
           </li>
         </ul>
       </section>
-      <mt-cell title="添加备注">
-        
+      <mt-cell title="红包"></mt-cell>
+      <mt-cell title="添加备注"></mt-cell>
+      <mt-cell 
+        title="付款方式" 
+        @click.native="payMethodVisible = true">
+        <span>{{order.payMethod}}</span>
       </mt-cell>
-      <mt-cell title="开发票">
-        
-      </mt-cell>
+      <mt-cell title="开是否需要发票"></mt-cell>
     </article>
     <aside>
       <div>
@@ -96,36 +97,79 @@
     <mt-datetime-picker
       ref="picker"
       type="time"
-      v-model="pickerValue"
+      v-model="order.pickerValue"
       :startHour="startHour"
       @confirm="handleConfirm">
     </mt-datetime-picker>
+    <mt-popup
+      position="bottom"
+      v-model="payMethodVisible"
+      popup-transition="popup-slide">
+        <ul>
+          <li
+            class="payMethod"
+            :title="v"
+            :key="i"
+            @click="setPayMethod(v)"
+            v-for="(v,i) in payMethodArray">
+            {{v}}
+          </li>
+          <li class="payMethod" @click="setPayMethod()">取消</li>
+        </ul>
+    </mt-popup>
     <router-view></router-view>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
 import { Toast } from 'mint-ui';
+import { floatComputeSuborDiv } from '../../tool/tool';
 
 export default {
   data() {
     return {
-      address: {},
       arrivedTime: '',
-      pickerValue: '14:05',
       startHour: 0,
       startMinute: 0,
       timeInterval: {},
+      payMethodVisible: false,
+      payMethodArray: ['在线支付', '货到付款'],
+      redPacket: 0,
+      OtherDiscounts: [],
+      order: {
+        pickerValue: '',
+        address: {},
+        payMethod: '在线支付',
+        time: 0,
+        shopId: 0,
+        userId: 0,
+        deliveryMethod: '',
+        payPrice: 0,
+      },
     };
   },
   computed: {
+    fullMinus() {
+      const totalPrice = this.shoppingCartProducts[this.currentShop.id].totalPrice;
+      const tempFullMinusArray = [...this.currentShop.shopFullMinus];
+      tempFullMinusArray.push({ full: totalPrice });
+      tempFullMinusArray.sort((a, b) => a.full - b.full);
+      let discounts = 0;
+      console.log(tempFullMinusArray);
+      tempFullMinusArray.forEach((e, i) => {
+        if (e.full === totalPrice && i !== 0) {
+          discounts = tempFullMinusArray[i - 1].minus;
+        }
+      });
+      return discounts;
+    },
     ...mapGetters(['currentShop', 'currentUser', 'shoppingCartProducts']),
   },
   watch: {
     $route() {
       const hasOwn = Object.prototype.hasOwnProperty;
       if (hasOwn.call(this.$route.query, 'addressIndex')) {
-        this.address = { ...this.address, ...this.currentUser.address[this.$route.query.addressIndex] };
+        this.order.address = { ...this.order.address, ...this.currentUser.address[this.$route.query.addressIndex] };
       }
     },
   },
@@ -137,21 +181,32 @@ export default {
       const currentHour = new Date().getHours();
       const currentMnute = new Date().getMinutes();
       this.startHour = currentMnute + minute >= 60 ? currentHour + hour + 1 : currentHour + hour;
+      this.startHour = this.startHour >= 24 ? this.startHour - 24 : this.startHour;
       this.startMinute = currentMnute + minute >= 60 ? (currentMnute + minute) - 60 : currentMnute + minute;
       const startHourString = this.startHour < 10 ? `0${this.startHour}` : `${this.startHour}`;
       const startMinuteString = this.startMinute < 10 ? `0${this.startMinute}` : `${this.startMinute}`;
-      this.pickerValue = `${startHourString}:${startMinuteString}`;
-      this.arrivedTime = this.pickerValue;
+      this.order.pickerValue = `${startHourString}:${startMinuteString}`;
+      this.arrivedTime = this.order.pickerValue;
     },
     handleConfirm(value) {
       const minute = value.split(':')[1];
       if (minute < this.startMinute) {
         Toast(`选择配送时间不能小于${this.arrivedTime}`);
-        this.pickerValue = this.arrivedTime;
+        this.order.pickerValue = this.arrivedTime;
       }
     },
     showTimePicker() {
       this.$refs.picker.open();
+    },
+    setPayMethod(method) {
+      this.payMethodVisible = false;
+      if (method) {
+        this.order.payMethod = method;
+      }
+    },
+    computedPayPrice() {
+      const totalPrice = this.shoppingCartProducts[this.currentShop.id].totalPrice;
+      this.order.payPrice = floatComputeSuborDiv('-', totalPrice, this.redPacket, this.fullMinus, ...this.OtherDiscounts);
     },
   },
   created() {
@@ -160,8 +215,11 @@ export default {
       this.$router.push('/home');
     }
     this.computedArrivedTime();
-    const time = setInterval(this.computedArrivedTime, 1000);
+
+    const time = setInterval(this.computedArrivedTime, 30000);
     this.timeInterval = time;
+
+    this.computedPayPrice();
   },
   beforeDestroy() {
     clearInterval(this.timeInterval);
@@ -264,6 +322,13 @@ export default {
     }
     .mint-cell-wrapper{
       background-position-x: -10px;
+    }
+    .payMethod{
+      width: 100vw;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+      @include remCalc('font-size',18px);
+      @include remCalc('padding',10px,0);
     }
     aside{
       position:fixed;

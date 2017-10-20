@@ -210,6 +210,7 @@
   import { Toast } from 'mint-ui';
   import * as type from '../../store/mutation-types';
   import { getShopFoodTypeList } from '../../api/shop';
+  import { creatOrder } from '../../api/order';
   import { floatComputeAddorMul, floatComputeSuborDiv } from '../../tool/tool';
 
   export default{
@@ -476,15 +477,26 @@
         if (currentShopInshoppingCart && Object.prototype.hasOwnProperty.call(currentShopInshoppingCart, 'totalPrice')) {
           if (currentShopInshoppingCart.totalPrice > this.currentShop.startCost) {
             if (Object.prototype.hasOwnProperty.call(this.currentUser, 'id')) {
-              this.$router.push('/confirmOrder');
+              this.creatOrder();
             } else if (localStorage.getItem('User') !== '') {
               const User = JSON.parse(localStorage.getItem('User'));
               this.$store.commit(type.SAVE_CURRENT_USER, User);
-              this.$router.push('/confirmOrder');
+              this.creatOrder();
             } else {
               Toast('您还没有登录,请先去登录');
             }
           }
+        }
+      },
+      async creatOrder() {
+        const shoppingCartProducts = this.shoppingCartProducts[this.currentShop.id].foodList;
+        const shopId = this.currentShop.id;
+        const data = { shopId, shoppingCartProducts };
+        const res = await creatOrder(data);
+        if (res.data.stateCode) {
+          this.$router.push('/confirmOrder');
+        } else {
+          Toast(res.data.message);
         }
       },
     },

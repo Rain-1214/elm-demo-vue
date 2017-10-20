@@ -20,7 +20,12 @@
           <h2>{{v.hongbaoName}}</h2>
           <ul>
             <li v-show="v.phoneNumber ? v.phoneNumber != '' : false">限{{v.phoneNumber}}手机号使用</li>
-            <li>{{v.startTime}}到{{v.endTime}}可用</li>
+            <li>
+              {{v.startTime}}
+              到
+              {{v.endTime}}
+              可用
+            </li>
             <li>
               限
               <span
