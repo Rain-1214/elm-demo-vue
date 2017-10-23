@@ -106,6 +106,21 @@
         </el-tabs>
       </section>
       <section id="shoppingCart">
+        <div 
+          v-if="currentShop.shopFullMinus.length !== 0 && !shoppingCartDetailShow"
+          class="fullMinus">
+          <span v-if="fullMinusIndex - 1 >= 0">
+            已减 
+            {{currentShop.shopFullMinus[fullMinusIndex - 1].minus}} 
+          </span>
+          <span v-if="fullMinusIndex - 1 >= 0 && fullMinusIndex < currentShop.shopFullMinus.length">
+            还差 
+            {{floatSubCompute(currentShop.shopFullMinus[fullMinusIndex].full,shoppingCartProducts[currentShop.id].totalPrice)}}
+          </span>
+          <span v-if="fullMinusIndex < currentShop.shopFullMinus.length">
+            满 {{currentShop.shopFullMinus[fullMinusIndex].full}} 减 {{currentShop.shopFullMinus[fullMinusIndex].minus}} 
+          </span>
+        </div>
         <div class="shoppingcart-icon">
           <el-badge :value="currentShopSelectedNum" class="item">
             <span>
@@ -132,7 +147,7 @@
             {{
               shoppingCartProducts[currentShop.id]?
               shoppingCartProducts[currentShop.id].totalPrice < currentShop.startCost?
-              `还差${ floatCompute(currentShop.startCost, shoppingCartProducts[currentShop.id].totalPrice)}元起送`:
+              `还差${ floatSubCompute(currentShop.startCost, shoppingCartProducts[currentShop.id].totalPrice)}元起送`:
               `去结算`:
               `还差${currentShop.startCost}元起送`
             }}
@@ -242,16 +257,30 @@
         shopHeaderShow: true, // 头部是否显示
         shopHeaderHeight: 0, // 头部组建高度
         createBlueBallFlag: false, // 什么时候点击可以产生蓝色球的添加动画
+        fullMinusIndex: 0,
       };
     },
     computed: {
       ...mapGetters(['shoppingCartProducts', 'currentShop', 'currentUser']),
     },
+    watch: {
+      currentShopSelectedNum() {
+        const totalPrice = this.shoppingCartProducts[this.currentShop.id] ? this.shoppingCartProducts[this.currentShop.id].totalPrice : 0;
+        const tempArray = [...this.currentShop.shopFullMinus];
+        tempArray.push({ full: totalPrice });
+        tempArray.sort((a, b) => a.full - b.full);
+        for (let i = 0; i < tempArray.length; i += 1) {
+          if (tempArray[i].full === totalPrice) {
+            this.fullMinusIndex = i;
+          }
+        }
+      },
+    },
     methods: {
       handleClick(tab, event) {
         console.log(tab, event);
       },
-      floatCompute(value, otherValue) {
+      floatSubCompute(value, otherValue) {
         return floatComputeSuborDiv('-', value, otherValue);
       },
       productScroll: throttle(function (event) {
@@ -273,7 +302,7 @@
         if (tempArray[this.activeIndex + 1] === tempArray[this.activeIndex + 2]) {
           this.activeIndex += 1;
         }
-      }, 60),
+      }, 100),
       jumpToFood(i) {
         /* eslint-disable no-undef */
         document.querySelector('.product-wrapper').scrollTop = this.foodTitleArray[i];
@@ -346,20 +375,18 @@
         if (product.foodPropertyList.length !== 0) {
           // 初始化多规格商品弹出框的选项数据
           this.selectArray.splice(0);
+          let productTypePrice = 0;
           product.foodPropertyList.forEach((e) => {
             const tempArray = new Array(e.foodPropertyDetail.length);
             tempArray.fill(false);
             tempArray[0] = true;
+            // 计算商品默认状态价格
+            productTypePrice = floatComputeAddorMul('+', productTypePrice, e.foodPropertyDetail[0].price);
             this.selectArray.push(tempArray);
           });
-
           // 将当前商品在所有商品的位置记录 以便以后使用
-          Object.assign(this.foodType, productList, { productListIndex });
-          // 计算商品默认状态价格
-          let productTypePrice = 0;
-          this.foodType.foodPropertyList.forEach((e) => {
-            productTypePrice = floatComputeAddorMul('+', productTypePrice, e.foodPropertyDetail[0].price);
-          });
+          Object.assign(this.foodType, product, productList, { productListIndex });
+
           this.currentPopupProductPrice = floatComputeAddorMul('+', this.foodType.price, productTypePrice);
           this.selectFoodType = true;
         } else {
@@ -424,18 +451,18 @@
           const price = this.currentPopupProductPrice; // 食物价格
           const Data = { foodName, shopId, price, shopName, foodType, foodId, foodNum };
           this.$store.commit(type.ADD_TO_SHOPPINGCART, Data);
-
-          this.foodType.productList.foodList[this.foodType.productListIndex].foodNum += 1;
+          this.foodType.foodList[this.foodType.productListIndex].foodNum += 1;
           this.selectFoodType = false;
         }
         this.currentShopSelectedNum += 1;
       },
       removeProduct(item, v, index) {
-        // 如果是从购物车直接删除
         const shopId = this.currentShop.id;
-        const foodId = item.foodId;
+        let foodId = item.id;
+        // 如果是从购物车直接删除
         if (!Number.isInteger(index)) {
           const foodType = item.foodType;
+          foodId = item.foodId;
           const Data = { shopId, foodId, foodType };
           this.$store.commit(type.REMOVE_FORM_SHOPPINGCART, Data);
           this.currentShopSelectedNum -= 1;
@@ -478,7 +505,7 @@
           if (currentShopInshoppingCart.totalPrice > this.currentShop.startCost) {
             if (Object.prototype.hasOwnProperty.call(this.currentUser, 'id')) {
               this.creatOrder();
-            } else if (localStorage.getItem('User') !== '') {
+            } else if (localStorage.getItem('User') !== null) {
               const User = JSON.parse(localStorage.getItem('User'));
               this.$store.commit(type.SAVE_CURRENT_USER, User);
               this.creatOrder();
@@ -842,6 +869,15 @@
       z-index: 99;
       @include remCalc('height',50px);
       @include remCalc('padding-left',80px);
+      .fullMinus{
+        position: absolute;
+        width: 100%;
+        left: 0;
+        bottom: 100%;
+        text-align: center;
+        background: #f9db58;
+        @include remCalc('padding',3px);
+      }
       .shoppingcart-icon{
         position: absolute;
         @include remCalc('left',10px);

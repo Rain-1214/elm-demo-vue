@@ -157,7 +157,7 @@
     created() {
       if (!this.currentUser.userName) {
         /* eslint-disable no-undef */
-        if (localStorage.getItem('User') !== '') {
+        if (localStorage.getItem('User') !== null) {
           const User = JSON.parse(localStorage.getItem('User'));
           this.$store.commit(type.SAVE_CURRENT_USER, User);
         }

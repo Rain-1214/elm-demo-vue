@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <my-loading v-show="isLoading"></my-loading>
     <router-view></router-view>
     <svg-icon></svg-icon>
   </div>
@@ -15,7 +14,7 @@ import Loading from './page/components/Loading.vue';
 export default {
   name: 'app',
   computed: {
-    ...mapGetters(['tempAddress', 'isLoading']),
+    ...mapGetters(['tempAddress']),
   },
   components: {
     svgIcon: svg,

@@ -1,15 +1,16 @@
-import Location from './page/location/Location.vue';
-import Home from './page/home/Home.vue';
-import Shop from './page/shop/Shop.vue';
-import User from './page/user/User.vue';
-import Login from './page/user/Login.vue';
-import Register from './page/user/Register.vue';
-import Address from './page/user/children/address.vue';
-import ForgetPassword from './page/user/forgetPassword.vue';
-import confirmOrder from './page/shop/confirmOrder.vue';
-import Order from './page/order/Order.vue';
-import OrderSelectAddress from './page/shop/OrderSelectAddress.vue';
-import Redpacket from './page/redpacket/Redpacket.vue';
+const Location = r => require.ensure([], () => r(require('./page/location/Location.vue')), 'Location');
+const Home = r => require.ensure([], () => r(require('./page/home/Home.vue')), 'Home');
+const Shop = r => require.ensure([], () => r(require('./page/shop/Shop.vue')), 'Shop');
+const User = r => require.ensure([], () => r(require('./page/user/User.vue')), 'User');
+const Login = r => require.ensure([], () => r(require('./page/user/Login.vue')), 'Login');
+const Register = r => require.ensure([], () => r(require('./page/user/Register.vue')), 'Register');
+const Address = r => require.ensure([], () => r(require('./page/user/children/address.vue')), 'Address');
+const ForgetPassword = r => require.ensure([], () => r(require('./page/user/forgetPassword.vue')), 'ForgetPassword');
+const confirmOrder = r => require.ensure([], () => r(require('./page/shop/confirmOrder.vue')), 'confirmOrder');
+const Order = r => require.ensure([], () => r(require('./page/order/Order.vue')), 'Order');
+const OrderSelectAddress = r => require.ensure([], () => r(require('./page/shop/OrderSelectAddress.vue')), 'OrderSelectAddress');
+const Redpacket = r => require.ensure([], () => r(require('./page/redpacket/Redpacket.vue')), 'Redpacket');
+const OrderSelectRedPacket = r => require.ensure([], () => r(require('./page/shop/OrderSelectRedPacket.vue')), 'OrderSelectRedPacket');
 
 export default{
   mode: 'history',
@@ -44,6 +45,10 @@ export default{
               component: Address,
             },
           ],
+        },
+        {
+          path: 'selectRedpacket',
+          component: OrderSelectRedPacket,
         },
       ],
     },

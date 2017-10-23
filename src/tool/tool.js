@@ -112,12 +112,12 @@ export const each = (list, iteratee, context) => {
     return list;
   }
   if (isArrayLike(list)) {
-    for (let i = 0; i <= list.length; i++) {
+    for (let i = 0; i <= list.length; i += 1) {
       iteratee(list[i], i, list);
     }
   } else {
     const keys = Object.keys(list);
-    for (let i = 0; i <= keys.length; i++) {
+    for (let i = 0; i <= keys.length; i += 1) {
       iteratee(list[keys[i]], keys[i], list);
     }
   }

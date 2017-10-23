@@ -59,6 +59,12 @@
               <span>{{v.price * v.foodNum}}</span>
             </div>
           </li>
+          <li>
+            <div>配送费</div>
+            <div>
+              <span>{{currentShop.deliveryCost}}</span>
+            </div>
+          </li>
           <li class="orange">
             <div>
               满减优惠
@@ -75,7 +81,21 @@
           </li>
         </ul>
       </section>
-      <mt-cell title="红包"></mt-cell>
+      <mt-cell 
+        to='/confirmOrder/selectRedpacket'
+        title="红包">
+        <span v-if="canUserRedPackedNum != 0 && order.redPacketId == -1">
+          有{{canUserRedPackedNum}}个红包可用
+        </span>
+        <span v-else>
+          <span v-if="order.redPacketId != -1">
+            红包已优惠 {{redPacket}} 元
+          </span>
+          <span v-else>
+            没有可用红包
+          </span>
+        </span>
+      </mt-cell>
       <mt-cell title="添加备注"></mt-cell>
       <mt-cell 
         title="付款方式" 
@@ -87,7 +107,7 @@
     <aside>
       <div>
         <h3>
-          待支付 ￥99999.99
+          待支付 ￥{{order.payPrice}}
         </h3>
       </div>
       <div>
@@ -123,28 +143,30 @@
 <script>
 import { mapGetters } from 'vuex';
 import { Toast } from 'mint-ui';
-import { floatComputeSuborDiv } from '../../tool/tool';
+import { floatComputeAddorMul, floatComputeSuborDiv } from '../../tool/tool';
 
 export default {
   data() {
     return {
-      arrivedTime: '',
-      startHour: 0,
-      startMinute: 0,
-      timeInterval: {},
-      payMethodVisible: false,
-      payMethodArray: ['在线支付', '货到付款'],
-      redPacket: 0,
-      OtherDiscounts: [],
+      arrivedTime: '', // 计算的预计到达时间字符串
+      startHour: 0, // 预计到达时间的小时
+      startMinute: 0, // 预计到达时间的分钟
+      timeInterval: {}, // 更新预计到达时间的定时器
+      payMethodVisible: false, // 控制改变付款方式上拉显示
+      payMethodArray: ['在线支付', '货到付款'], // 付款方式数组
+      redPacket: 0, // 红包优惠金额
+      canUserRedPackedNum: 0,
+      OtherDiscounts: [], // 其他优惠金额
       order: {
-        pickerValue: '',
-        address: {},
-        payMethod: '在线支付',
-        time: 0,
-        shopId: 0,
-        userId: 0,
-        deliveryMethod: '',
-        payPrice: 0,
+        pickerValue: '', // 选择的派送时间
+        address: {}, // 选择的派送地址
+        payMethod: '在线支付', // 支付方式
+        time: 0, // 下单时间
+        shopId: 0, // 店铺ID
+        userId: 0, // 用户id
+        deliveryMethod: '', // 配送方式
+        payPrice: 0, // 支付金额
+        redPacketId: -1, // 选择的红包ID
       },
     };
   },
@@ -155,7 +177,6 @@ export default {
       tempFullMinusArray.push({ full: totalPrice });
       tempFullMinusArray.sort((a, b) => a.full - b.full);
       let discounts = 0;
-      console.log(tempFullMinusArray);
       tempFullMinusArray.forEach((e, i) => {
         if (e.full === totalPrice && i !== 0) {
           discounts = tempFullMinusArray[i - 1].minus;
@@ -170,6 +191,7 @@ export default {
       const hasOwn = Object.prototype.hasOwnProperty;
       if (hasOwn.call(this.$route.query, 'addressIndex')) {
         this.order.address = { ...this.order.address, ...this.currentUser.address[this.$route.query.addressIndex] };
+        this.computedRedPacket();
       }
     },
   },
@@ -205,8 +227,41 @@ export default {
       }
     },
     computedPayPrice() {
-      const totalPrice = this.shoppingCartProducts[this.currentShop.id].totalPrice;
+      let totalPrice = this.shoppingCartProducts[this.currentShop.id].totalPrice;
+      totalPrice = floatComputeAddorMul('+', totalPrice, this.currentShop.deliveryCost);
       this.order.payPrice = floatComputeSuborDiv('-', totalPrice, this.redPacket, this.fullMinus, ...this.OtherDiscounts);
+    },
+    computedRedPacket() {
+      if (Object.prototype.hasOwnProperty.call(this.order.address, 'id')) {
+        this.currentUser.hongbao.forEach((e) => {
+          // 检测红包状态
+          if (e.hongbaoState !== 2) {
+            return;
+          }
+          // 检测是否有手机号码限制
+          if (e.phoneNumber != '' && e.phoneNumber != this.order.address.phoneNumber) {
+            return;
+          }
+          // 检测是否处于红包限制时间内
+          const startTime = new Date(e.startTime).getTime();
+          const endTime = new Date(e.endTime).getTime();
+          const nowTime = new Date().getTime();
+          if (nowTime <= startTime || nowTime >= endTime) {
+            return;
+          }
+          // 检测店铺类型是否符合红包限制
+          let checkShopTypeFlag = true;
+          this.currentShop.shopPropertyType.forEach((ele) => {
+            if (e.shopTypeList.includes(ele)) {
+              checkShopTypeFlag = false;
+            }
+          });
+          if (checkShopTypeFlag) {
+            return;
+          }
+          this.canUserRedPackedNum += 1;
+        });
+      }
     },
   },
   created() {
@@ -220,6 +275,7 @@ export default {
     this.timeInterval = time;
 
     this.computedPayPrice();
+    this.computedRedPacket();
   },
   beforeDestroy() {
     clearInterval(this.timeInterval);
