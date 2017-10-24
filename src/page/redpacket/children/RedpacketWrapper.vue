@@ -59,19 +59,6 @@ export default {
     @include remCalc('padding',10px);
     .redpacket{
       display: flex;
-      .canNotUse{
-        >div{
-          div{
-            color: #ccc;
-          }
-          h2{
-            color: #ccc;
-          }
-          li{
-            color: #ccc;
-          }
-        }
-      }
       >div{
         div{
           color: red;
@@ -97,6 +84,19 @@ export default {
         h2{
           font-weight: bold;
           @include remCalc('margin-bottom',5px);
+        }
+      }
+    }
+    .canNotUse{
+      >div{
+        div{
+          color: #ccc;
+        }
+        h2{
+          color: #ccc;
+        }
+        li{
+          color: #ccc;
         }
       }
     }

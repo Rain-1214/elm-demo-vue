@@ -1,7 +1,7 @@
 <template>
   <div id="orderAddress">
     <mt-header title="选择地址">
-      <section slot="left" @click="$router.go(-1)">
+      <section slot="left" @click="$router.push('/confirmOrder')">
         <i class="el-icon-arrow-left"></i>
       </section>
       <section slot="right" @click="$router.push('/confirmOrder/selectAddress/addAddress')">

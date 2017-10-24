@@ -44,7 +44,7 @@
   import { mapGetters } from 'vuex';
   import { getHotCity, getAllCity } from '../../api/location';
   import * as types from '../../store/mutation-types';
-  import SearchAddress from '../components/SearchAddress.vue';
+  import SearchAddress from './children/SearchAddress.vue';
 
   export default{
     data() {

@@ -1,7 +1,7 @@
 <template>
   <div id="confirmOrder">
     <mt-header title="确认订单">
-      <section slot="left" @click="$router.go(-1)">
+      <section slot="left" @click="$router.push('/shop')">
         <i class="el-icon-arrow-left"></i>
       </section>
     </mt-header>
@@ -38,11 +38,18 @@
           <h2>送达时间</h2>
         </div>
         <div>
-          <p v-show="order.pickerValue == arrivedTime">尽快送达 | 预计 {{order.pickerValue}}</p>
-          <p v-show="order.pickerValue != arrivedTime">预计 {{order.pickerValue}}</p>
-          <p>
-            <span class="blue-background">蜂鸟专送</span>
-          </p>
+          <template v-if="Object.prototype.hasOwnProperty.call(order.address, 'id')">
+            <p v-show="order.pickerValue == arrivedTime">尽快送达 | 预计 {{order.pickerValue}}</p>
+            <p v-show="order.pickerValue != arrivedTime">预计 {{order.pickerValue}}</p>
+            <p>
+              <span class="blue-background">蜂鸟专送</span>
+            </p>
+          </template>
+          <template v-else>
+            <p>
+              请先选择地址
+            </p>
+          </template>
         </div>
       </section>
       <section class="bill">
@@ -65,7 +72,9 @@
               <span>{{currentShop.deliveryCost}}</span>
             </div>
           </li>
-          <li class="orange">
+          <li 
+            v-if="fullMinus != 0"
+            class="orange">
             <div>
               满减优惠
             </div>
@@ -73,16 +82,33 @@
               <span>{{`-${fullMinus}`}}</span>
             </div>
           </li>
+          <li 
+            v-if="order.redPacketId != -1"
+            class="orange">
+            <div>
+              红包优惠
+            </div>
+            <div>
+              <span>{{`-${redPacket}`}}</span>
+            </div>
+          </li>
           <li class="orange">
             <div>总计</div>
             <div>
-              <span>￥{{order.payPrice}}</span>
+              <span>
+                ￥{{order.payPrice}} 
+              </span>
             </div>
+          </li>
+          <li>
+            <span v-if="order.payPrice == 1">
+              (优惠最多只能到1元哦)
+            </span>
           </li>
         </ul>
       </section>
       <mt-cell 
-        to='/confirmOrder/selectRedpacket'
+        :to="{path:'/confirmOrder/selectRedpacket',query:{phoneNumber:this.order.address.phoneNumber}}"
         title="红包">
         <span v-if="canUserRedPackedNum != 0 && order.redPacketId == -1">
           有{{canUserRedPackedNum}}个红包可用
@@ -91,12 +117,17 @@
           <span v-if="order.redPacketId != -1">
             红包已优惠 {{redPacket}} 元
           </span>
+          <span v-else-if="order.address.id == undefined">
+            请先选择地址
+          </span>
           <span v-else>
             没有可用红包
           </span>
         </span>
       </mt-cell>
-      <mt-cell title="添加备注"></mt-cell>
+      <mt-cell 
+        @click.native="remarkVisible = true"
+        title="添加备注"></mt-cell>
       <mt-cell 
         title="付款方式" 
         @click.native="payMethodVisible = true">
@@ -117,8 +148,8 @@
     <mt-datetime-picker
       ref="picker"
       type="time"
-      v-model="order.pickerValue"
       :startHour="startHour"
+      v-model="arrivedTime"
       @confirm="handleConfirm">
     </mt-datetime-picker>
     <mt-popup
@@ -137,6 +168,14 @@
           <li class="payMethod" @click="setPayMethod()">取消</li>
         </ul>
     </mt-popup>
+    <mt-popup
+      position="right"
+      v-model="remarkVisible"
+      popup-transition="popup-slide">
+      <my-remark
+        @close='responseRemark'
+        ></my-remark>
+    </mt-popup>
     <router-view></router-view>
   </div>
 </template>
@@ -144,6 +183,8 @@
 import { mapGetters } from 'vuex';
 import { Toast } from 'mint-ui';
 import { floatComputeAddorMul, floatComputeSuborDiv } from '../../tool/tool';
+import computDistance from '../../tool/computdistance';
+import Remark from './children/Remark.vue';
 
 export default {
   data() {
@@ -154,6 +195,7 @@ export default {
       timeInterval: {}, // 更新预计到达时间的定时器
       payMethodVisible: false, // 控制改变付款方式上拉显示
       payMethodArray: ['在线支付', '货到付款'], // 付款方式数组
+      remarkVisible: false, // 控制备注信息显示
       redPacket: 0, // 红包优惠金额
       canUserRedPackedNum: 0,
       OtherDiscounts: [], // 其他优惠金额
@@ -167,6 +209,7 @@ export default {
         deliveryMethod: '', // 配送方式
         payPrice: 0, // 支付金额
         redPacketId: -1, // 选择的红包ID
+        remarkString: '', // 备注
       },
     };
   },
@@ -191,13 +234,22 @@ export default {
       const hasOwn = Object.prototype.hasOwnProperty;
       if (hasOwn.call(this.$route.query, 'addressIndex')) {
         this.order.address = { ...this.order.address, ...this.currentUser.address[this.$route.query.addressIndex] };
-        this.computedRedPacket();
+        this.checkRedPacket();
+        this.computedArrivedTime();
+      }
+      if (hasOwn.call(this.$route.query, 'redPacketIndex')) {
+        this.order.redPacketId = this.currentUser.hongbao[this.$route.query.redPacketIndex].id;
+        this.computedRedPacket(this.$route.query.redPacketIndex);
+        this.computedPayPrice();
       }
     },
   },
   methods: {
     computedArrivedTime() {
-      const { time: tempTime } = this.currentShop;
+      const { lat: addressLat, lng: addressLng } = this.order.address;
+      const { latitude: shopLat, longitude: shopLng } = this.currentShop;
+      const distance = computDistance(addressLat, addressLng, shopLat, shopLng);
+      const tempTime = Math.ceil(distance / 1000) * 20;
       const minute = tempTime % 60;
       const hour = (tempTime - minute) / 60;
       const currentHour = new Date().getHours();
@@ -214,7 +266,7 @@ export default {
       const minute = value.split(':')[1];
       if (minute < this.startMinute) {
         Toast(`选择配送时间不能小于${this.arrivedTime}`);
-        this.order.pickerValue = this.arrivedTime;
+        this.arrivedTime = this.order.pickerValue;
       }
     },
     showTimePicker() {
@@ -230,8 +282,13 @@ export default {
       let totalPrice = this.shoppingCartProducts[this.currentShop.id].totalPrice;
       totalPrice = floatComputeAddorMul('+', totalPrice, this.currentShop.deliveryCost);
       this.order.payPrice = floatComputeSuborDiv('-', totalPrice, this.redPacket, this.fullMinus, ...this.OtherDiscounts);
+      this.order.payPrice = this.order.payPrice <= 0 ? 1 : this.order.payPrice;
     },
-    computedRedPacket() {
+    computedRedPacket(redPacketIndex) {
+      this.redPacket = this.currentUser.hongbao[redPacketIndex].minusMoney;
+    },
+    checkRedPacket() {
+      this.canUserRedPackedNum = 0;
       if (Object.prototype.hasOwnProperty.call(this.order.address, 'id')) {
         this.currentUser.hongbao.forEach((e) => {
           // 检测红包状态
@@ -263,19 +320,20 @@ export default {
         });
       }
     },
+    responseRemark(remarkString) {
+      this.remarkVisible = false;
+      this.order.remarkString = remarkString;
+    },
+  },
+  components: {
+    'my-remark': Remark,
   },
   created() {
     const hasOwn = Object.prototype.hasOwnProperty;
     if (!hasOwn.call(this.currentShop, 'id') || !hasOwn.call(this.shoppingCartProducts, this.currentShop.id)) {
       this.$router.push('/home');
     }
-    this.computedArrivedTime();
-
-    const time = setInterval(this.computedArrivedTime, 30000);
-    this.timeInterval = time;
-
     this.computedPayPrice();
-    this.computedRedPacket();
   },
   beforeDestroy() {
     clearInterval(this.timeInterval);

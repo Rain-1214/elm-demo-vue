@@ -21,8 +21,8 @@
 </template>
 <script>
   import { throttle } from 'lodash';
-  import { searchAddress } from '../../api/location';
-  import * as types from '../../store/mutation-types';
+  import { searchAddress } from '../../../api/location';
+  import * as types from '../../../store/mutation-types';
 
   export default{
     data() {
@@ -80,8 +80,8 @@
 </script>
 <style lang="scss" scoped>
 
-  @import '../../assets/css/common/tool';
-  @import '../../assets/css/common/responsive';
+  @import '../../../assets/css/common/tool';
+  @import '../../../assets/css/common/responsive';
 
   .searchInput{
     background: $blue;
