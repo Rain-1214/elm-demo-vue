@@ -53,7 +53,7 @@
     </section>
     <section class="hongbao">
       <div>
-        <router-link to="/redpacket">
+        <router-link to="/user/redpacket">
           <svg>
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#luckybag"></use>
           </svg>	

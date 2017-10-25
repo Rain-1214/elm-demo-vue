@@ -2,7 +2,7 @@
   <div id="shop">
     <div class="shop-wrapper" @click='createBlueBall($event)'>
       <section class="shop-header ">
-        <div class="back" @click="$router.go(-1)">
+        <div class="back" @click="$router.push('/home')">
           <i class="el-icon-arrow-left"></i>
         </div>
         <div class="shop-info">
@@ -421,7 +421,6 @@
           if (Object.prototype.hasOwnProperty.call(product, 'foodType')) {
             const data = { shopName, shopId, ...product };
             this.$store.commit(type.ADD_TO_SHOPPINGCART, data);
-            
             const foodId = product.foodId;
             let tempFood;
             for (let i = 0; i < this.shopFoods.length; i += 1) {
@@ -530,10 +529,6 @@
     async created() {
       // 初始化时 通过店铺ID获取店铺商品
       const id = this.currentShop.id;
-      if (!id) {
-        this.$router.push('/home');
-        return;
-      }
       try {
         const res = await getShopFoodTypeList({ id });
         // 检测购物车当中是否有该商品以初始化商品数量

@@ -183,36 +183,22 @@
   @import '../../assets/css/common/responsive';
 
   #register{
-    .el-input__inner{
-      border: none;
-      @include remCalc('height',140px);
-      @include remCalc('font-size',52px);
-      @include remCalc('padding-left',30px);
-    }
     .el-form-item{
-      @include remCalc('margin-bottom',54px);
-      border-bottom: 1px solid #ccc;
       &.is-error{
         .el-input__inner{
           border: 1px solid #ff4949;
         }
       }
     }
-    .el-form-item__error{
-      @include remCalc('font-size',44px);
-    }
     article{
-      @include remCalc('padding',20px,0);
-      section{
-        border-bottom: 1px solid #ccc;
-      }
+      @include remCalc('padding',10px);
       .code{
         display: flex;
         .input{
           flex:1;
         }
         .code-img{
-          @include remCalc('width',300px);
+          @include remCalc('width',80px);
           position: relative;
           img{
             width: 80%;
@@ -221,15 +207,12 @@
           }
         }
         .change{
-          @include remCalc('width',230px);
-          @include remCalc('padding-top',25px);
           p{
-            @include remCalc('padding-left',25px);
+            @include remCalc('padding-left',0px);
           }
         }
       }
       .tips{
-        @include remCalc('padding',20,30);
         border-bottom: none;
         p{
           line-height: 1.5;
@@ -239,15 +222,7 @@
       .submit{
         width: 100%;
         border-bottom: none;
-        @include remCalc('padding',30);
         @include clear;
-        button{
-          width: 100%;
-          @include remCalc('padding',30px,0);
-          span{
-            @include remCalc('font-size',52px);
-          }
-        }
       }
     }
   }

@@ -26,6 +26,10 @@ export default {
     if (tempAddress) {
       this.$store.commit(types.ALERT_TEMPADDRESS, tempAddress);
     }
+    const User = JSON.parse(localStorage.getItem('User'));
+    if (User) {
+      this.$store.commit(types.SAVE_CURRENT_USER, User);
+    }
     if (!this.tempAddress.name) {
       this.$router.push('/location');
     }

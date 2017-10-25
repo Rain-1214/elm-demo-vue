@@ -6,11 +6,11 @@ const Login = r => require.ensure([], () => r(require('./page/user/Login.vue')),
 const Register = r => require.ensure([], () => r(require('./page/user/Register.vue')), 'Register');
 const Address = r => require.ensure([], () => r(require('./page/user/children/address.vue')), 'Address');
 const ForgetPassword = r => require.ensure([], () => r(require('./page/user/forgetPassword.vue')), 'ForgetPassword');
-const confirmOrder = r => require.ensure([], () => r(require('./page/shop/confirmOrder.vue')), 'confirmOrder');
+const confirmOrder = r => require.ensure([], () => r(require('./page/creatOrder/confirmOrder.vue')), 'confirmOrder');
 const Order = r => require.ensure([], () => r(require('./page/order/Order.vue')), 'Order');
-const OrderSelectAddress = r => require.ensure([], () => r(require('./page/shop/OrderSelectAddress.vue')), 'OrderSelectAddress');
+const OrderSelectAddress = r => require.ensure([], () => r(require('./page/creatOrder/OrderSelectAddress.vue')), 'OrderSelectAddress');
 const Redpacket = r => require.ensure([], () => r(require('./page/redpacket/Redpacket.vue')), 'Redpacket');
-const OrderSelectRedPacket = r => require.ensure([], () => r(require('./page/shop/OrderSelectRedPacket.vue')), 'OrderSelectRedPacket');
+const OrderSelectPacket = r => require.ensure([], () => r(require('./page/creatOrder/OrderSelectRedPacket.vue')), 'OrderSelectRedPacket');
 
 export default{
   mode: 'history',
@@ -19,6 +19,10 @@ export default{
     { path: '/location', component: Location },
     { path: '/home', component: Home },
     { path: '/shop', component: Shop },
+    { path: '/login', component: Login },
+    { path: '/register', component: Register },
+    { path: '/forgetPassword', component: ForgetPassword },
+    { path: '/order', component: Order },
     {
       path: '/user',
       component: User,
@@ -27,11 +31,12 @@ export default{
           path: 'address',
           component: Address,
         },
+        {
+          path: 'redpacket',
+          component: Redpacket,
+        },
       ],
     },
-    { path: '/login', component: Login },
-    { path: '/register', component: Register },
-    { path: '/forgetPassword', component: ForgetPassword },
     {
       path: '/confirmOrder',
       component: confirmOrder,
@@ -48,12 +53,10 @@ export default{
         },
         {
           path: 'selectRedpacket',
-          component: OrderSelectRedPacket,
+          component: OrderSelectPacket,
         },
       ],
     },
-    { path: '/order', component: Order },
-    { path: '/redpacket', component: Redpacket },
     { path: '*', redirect: '/home' },
   ],
 };

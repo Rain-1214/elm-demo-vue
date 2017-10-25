@@ -111,11 +111,6 @@
         });
       },
     },
-    created() {
-      if (!this.currentUser.userName) {
-        this.$router.push('/user');
-      }
-    },
     mounted() {
       /* eslint-disable no-undef */
       const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;

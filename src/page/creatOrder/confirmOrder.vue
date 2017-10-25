@@ -127,7 +127,9 @@
       </mt-cell>
       <mt-cell 
         @click.native="remarkVisible = true"
-        title="添加备注"></mt-cell>
+        title="添加备注">
+        {{order.remarkString}}
+      </mt-cell>
       <mt-cell 
         title="付款方式" 
         @click.native="payMethodVisible = true">
@@ -192,7 +194,7 @@ export default {
       arrivedTime: '', // 计算的预计到达时间字符串
       startHour: 0, // 预计到达时间的小时
       startMinute: 0, // 预计到达时间的分钟
-      timeInterval: {}, // 更新预计到达时间的定时器
+      timeInterval: false, // 更新预计到达时间的定时器
       payMethodVisible: false, // 控制改变付款方式上拉显示
       payMethodArray: ['在线支付', '货到付款'], // 付款方式数组
       remarkVisible: false, // 控制备注信息显示
@@ -229,21 +231,6 @@ export default {
     },
     ...mapGetters(['currentShop', 'currentUser', 'shoppingCartProducts']),
   },
-  watch: {
-    $route() {
-      const hasOwn = Object.prototype.hasOwnProperty;
-      if (hasOwn.call(this.$route.query, 'addressIndex')) {
-        this.order.address = { ...this.order.address, ...this.currentUser.address[this.$route.query.addressIndex] };
-        this.checkRedPacket();
-        this.computedArrivedTime();
-      }
-      if (hasOwn.call(this.$route.query, 'redPacketIndex')) {
-        this.order.redPacketId = this.currentUser.hongbao[this.$route.query.redPacketIndex].id;
-        this.computedRedPacket(this.$route.query.redPacketIndex);
-        this.computedPayPrice();
-      }
-    },
-  },
   methods: {
     computedArrivedTime() {
       const { lat: addressLat, lng: addressLng } = this.order.address;
@@ -261,12 +248,22 @@ export default {
       const startMinuteString = this.startMinute < 10 ? `0${this.startMinute}` : `${this.startMinute}`;
       this.order.pickerValue = `${startHourString}:${startMinuteString}`;
       this.arrivedTime = this.order.pickerValue;
+      console.log(this.arrivedTime, this.order.pickerValue);
+      this.startInterval();
     },
     handleConfirm(value) {
       const minute = value.split(':')[1];
       if (minute < this.startMinute) {
         Toast(`选择配送时间不能小于${this.arrivedTime}`);
         this.arrivedTime = this.order.pickerValue;
+      }
+    },
+    startInterval() {
+      if (!this.timeInterval) {
+        const time = setInterval(() => {
+          this.computedArrivedTime();
+        }, 30000);
+        this.timeInterval = time;
       }
     },
     showTimePicker() {
@@ -329,11 +326,21 @@ export default {
     'my-remark': Remark,
   },
   created() {
-    const hasOwn = Object.prototype.hasOwnProperty;
-    if (!hasOwn.call(this.currentShop, 'id') || !hasOwn.call(this.shoppingCartProducts, this.currentShop.id)) {
-      this.$router.push('/home');
-    }
     this.computedPayPrice();
+  },
+  beforeRouteUpdate(to, from, next) {
+    const hasOwn = Object.prototype.hasOwnProperty;
+    if (hasOwn.call(to.query, 'addressIndex')) {
+      this.order.address = { ...this.order.address, ...this.currentUser.address[to.query.addressIndex] };
+      this.checkRedPacket();
+      this.computedArrivedTime();
+    }
+    if (hasOwn.call(to.query, 'redPacketIndex')) {
+      this.order.redPacketId = this.currentUser.hongbao[to.query.redPacketIndex].id;
+      this.computedRedPacket(to.query.redPacketIndex);
+      this.computedPayPrice();
+    }
+    next();
   },
   beforeDestroy() {
     clearInterval(this.timeInterval);
@@ -436,6 +443,11 @@ export default {
     }
     .mint-cell-wrapper{
       background-position-x: -10px;
+    }
+    .mint-cell-value{
+      max-width: 60%;
+      display: block;
+      @include ellipsis;
     }
     .payMethod{
       width: 100vw;

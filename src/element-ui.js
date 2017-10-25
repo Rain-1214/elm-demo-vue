@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import { Button, Select, Form, FormItem, Input,
   Table, TableColumn, Option, Dialog, Icon,
-  Rate, Tabs, TabPane, Badge, Radio, RadioGroup
-  , Steps, Step, RadioButton } from 'element-ui';
+  Rate, Tabs, TabPane, Badge, Radio
+  , Steps, Step } from 'element-ui';
 
 Vue.use(Button);
 Vue.use(Select);
@@ -19,7 +19,5 @@ Vue.use(Tabs);
 Vue.use(TabPane);
 Vue.use(Badge);
 Vue.use(Radio);
-Vue.use(RadioGroup);
 Vue.use(Steps);
 Vue.use(Step);
-Vue.use(RadioButton);
