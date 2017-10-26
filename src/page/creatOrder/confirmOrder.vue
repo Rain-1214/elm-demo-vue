@@ -33,7 +33,7 @@
           </template>
         </router-link>
       </section>
-      <section class="arrived-time"  @click="showTimePicker()">
+      <section class="arrived-time"  @click="arrivedTimeVisible = true">
         <div>
           <h2>送达时间</h2>
         </div>
@@ -147,13 +147,14 @@
         <el-button type="success">确认下单</el-button>
       </div>
     </aside>
-    <mt-datetime-picker
-      ref="picker"
-      type="time"
-      :startHour="startHour"
-      v-model="arrivedTime"
-      @confirm="handleConfirm">
-    </mt-datetime-picker>
+    <mt-popup
+      position="bottom"
+      v-model="arrivedTimeVisible"
+      popup-transition="popup-slide">
+        <time-picker
+          :start-hour="this.startHour"
+          :start-minut="this.startMinute"></time-picker>
+    </mt-popup>
     <mt-popup
       position="bottom"
       v-model="payMethodVisible"
@@ -185,6 +186,7 @@
 import { mapGetters } from 'vuex';
 import { Toast } from 'mint-ui';
 import { floatComputeAddorMul, floatComputeSuborDiv } from '../../tool/tool';
+import TimePicker from '../components/TimePicker.vue';
 import computDistance from '../../tool/computdistance';
 import Remark from './children/Remark.vue';
 
@@ -194,6 +196,7 @@ export default {
       arrivedTime: '', // 计算的预计到达时间字符串
       startHour: 0, // 预计到达时间的小时
       startMinute: 0, // 预计到达时间的分钟
+      arrivedTimeVisible: false, // 控制显示送达时间部分
       timeInterval: false, // 更新预计到达时间的定时器
       payMethodVisible: false, // 控制改变付款方式上拉显示
       payMethodArray: ['在线支付', '货到付款'], // 付款方式数组
@@ -266,9 +269,6 @@ export default {
         this.timeInterval = time;
       }
     },
-    showTimePicker() {
-      this.$refs.picker.open();
-    },
     setPayMethod(method) {
       this.payMethodVisible = false;
       if (method) {
@@ -324,6 +324,7 @@ export default {
   },
   components: {
     'my-remark': Remark,
+    'time-picker': TimePicker,
   },
   created() {
     this.computedPayPrice();
