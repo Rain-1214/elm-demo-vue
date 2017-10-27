@@ -34,6 +34,7 @@
       </section>
       <section>
         <el-button 
+          size="small"
           @click="requestRemark()"
           type="success">提交</el-button>
       </section>
@@ -78,6 +79,7 @@ export default {
   #remark{
     height: 100vh;
     width: 100vw;
+    background: #fff;
     article{
       @include remCalc('padding',5px);
       section{

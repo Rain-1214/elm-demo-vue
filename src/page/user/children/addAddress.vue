@@ -44,7 +44,11 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button class="submit" type="success" @click="submit('form')">提交</el-button>
+          <el-button 
+            size="small"
+            class="submit" 
+            type="success" 
+            @click="submit('form')">提交</el-button>
         </el-form-item>
       </el-form>
     </article>
@@ -115,15 +119,29 @@
     props: ['currentAddress', 'addOrEdit'],
     watch: {
       currentAddress() {
-        this.form = Object.assign({}, this.form, this.currentAddress);
-        const sex = this.form.sex - 1;
-        const tag = this.form.tag;
-        const sexFlag = this.sexActive[sex] ? void 0 : this.sexActive.fill(false).splice(sex, 1, true);
-        this.tag.forEach((e, i) => {
-          if (e === tag) {
-            this.tagActive.fill(false).splice(i, 1, true);
-          }
-        });
+        if (this.currentAddress.userName) {
+          this.form = Object.assign({}, this.form, this.currentAddress);
+          const sex = this.form.sex - 1;
+          const tag = this.form.tag;
+          const sexFlag = this.sexActive[sex] ? void 0 : this.sexActive.fill(false).splice(sex, 1, true);
+          this.tag.forEach((e, i) => {
+            if (e === tag) {
+              this.tagActive.fill(false).splice(i, 1, true);
+            }
+          });
+        } else {
+          this.form = Object.assign({}, {
+            sex: 1,
+            userName: '',
+            phoneNumber: '',
+            addressName: '',
+            addressDetail: '',
+            tag: '',
+            lat: 0,
+            lng: 0,
+          });
+          this.$refs['form'].resetFields();
+        }
       },
     },
     computed: {

@@ -52,7 +52,7 @@ export default {
       minutArray: [],
       selectHour: '',
       selectMinut: '',
-    }
+    };
   },
   props: {
     model: {
@@ -72,6 +72,24 @@ export default {
       }
     },
     value: Boolean,
+  },
+  watch: {
+    startHour() {
+      this.hourArray.splice(0);
+      let i = this.startHour || 0;
+      this.selectHour = this.startHour;
+      for (;i <= 23; i += 1) {
+        this.hourArray.push(i);
+      }
+    },
+    startMinut() {
+      this.minutArray.splice(0);
+      let j = this.startMinut || 0;
+      this.selectMinut = this.startMinut;
+      for (;j <= 59; j += 1) {
+        this.minutArray.push(j);
+      }
+    }
   },
   components: {
     'my-drag': Drag,
@@ -106,36 +124,17 @@ export default {
       this.$emit('requestValue', str);
     }
   },
-  mounted() {
-    let i = this.startHour || 0;
-    this.selectHour = this.startHour;
-    for (;i <= 23; i += 1) {
-      this.hourArray.push(i);
-    }
-    let j = this.startMinut || 0;
-    this.selectMinut = this.startMinut;
-    for (;j <= 59; j += 1) {
-      this.minutArray.push(j);
-    }
-  },
 };
 </script>
 <style lang="scss" scoped>
   #timePicker{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 2016;
     .picker-wrapper{
-      position: absolute;
+      width: 100vw;
+      position: relative;
       bottom: 0;
       left: 0;
       z-index: 2017;
       background: #fff;
-      width: 100%;
       header{
         display: flex;
         border-top: 1px solid #ccc;

@@ -19,6 +19,11 @@ const tag = {
   undefinedTag: '[object Undefined]',
 };
 
+/**
+ * 获取value的类型标签
+ * @param {Any} value 需要获取的值
+ * @return {String} 类型标签
+ */
 const getValueTag = (value) => {
   if (value === null) {
     return value === undefined ? tag.undefinedTag : tag.nullTag;
@@ -81,6 +86,16 @@ export const isMap = (value) => value != null && getValueTag(value) === tag.mapT
 
 export const isSet = (value) => value != null && getValueTag(value) === tag.setTag;
 
+/**
+ * 将一个浮点类型值转放大成整数
+ * @param {Number} value 需要转换的值
+ * @return {Object} -> {
+ *  floatInt: 整数部分
+ *  floatDecimal: 小数部分
+ *  allInteger：转换成的整数
+ *  times: 放大倍数
+ * }
+ */
 export const floatToInt = (value) => {
   if (!(isNumber(value) && `${value}`.indexOf('.') !== -1)) {
     return {
@@ -99,7 +114,7 @@ export const floatToInt = (value) => {
 };
 
 /**
- * 
+ * 遍历一个数组或者对象并用自定义函数处理
  * @param {Array|Object} list 需要便利的目标
  * @param {Function} iteratee 迭代器
  * @param {Object} context 迭代是否器需要改变this指向
@@ -124,6 +139,12 @@ export const each = (list, iteratee, context) => {
   return list;
 };
 
+/**
+ * 浮点类型计算 加法 或 乘法
+ * @param {String} sign 计算符号 '+' '*'
+ * @param {...Number} valueArray 累加(乘)的一系列值
+ * @return {Number} 计算结果
+ */
 export const floatComputeAddorMul = (sign, ...valueArray) => valueArray.reduce((sum, currentValue) => {
   if (!isNumber(currentValue)) {
     return sum;
@@ -140,6 +161,13 @@ export const floatComputeAddorMul = (sign, ...valueArray) => valueArray.reduce((
   }
 }, 0);
 
+/**
+ * 浮点类型计算 减法 或 除法
+ * @param {String} sign 计算符号 '-' '/'
+ * @param {Number} firstvalue 被减数/被除数 
+ * @param {...Number} valueArray 累减(除)的一系列值
+ * @return {Number} 计算结果
+ */
 export const floatComputeSuborDiv = (sign, firstvalue, ...valueArray) => valueArray.reduce((sum, currentValue) => {
   if (!isNumber(currentValue)) {
     return sum;

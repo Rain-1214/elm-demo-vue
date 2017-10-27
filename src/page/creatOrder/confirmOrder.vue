@@ -33,7 +33,7 @@
           </template>
         </router-link>
       </section>
-      <section class="arrived-time"  @click="arrivedTimeVisible = true">
+      <section class="arrived-time"  @click="showTimePicker()">
         <div>
           <h2>送达时间</h2>
         </div>
@@ -108,7 +108,7 @@
         </ul>
       </section>
       <mt-cell 
-        :to="{path:'/confirmOrder/selectRedpacket',query:{phoneNumber:this.order.address.phoneNumber}}"
+        @click.native="showRedPacker()"
         title="红包">
         <span v-if="canUserRedPackedNum != 0 && order.redPacketId == -1">
           有{{canUserRedPackedNum}}个红包可用
@@ -135,7 +135,22 @@
         @click.native="payMethodVisible = true">
         <span>{{order.payMethod}}</span>
       </mt-cell>
-      <mt-cell title="开是否需要发票"></mt-cell>
+      <mt-cell 
+        @click.native="invoiceVisible = true"
+        title="开是否需要发票">
+        <span 
+          v-if="currentShop.shopProperty.invoice != 1">
+          商家不支持开发票
+        </span>
+        <span v-else>
+          <span v-show="order.needInvoice">
+            需要开发票
+          </span>
+          <span v-show="!order.needInvoice">
+            不需要开发票
+          </span>
+        </span>
+      </mt-cell>
     </article>
     <aside>
       <div>
@@ -153,7 +168,9 @@
       popup-transition="popup-slide">
         <time-picker
           :start-hour="this.startHour"
-          :start-minut="this.startMinute"></time-picker>
+          :start-minut="this.startMinute"
+          @requestValue="handleConfirm"
+          @cancle="arrivedTimeVisible = false"></time-picker>
     </mt-popup>
     <mt-popup
       position="bottom"
@@ -179,6 +196,13 @@
         @close='responseRemark'
         ></my-remark>
     </mt-popup>
+    <mt-popup
+      position="right"
+      v-model="invoiceVisible"
+      popup-transition="popup-slide">
+      <my-invoice
+        @close="responseInvoice"></my-invoice>
+    </mt-popup>
     <router-view></router-view>
   </div>
 </template>
@@ -189,10 +213,12 @@ import { floatComputeAddorMul, floatComputeSuborDiv } from '../../tool/tool';
 import TimePicker from '../components/TimePicker.vue';
 import computDistance from '../../tool/computdistance';
 import Remark from './children/Remark.vue';
+import Invoice from './children/Invoice.vue';
 
 export default {
   data() {
     return {
+      enterTime: 0, // 订单超时检测
       arrivedTime: '', // 计算的预计到达时间字符串
       startHour: 0, // 预计到达时间的小时
       startMinute: 0, // 预计到达时间的分钟
@@ -202,8 +228,9 @@ export default {
       payMethodArray: ['在线支付', '货到付款'], // 付款方式数组
       remarkVisible: false, // 控制备注信息显示
       redPacket: 0, // 红包优惠金额
-      canUserRedPackedNum: 0,
+      canUserRedPackedNum: 0, // 可用红包数量
       OtherDiscounts: [], // 其他优惠金额
+      invoiceVisible: false, // 选择发票界面显示
       order: {
         pickerValue: '', // 选择的派送时间
         address: {}, // 选择的派送地址
@@ -215,6 +242,7 @@ export default {
         payPrice: 0, // 支付金额
         redPacketId: -1, // 选择的红包ID
         remarkString: '', // 备注
+        needInvoice: false, // 是否需要发票
       },
     };
   },
@@ -255,10 +283,29 @@ export default {
       this.startInterval();
     },
     handleConfirm(value) {
+      this.computedArrivedTime();
       const minute = value.split(':')[1];
-      if (minute < this.startMinute) {
+      const hour = value.split(':')[0];
+      if (minute < this.startMinute || hour < this.startHour) {
         Toast(`选择配送时间不能小于${this.arrivedTime}`);
-        this.arrivedTime = this.order.pickerValue;
+        this.arrivedTimeVisible = false;
+      } else {
+        this.order.pickerValue = value;
+        this.arrivedTimeVisible = false;
+      }
+    },
+    showTimePicker() {
+      if (this.order.address.id) {
+        clearInterval(this.timeInterval);
+        this.arrivedTimeVisible = true;
+      }
+    },
+    showRedPacker() {
+      if (this.order.address.id) {
+        this.$router.push({
+          path: '/confirmOrder/selectRedpacket',
+          query: { phoneNumber: this.order.address.phoneNumber },
+        });
       }
     },
     startInterval() {
@@ -293,7 +340,7 @@ export default {
             return;
           }
           // 检测是否有手机号码限制
-          if (e.phoneNumber != '' && e.phoneNumber != this.order.address.phoneNumber) {
+          if (e.phoneNumber != null && e.phoneNumber !== this.order.address.phoneNumber) {
             return;
           }
           // 检测是否处于红包限制时间内
@@ -304,14 +351,16 @@ export default {
             return;
           }
           // 检测店铺类型是否符合红包限制
-          let checkShopTypeFlag = true;
-          this.currentShop.shopPropertyType.forEach((ele) => {
-            if (e.shopTypeList.includes(ele)) {
-              checkShopTypeFlag = false;
+          if (e.shopTypeList.length !== 0) {
+            let checkShopTypeFlag = true;
+            e.shopTypeList.forEach((ele) => {
+              if (this.currentShop.shopPropertyType.includes(ele)) {
+                checkShopTypeFlag = false;
+              }
+            });
+            if (checkShopTypeFlag) {
+              return;
             }
-          });
-          if (checkShopTypeFlag) {
-            return;
           }
           this.canUserRedPackedNum += 1;
         });
@@ -321,10 +370,20 @@ export default {
       this.remarkVisible = false;
       this.order.remarkString = remarkString;
     },
+    responseInvoice(invoice) {
+      if (!invoice) {
+        this.order.needInvoice = false;
+      } else {
+        this.order = { ...this.order, ...invoice };
+        this.order.needInvoice = true;
+      }
+      this.invoiceVisible = false;
+    },
   },
   components: {
     'my-remark': Remark,
     'time-picker': TimePicker,
+    'my-invoice': Invoice,
   },
   created() {
     this.computedPayPrice();
@@ -337,8 +396,13 @@ export default {
       this.computedArrivedTime();
     }
     if (hasOwn.call(to.query, 'redPacketIndex')) {
-      this.order.redPacketId = this.currentUser.hongbao[to.query.redPacketIndex].id;
-      this.computedRedPacket(to.query.redPacketIndex);
+      if (to.query.redPacketIndex !== -1) {
+        this.order.redPacketId = this.currentUser.hongbao[to.query.redPacketIndex].id;
+        this.computedRedPacket(to.query.redPacketIndex);
+      } else {
+        this.order.redPacketId = -1;
+        this.redPacket = 0;
+      }
       this.computedPayPrice();
     }
     next();
@@ -450,10 +514,14 @@ export default {
       display: block;
       @include ellipsis;
     }
+    .mint-popup{
+      background: none;
+    }
     .payMethod{
       width: 100vw;
       text-align: center;
       border-bottom: 1px solid #ccc;
+      background: #fff;
       @include remCalc('font-size',18px);
       @include remCalc('padding',10px,0);
     }

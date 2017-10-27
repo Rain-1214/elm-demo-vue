@@ -19,11 +19,11 @@
           v-show="v.tag !== ''">{{v.tag}}</span>
           <p :class="{'hastag':v.tag !== ''}">{{v.addressName}} {{v.addressDetail}}</p>
         </h2>
-        <i class="el-icon-delete2" @click="removeAddress(v)"></i>
+        <i class="el-icon-delete" @click="removeAddress(v)"></i>
         <i class="el-icon-edit" @click="editAddress(v)"></i>
       </section>
     </article>
-    <aside @click ="popupVisible = true">
+    <aside @click ="addAddress()">
       <p>添加新地址</p>
     </aside>
     <mt-popup
@@ -79,12 +79,16 @@
       },
       afreshAddress() {
         this.popupVisible = false;
-        this.addOrEdit = 'add';
         this.$store.dispatch('afreshAddress');
       },
       editAddress(address) {
         this.currentAddress = { ...this.currentAddress, ...address };
         this.addOrEdit = 'edit';
+        this.popupVisible = true;
+      },
+      addAddress() {
+        this.currentAddress = {};
+        this.addOrEdit = 'add';
         this.popupVisible = true;
       },
       removeAddress(address) {
@@ -179,7 +183,7 @@
           right: 10px;
           @include remCalc('font-size',18px);
           @include tb-center(absolute);
-          &.el-icon-delete2{
+          &.el-icon-delete{
             color: red;
             @include remCalc('right',30px);
           }

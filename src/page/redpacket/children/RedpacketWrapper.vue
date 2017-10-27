@@ -12,7 +12,7 @@
       <div>
         <h2>{{packet.hongbaoName}}</h2>
         <ul>
-          <li v-show="packet.phoneNumber ? packet.phoneNumber != '' : false">限{{packet.phoneNumber}}手机号使用</li>
+          <li v-show="packet.phoneNumber ? packet.phoneNumber != null : false">限{{packet.phoneNumber}}手机号使用</li>
           <li>
             {{packet.startTime}}
             到
@@ -38,15 +38,7 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
-
-    };
-  },
   props: ['packet', 'canNotUse', 'canNotUseCause'],
-  created() {
-    console.log(this.data);
-  },
 };
 </script>
 <style lang="scss" scoped>
