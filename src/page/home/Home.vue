@@ -45,7 +45,7 @@
               <el-rate
                 v-model="v.averageEvaluate"
                 disabled
-                show-text
+                show-score
                 text-color="#ff9900">
               </el-rate>
               <p>

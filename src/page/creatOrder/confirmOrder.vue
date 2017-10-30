@@ -159,7 +159,9 @@
         </h3>
       </div>
       <div>
-        <el-button type="success">确认下单</el-button>
+        <el-button 
+          @click.native="submit()"
+          type="success">确认下单</el-button>
       </div>
     </aside>
     <mt-popup
@@ -210,6 +212,7 @@
 import { mapGetters } from 'vuex';
 import { Toast } from 'mint-ui';
 import { floatComputeAddorMul, floatComputeSuborDiv } from '../../tool/tool';
+import { checkOrder } from '../../api/order';
 import TimePicker from '../components/TimePicker.vue';
 import computDistance from '../../tool/computdistance';
 import Remark from './children/Remark.vue';
@@ -227,18 +230,20 @@ export default {
       payMethodVisible: false, // 控制改变付款方式上拉显示
       payMethodArray: ['在线支付', '货到付款'], // 付款方式数组
       remarkVisible: false, // 控制备注信息显示
-      redPacket: 0, // 红包优惠金额
+      redPacket: 0, // 红包优惠金额`
       canUserRedPackedNum: 0, // 可用红包数量
       OtherDiscounts: [], // 其他优惠金额
       invoiceVisible: false, // 选择发票界面显示
+      ajaxFlag: true, // 防止多次提交
       order: {
         pickerValue: '', // 选择的派送时间
+        deliveryTime: '', // 配送需要多长时间
         address: {}, // 选择的派送地址
         payMethod: '在线支付', // 支付方式
         time: 0, // 下单时间
         shopId: 0, // 店铺ID
         userId: 0, // 用户id
-        deliveryMethod: '', // 配送方式
+        deliveryMethod: '蜂鸟专送', // 配送方式
         payPrice: 0, // 支付金额
         redPacketId: -1, // 选择的红包ID
         remarkString: '', // 备注
@@ -267,9 +272,9 @@ export default {
       const { lat: addressLat, lng: addressLng } = this.order.address;
       const { latitude: shopLat, longitude: shopLng } = this.currentShop;
       const distance = computDistance(addressLat, addressLng, shopLat, shopLng);
-      const tempTime = Math.ceil(distance / 1000) * 20;
-      const minute = tempTime % 60;
-      const hour = (tempTime - minute) / 60;
+      this.order.deliveryTime = Math.ceil(distance / 1000) * 20;
+      const minute = this.order.deliveryTime % 60;
+      const hour = (this.order.deliveryTime - minute) / 60;
       const currentHour = new Date().getHours();
       const currentMnute = new Date().getMinutes();
       this.startHour = currentMnute + minute >= 60 ? currentHour + hour + 1 : currentHour + hour;
@@ -302,9 +307,10 @@ export default {
     },
     showRedPacker() {
       if (this.order.address.id) {
+        const redPacketId = this.order.redPacketId;
         this.$router.push({
           path: '/confirmOrder/selectRedpacket',
-          query: { phoneNumber: this.order.address.phoneNumber },
+          query: { phoneNumber: this.order.address.phoneNumber, redPacketId },
         });
       }
     },
@@ -326,7 +332,7 @@ export default {
       let totalPrice = this.shoppingCartProducts[this.currentShop.id].totalPrice;
       totalPrice = floatComputeAddorMul('+', totalPrice, this.currentShop.deliveryCost);
       this.order.payPrice = floatComputeSuborDiv('-', totalPrice, this.redPacket, this.fullMinus, ...this.OtherDiscounts);
-      this.order.payPrice = this.order.payPrice <= 0 ? 1 : this.order.payPrice;
+      this.order.payPrice = this.order.payPrice < 1 ? 1 : this.order.payPrice;
     },
     computedRedPacket(redPacketIndex) {
       this.redPacket = this.currentUser.hongbao[redPacketIndex].minusMoney;
@@ -379,6 +385,24 @@ export default {
       }
       this.invoiceVisible = false;
     },
+    async submit() {
+      if (this.ajaxFlag) {
+        this.ajaxFlag = false;
+        try {
+          const tempDate = new Date();
+          this.order.time = `${tempDate.getFullYear()}-${tempDate.getMonth() + 1}-${tempDate.getDate()} ${tempDate.getHours()}:${tempDate.getMinutes()}:${tempDate.getSeconds()}`;
+          this.order.shopId = this.currentShop.id;
+          this.order.userId = this.currentUser.id;
+          const data = this.order;
+          const res = await checkOrder(data);
+          console.log(res);
+        } catch (error) {
+          console.log(error.message);
+        } finally {
+          this.ajaxFlag = true;
+        }
+      }
+    },
   },
   components: {
     'my-remark': Remark,
@@ -386,7 +410,11 @@ export default {
     'my-invoice': Invoice,
   },
   created() {
+    this.enterTime = new Date().getTime();
     this.computedPayPrice();
+    if (this.currentShop.shopProperty.hummingbird !== 1) {
+      this.order.deliveryMethod = '商家自送';
+    }
   },
   beforeRouteUpdate(to, from, next) {
     const hasOwn = Object.prototype.hasOwnProperty;

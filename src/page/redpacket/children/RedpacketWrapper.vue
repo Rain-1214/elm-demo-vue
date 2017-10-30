@@ -30,6 +30,7 @@
           </li>
         </ul>
       </div>
+      <i v-if="iconShow" class="el-icon-circle-check"></i>
     </section>
     <div class="cause" v-if="canNotUseCause">
       不可用原因：{{canNotUseCause}}
@@ -38,7 +39,7 @@
 </template>
 <script>
 export default {
-  props: ['packet', 'canNotUse', 'canNotUseCause'],
+  props: ['packet', 'canNotUse', 'canNotUseCause', 'iconShow'],
 };
 </script>
 <style lang="scss" scoped>
@@ -51,6 +52,13 @@ export default {
     @include remCalc('padding',10px);
     .redpacket{
       display: flex;
+      position: relative;
+      i{
+        position: absolute;
+        color: #76dc2c;
+        @include remCalc('right',0px);
+        @include remCalc('top',0px);
+      }
       >div{
         div{
           color: red;

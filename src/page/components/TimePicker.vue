@@ -71,7 +71,6 @@ export default {
         return value >= 0 && value <= 59
       }
     },
-    value: Boolean,
   },
   watch: {
     startHour() {
@@ -79,7 +78,7 @@ export default {
       let i = this.startHour || 0;
       this.selectHour = this.startHour;
       for (;i <= 23; i += 1) {
-        this.hourArray.push(i);
+        this.hourArray.push(i < 10 ? `0${i}` : `${i}`);
       }
     },
     startMinut() {
@@ -87,7 +86,7 @@ export default {
       let j = this.startMinut || 0;
       this.selectMinut = this.startMinut;
       for (;j <= 59; j += 1) {
-        this.minutArray.push(j);
+        this.minutArray.push(j < 10 ? `0${j}` : `${j}`);
       }
     }
   },

@@ -15,7 +15,9 @@
         <section
           class="noUse">
           不使用红包
-          <i class="el-icon-circle-check"></i>
+          <i 
+            v-show="$route.query.redPacketId === -1"
+            class="el-icon-circle-check"></i>
         </section>
       </router-link>
       <redpacket-wrapper
@@ -23,6 +25,7 @@
         :canNotUseCause="canUseArray[i].string"
         :packet="v"
         :key="i"
+        :icon-show="v.id === $route.query.redPacketId"
         @click.native="addRedPacket(i)"
         v-for="(v,i) in currentUser.hongbao">
       </redpacket-wrapper>
@@ -127,9 +130,9 @@ export default {
         @include remCalc('margin',10px);
         @include remCalc('padding',10px);
         @include remCalc('font-size',16px);
-        i{
-          color: #76dc2c;
-        }
+      }
+      i{
+        color: #76dc2c;
       }
     }
   }
