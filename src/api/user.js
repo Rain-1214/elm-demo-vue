@@ -18,4 +18,6 @@ export const getUserSafetyQuestion = (data) => axios.post('/ElmPro/User/getUserS
 
 export const checkUserSafetyQuestion = (data) => axios.post('/ElmPro/User/checkUserSafetyQuestion.do', data); // 对比安全问题答案
 
-export const setNewPassword = (data) => axios.post('/ElmPro/User/setNewPassword.do', data);
+export const setNewPassword = (data) => axios.post('/ElmPro/User/setNewPassword.do', data); // 设置新密码
+
+export const getUserHongbao = (data) => axios.post('/ElmPro/User/findHongbaoByUserId.do', data); // 获取用户所有红包

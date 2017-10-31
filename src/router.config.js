@@ -11,6 +11,7 @@ const Order = r => require.ensure([], () => r(require('./page/order/Order.vue'))
 const OrderSelectAddress = r => require.ensure([], () => r(require('./page/creatOrder/OrderSelectAddress.vue')), 'OrderSelectAddress');
 const Redpacket = r => require.ensure([], () => r(require('./page/redpacket/Redpacket.vue')), 'Redpacket');
 const OrderSelectPacket = r => require.ensure([], () => r(require('./page/creatOrder/OrderSelectRedPacket.vue')), 'OrderSelectRedPacket');
+const Pay = r => require.ensure([], () => r(require('./page/pay/Pay.vue')), 'Pay');
 
 export default{
   mode: 'history',
@@ -23,6 +24,7 @@ export default{
     { path: '/register', component: Register },
     { path: '/forgetPassword', component: ForgetPassword },
     { path: '/order', component: Order },
+    { path: '/Pay', component: Pay },
     {
       path: '/user',
       component: User,

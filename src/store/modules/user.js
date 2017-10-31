@@ -1,5 +1,5 @@
 import * as type from '../mutation-types';
-import { getUserAddress } from '../../api/user';
+import { getUserAddress, getUserHongbao } from '../../api/user';
 
 const state = {
   user: {},
@@ -19,6 +19,16 @@ const actions = {
       console.log(error);
     }
   },
+  async afreshHongbao({ state, commit }) {
+    try {
+      const userId = state.user.id;
+      const res = await getUserHongbao({ userId });
+      console.log(res);
+      commit(type.AFRESH_HONGBAO, res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 const mutations = {
@@ -34,6 +44,10 @@ const mutations = {
   },
   [type.AFRESH_ADDRESS](state, addressArray) {
     state.user.address = [...addressArray];
+    localStorage.setItem('User', JSON.stringify(state.user));
+  },
+  [type.AFRESH_HONGBAO](state, hongbaoArray) {
+    state.user.hongbao = [...hongbaoArray];
     localStorage.setItem('User', JSON.stringify(state.user));
   },
 };

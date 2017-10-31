@@ -63,10 +63,8 @@ export default {
           return;
         }
         // 检测是否处于红包限制时间内
-        const startTime = new Date(e.startTime).getTime();
-        const endTime = new Date(e.endTime).getTime();
         const nowTime = new Date().getTime();
-        if (nowTime <= startTime || nowTime >= endTime) {
+        if (nowTime <= e.startTime || nowTime >= e.endTime) {
           this.writeRedPacketType(i, true, '红包不在使用时间内');
           return;
         }

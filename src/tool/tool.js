@@ -1,6 +1,8 @@
 // 常量
 const MAX_ARRAY_INDEX = (2 ** 53) - 1;
 
+const hasOwn = Object.prototype.hasOwnProperty;
+
 const tag = {
   arrayTag: '[object Array]',
   boolTag: '[object Boolean]',
@@ -39,24 +41,7 @@ const getValueTag = (value) => {
  */
 const bindThis = (func, context, argCount) => {
   if (context === undefined) return func;
-
-  switch (argCount == null ? 3 : argCount) {
-    case 1: return function (value) {
-      return func.call(context, value);
-    };
-    case 2: return function (value, other) {
-      return func.call(context, value, other);
-    };
-    case 3: return function (value, index, collection) {
-      return func.call(context, value, index, collection);
-    };
-    case 4: return function (accumulator, value, index, collection) {
-      return func.call(context, accumulator, value, index, collection);
-    };
-    default: return function (...value) {
-      return func.apply(context, value);
-    };
-  }
+  return func.call(context, ...argCount);
 };
 
 export const isObject = (value) => {
@@ -71,6 +56,7 @@ export const isUndefined = (value) => value === undefined;
 export const isArray = Array.isArray;
 
 export const isArrayLike = (value) => {
+  if (!hasOwn.call(value, 'length')) return false;
   const length = value.length;
   return typeof length === 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
 };
@@ -183,3 +169,12 @@ export const floatComputeSuborDiv = (sign, firstvalue, ...valueArray) => valueAr
     default : return (sum.allInteger / currentValue.allInteger) * (sum.times / currentValue.times);
   }
 }, firstvalue);
+
+export const functionFactory = (fn, value, context) => () => {
+  console.log(value, context);
+  if (isArrayLike(value)) {
+    fn.call(context, ...value);
+  } else {
+    fn.call(context, value);
+  }
+};

@@ -350,10 +350,8 @@ export default {
             return;
           }
           // 检测是否处于红包限制时间内
-          const startTime = new Date(e.startTime).getTime();
-          const endTime = new Date(e.endTime).getTime();
           const nowTime = new Date().getTime();
-          if (nowTime <= startTime || nowTime >= endTime) {
+          if (nowTime <= e.startTime || nowTime >= e.endTime) {
             return;
           }
           // 检测店铺类型是否符合红包限制
@@ -440,7 +438,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   @import '../../assets/css/common/tool';
   @import '../../assets/css/common/responsive';
   

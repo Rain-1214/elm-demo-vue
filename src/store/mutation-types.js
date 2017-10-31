@@ -16,7 +16,4 @@ export const REMOVE_ALL_PRODUCTS = 'REMOVE_ALL_PRODUCTS'; // 从购物车当中�
 export const SAVE_CURRENT_USER = 'SAVE_CURRENT_USER'; // 存储当前登录的用户
 export const REMOVE_CURRENT_USER = 'REMOVE_CURRENT_USER'; // 删除当前用户 （登出）
 export const AFRESH_ADDRESS = 'AFRESH_ADDRESS'; // 刷新用户地址
-
-// loading
-export const OPEN_LOADING = 'OPEN_LOADING';
-export const CLOSE_LOADING = 'CLOSE_LOADING';
+export const AFRESH_HONGBAO = 'AFRESH_HONGBAO'; // 刷新用户红包

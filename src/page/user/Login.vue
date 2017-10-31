@@ -22,7 +22,7 @@
            <el-input v-model="code" placeholder="请输入验证码"></el-input>
          </div>
          <div class="code-img">
-           <img :src="`/ElmPro/User/getCode.do?${new Date()}`" v-once alt="">
+           <img>
          </div>
          <div class="change">
            <p>看不清？</p>
@@ -98,8 +98,8 @@
         }
       },
     },
-    created() {
-
+    mounted() {
+      this.change();
     },
   };
 </script>

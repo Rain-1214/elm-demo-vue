@@ -14,9 +14,9 @@
         <ul>
           <li v-show="packet.phoneNumber ? packet.phoneNumber != null : false">限{{packet.phoneNumber}}手机号使用</li>
           <li>
-            {{packet.startTime}}
+            {{serializeDate(packet.startTime)}}
             到
-            {{packet.endTime}}
+            {{serializeDate(packet.endTime)}}
             可用
           </li>
           <li v-if="packet.shopTypeList.length != 0">
@@ -40,6 +40,12 @@
 <script>
 export default {
   props: ['packet', 'canNotUse', 'canNotUseCause', 'iconShow'],
+  methods: {
+    serializeDate(dateTime) {
+      const date = new Date(dateTime);
+      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

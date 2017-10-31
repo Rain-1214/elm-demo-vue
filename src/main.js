@@ -23,7 +23,7 @@ const router = new VueRouter(routerConfig);
 // 路由拦截
 router.beforeEach((to, from, next) => {
   const hasOwn = Object.prototype.hasOwnProperty;
-  const { shop, shoppingCart } = store.state;
+  const { shop, shoppingCart, user } = store.state;
 
   switch (to.path) {
     case '/shop':
@@ -35,13 +35,14 @@ router.beforeEach((to, from, next) => {
         router.push('/home');
       }
       break;
-    case /^\/user.*$/.test(to.path) && to.path:
+    case /^\/user\/.*$/.test(to.path) && to.path:
       /* eslint-disable no-undef */
-      if (localStorage.getItem('User') != null) {
+      console.log(user.user);
+      if (localStorage.getItem('User') != null && !hasOwn.call(user.user, 'id')) {
         const User = localStorage.getItem('User');
         store.commit('SAVE_CURRENT_USER', JSON.parse(User));
       } else {
-        router.push('/home');
+        router.push('/user');
       }
       break;
     case /(^\/login$)|(^\/register$)/.test(to.path) && to.path:

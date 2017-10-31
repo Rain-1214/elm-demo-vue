@@ -43,6 +43,7 @@
 </template>
 <script>
 import Drag from './Drag.vue';
+import { functionFactory } from '../../tool/tool';
 
 export default {
   data() {
@@ -85,8 +86,24 @@ export default {
       this.minutArray.splice(0);
       let j = this.startMinut || 0;
       this.selectMinut = this.startMinut;
+      this.constStartMinut = this.startMinut;
       for (;j <= 59; j += 1) {
         this.minutArray.push(j < 10 ? `0${j}` : `${j}`);
+      }
+    },
+    selectHour() {
+      if (this.selectHour > this.startHour) {
+        this.minutArray.splice(0);
+        let j = 0;
+        for (;j <= 59; j += 1) {
+          this.minutArray.push(j < 10 ? `0${j}` : `${j}`);
+        }
+      } else {
+        this.minutArray.splice(0);
+        let j = this.startMinut || 0;
+        for (;j <= 59; j += 1) {
+          this.minutArray.push(j < 10 ? `0${j}` : `${j}`);
+        }
       }
     }
   },
