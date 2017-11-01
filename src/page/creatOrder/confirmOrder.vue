@@ -393,6 +393,14 @@ export default {
           this.order.userId = this.currentUser.id;
           const data = this.order;
           const res = await checkOrder(data);
+          if (res.data.stateCode) {
+            this.$router.push({
+              path: '/pay',
+              query: {
+                payPrice: res.data.data,
+              },
+            });
+          }
           console.log(res);
         } catch (error) {
           console.log(error.message);

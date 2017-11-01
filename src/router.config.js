@@ -24,7 +24,7 @@ export default{
     { path: '/register', component: Register },
     { path: '/forgetPassword', component: ForgetPassword },
     { path: '/order', component: Order },
-    { path: '/Pay', component: Pay },
+    { path: '/pay', component: Pay },
     {
       path: '/user',
       component: User,

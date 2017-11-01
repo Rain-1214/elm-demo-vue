@@ -170,11 +170,15 @@ export const floatComputeSuborDiv = (sign, firstvalue, ...valueArray) => valueAr
   }
 }, firstvalue);
 
-export const functionFactory = (fn, value, context) => () => {
-  console.log(value, context);
-  if (isArrayLike(value)) {
-    fn.call(context, ...value);
-  } else {
-    fn.call(context, value);
-  }
+export const isPc = () => {
+  const phoneArray = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod'];
+  /* eslint-disable no-undef */
+  const userString = navigator.userAgent;
+  let flag = true;
+  phoneArray.forEach((e) => {
+    if (userString.includes(e)) {
+      flag = false;
+    }
+  });
+  return flag;
 };
