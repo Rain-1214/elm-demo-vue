@@ -4,7 +4,7 @@
     <article>
       <section class="time">
         <h3>剩余支付时间</h3>
-        <h1>14:59</h1>
+        <h1>{{ time }}</h1>
       </section>
       <section>
         <img src="../../assets/img/pay.png" alt="">
@@ -26,67 +26,119 @@
       <br>
       <section>
         <el-button
-          @click.native = "send()"
+          @click.native = "websocket.close()"
           type="success">
           send
+        </el-button>
+        <el-button
+          @click.native = "creatWebSocket()"
+          type="success">
+          send2
         </el-button>
       </section>
     </article>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import { isPc } from '../../tool/tool';
 
 export default {
   data() {
     return {
       websocket: null,
+      time: '15:00',
+      intervalId: -1,
+      getTime: -1,
+      data: null,
     };
   },
-  methods: {
-    open(event) {
-      console.log('Connected to WebSocket server.');
-    },
-    close(event) {
-      console.log('Disconnected');
-    },
-    message(event) {
-      console.log(JSON.parse(event.data));
-      console.log('Retrieved data from server: ' + event);
-    },
-    error(event) {
-      console.log('Error occured: ' + event);
-    },
-    send() {
-      try {
-        this.websocket.send(JSON.stringify({ a: 1 }));
-      } catch (e) {
-        console.log(e);
-      }
+  watch: {
+    data() {
+      const time = this.surplusTime();
+      this.setTime(time);
     },
   },
-  created() {
-    try {
+  computed: {
+    ...mapGetters(['currentUser']),
+  },
+  methods: {
+    surplusTime() {
+      return (this.data.time + (15 * 60 * 1000)) - new Date().getTime();
+    },
+    setTime(time) {
+      const minutes = new Date(time).getMinutes();
+      const seconds = new Date(time).getSeconds();
+      this.time = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+    },
+    open() {
+      const id = this.currentUser.id;
+      const data = {
+        message: 'init',
+        id,
+      };
+      this.send(JSON.stringify(data));
+    },
+    close() {
+    },
+    message(event) {
+      if (event.data === 'close') {
+        this.cancelOrder();
+      } else {
+        this.data = { ...this.data, ...JSON.parse(event.data) };
+      }
+    },
+    error() {
+      this.creatWebSocket();
+    },
+    send(message) {
+      this.websocket.send(message);
+    },
+    creatWebSocket() {
       let wsServer;
       if (isPc()) {
         wsServer = 'ws://localhost:8080/ElmPro/websocket';
       } else {
         wsServer = 'ws://10.1.1.35:8080/ElmPro/websocket';
       }
-      console.log(wsServer);
       const websocket = new WebSocket(wsServer);
       this.websocket = websocket;
       websocket.onopen = this.open;
       websocket.onclose = this.open;
       websocket.onmessage = this.message;
       websocket.onerror = this.error;
-    } catch (e) {
-      alert(e)
-    }
+    },
+    cancelOrder() {
+      this.websocket.close();
+      clearInterval(this.intervalId);
+      clearInterval(this.getTime);
+      this.$router.push('/home');
+    },
+  },
+  created() {
+    this.creatWebSocket();
+    const intervalId = setInterval(() => {
+      const time = this.surplusTime();
+      if (time <= 0) {
+        this.cancelOrder();
+      }
+      this.setTime(time);
+    }, 1000);
+    const id = this.currentUser.id;
+    const data = {
+      message: 'getTime',
+      id,
+    };
+    const getTime = setInterval(() => {
+      this.send(JSON.stringify(data));
+    }, 6000);
+    this.intervalId = intervalId;
+    this.getTime = getTime;
   },
   beforeDestroy() {
-    alert(1);
     this.websocket.close();
+    clearInterval(this.intervalId);
+    clearInterval(this.getTime);
   },
 };
 </script>

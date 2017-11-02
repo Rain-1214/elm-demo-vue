@@ -170,6 +170,10 @@ export const floatComputeSuborDiv = (sign, firstvalue, ...valueArray) => valueAr
   }
 }, firstvalue);
 
+/**
+ * 检测是PC还是手机
+ * @returns {Boolean} true => PC false => 手机
+ */
 export const isPc = () => {
   const phoneArray = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod'];
   /* eslint-disable no-undef */
