@@ -145,7 +145,7 @@ export const floatComputeAddorMul = (sign, ...valueArray) => valueArray.reduce((
         : ((currentValue.allInteger + (sum.allInteger * (currentValue.times / sum.times))) / currentValue.times);
     default : return (sum.allInteger * currentValue.allInteger) / (sum.times * currentValue.times);
   }
-}, 0);
+});
 
 /**
  * 浮点类型计算 减法 或 除法

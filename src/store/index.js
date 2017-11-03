@@ -6,6 +6,7 @@ import location from './modules/location';
 import shoppingCart from './modules/shoppingCart';
 import shop from './modules/shop';
 import user from './modules/user';
+import order from './modules/order';
 
 Vue.use(Vuex);
 
@@ -17,5 +18,6 @@ export default new Vuex.Store({
     shoppingCart,
     shop,
     user,
+    order,
   },
 });

@@ -400,6 +400,8 @@ export default {
                 payPrice: res.data.data,
               },
             });
+          } else {
+            Toast(res.data.message);
           }
           console.log(res);
         } catch (error) {
@@ -558,6 +560,9 @@ export default {
       background: #fff;
       @include remCalc('font-size',18px);
       @include remCalc('padding',10px,0);
+    }
+    article{
+      @include remCalc('padding-bottom',50px);
     }
     aside{
       position:fixed;

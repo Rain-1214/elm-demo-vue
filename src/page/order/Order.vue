@@ -33,6 +33,7 @@
               再来一单 
             </el-button>
             <el-button 
+              @click="showDetail(v)"
               v-if="v.order.orderState !== 1"
               size="small">
               查看详情 
@@ -42,17 +43,21 @@
       </section>
     </article>
     <my-footer :active="2"></my-footer>
+    <router-view></router-view>
   </div>
 </template>
 <script>
   import { mapGetters } from 'vuex';
   import { getOrder } from '../../api/order';
   import Footer from '../components/footer.vue';
+  import { ALERT_CURRENTORDER } from '../../store/mutation-types';
 
   export default {
     data() {
       return {
         orderList: [],
+        detailVisible: false,
+        detailData: null,
       };
     },
     components: {
@@ -64,11 +69,15 @@
     methods: {
       computeOrderState(stateCode) {
         switch (stateCode) {
-          case 1: return '代付款';
+          case 1: return '待付款';
           case 2: return '已取消';
           case 3: return '正在配送';
           default: return '已完成';
         }
+      },
+      showDetail(v) {
+        this.$store.commit(ALERT_CURRENTORDER, v);
+        this.$router.push('/order/orderDetail');
       },
     },
     async created() {
@@ -87,7 +96,7 @@
 
   #order{
     article{
-      @include remCalc('padding',20px,0px);
+      @include remCalc('padding',20px,0px,40px);
       section{
         @include remCalc('margin-bottom',15px);
         @include remCalc('padding',0,10px);

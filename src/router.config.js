@@ -8,6 +8,7 @@ const Address = r => require.ensure([], () => r(require('./page/user/children/ad
 const ForgetPassword = r => require.ensure([], () => r(require('./page/user/forgetPassword.vue')), 'ForgetPassword');
 const confirmOrder = r => require.ensure([], () => r(require('./page/creatOrder/confirmOrder.vue')), 'confirmOrder');
 const Order = r => require.ensure([], () => r(require('./page/order/Order.vue')), 'Order');
+const OrderDetail = r => require.ensure([], () => r(require('./page/order/children/OrderDetail.vue')), 'OrderDetail');
 const OrderSelectAddress = r => require.ensure([], () => r(require('./page/creatOrder/OrderSelectAddress.vue')), 'OrderSelectAddress');
 const Redpacket = r => require.ensure([], () => r(require('./page/redpacket/Redpacket.vue')), 'Redpacket');
 const OrderSelectPacket = r => require.ensure([], () => r(require('./page/creatOrder/OrderSelectRedPacket.vue')), 'OrderSelectRedPacket');
@@ -23,8 +24,17 @@ export default{
     { path: '/login', component: Login },
     { path: '/register', component: Register },
     { path: '/forgetPassword', component: ForgetPassword },
-    { path: '/order', component: Order },
     { path: '/pay', component: Pay },
+    {
+      path: '/order',
+      component: Order,
+      children: [
+        {
+          path: 'orderDetail',
+          component: OrderDetail,
+        },
+      ],
+    },
     {
       path: '/user',
       component: User,
