@@ -59,7 +59,7 @@
             :key="i" 
             v-for="(v,i) in shoppingCartProducts[currentShop.id].foodList">
             <div>
-              {{v.foodName}}
+              {{v.foodName}}{{v.foodType}}
             </div>
             <div>
               <span>x{{v.foodNum}}</span>
@@ -394,10 +394,13 @@ export default {
           const data = this.order;
           const res = await checkOrder(data);
           if (res.data.stateCode) {
+            const shopId = this.currentShop.id;
+            this.$store.commit('REMOVE_ALL_PRODUCTS', { shopId });
             this.$router.push({
               path: '/pay',
               query: {
                 payPrice: res.data.data,
+                orderId: res.data.orderId,
               },
             });
           } else {

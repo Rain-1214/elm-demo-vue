@@ -7,3 +7,7 @@ export const checkOrder = (data) => axios.post('/ElmPro/order/checkOrder.do', da
 export const getOrder = (data) => axios.post('/ElmPro/order/getOrder.do', data);
 
 export const getRedPacket = (data) => axios.post('/ElmPro/order/getHongbao.do', data);
+
+export const pay = () => axios.post('/ElmPro/order/pay.do');
+
+export const orderCompleted = (data) => axios.post('/ElmPro/order/orderCompleted.do', data);

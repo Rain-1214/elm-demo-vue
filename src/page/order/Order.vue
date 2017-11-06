@@ -21,14 +21,29 @@
             {{v.orderProduct[0].name}} 等 {{v.orderProduct.length}} 件商品
           </div>
           <div class="button">
+            <router-link :to="{
+              path: '/pay',
+              query: {
+                orderId: v.order.id,
+                payPrice: v.order.payPrice,
+              }
+            }">
+              <el-button 
+                v-if="v.order.orderState == 1"
+                type="success"
+                size="small">
+                去付款 
+              </el-button>
+            </router-link>
             <el-button 
-              v-if="v.order.orderState == 1"
-              type="success"
-              size="small">
-              去付款 
+              type="primary"
+              v-if="v.order.orderState == 3"
+              size="small"
+              @click.native="orderCpt(v.order.id)">
+              确认收货 
             </el-button>
             <el-button 
-              v-if="v.order.orderState !== 1"
+              v-if="v.order.orderState !== 1 && v.order.orderState !== 3"
               size="small">
               再来一单 
             </el-button>
@@ -48,7 +63,8 @@
 </template>
 <script>
   import { mapGetters } from 'vuex';
-  import { getOrder } from '../../api/order';
+  import { Message } from 'element-ui';
+  import { getOrder, orderCompleted } from '../../api/order';
   import Footer from '../components/footer.vue';
   import { ALERT_CURRENTORDER } from '../../store/mutation-types';
 
@@ -79,10 +95,20 @@
         this.$store.commit(ALERT_CURRENTORDER, v);
         this.$router.push('/order/orderDetail');
       },
+      async orderCpt(orderId) {
+        const res = await orderCompleted({ orderId });
+        if (res.data.stateCode) {
+          Message({
+            message: '恭喜，订单已完成',
+            type: 'success',
+          });
+        }
+      },
     },
     async created() {
       const userId = this.currentUser.id;
       const res = await getOrder({ userId });
+      console.log(res);
       if (res.data.stateCode) {
         this.orderList = res.data.data;
       }

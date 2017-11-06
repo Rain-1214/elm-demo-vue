@@ -35,9 +35,9 @@
             :rules="[
               { required: true, message: '请填写好完整的公司名称' }
             ]"
-            prop="companyNmae">
+            prop="companyName">
             <el-input 
-              v-model="form.companyNmae" 
+              v-model="form.companyName" 
               placeholder="公司名称"></el-input>
           </el-form-item>
           <el-form-item 
@@ -68,7 +68,7 @@ export default {
   data() {
     return {
       form: {
-        companyNmae: '',
+        companyName: '',
         code: '',
       },
       companyInfoVisible: false,

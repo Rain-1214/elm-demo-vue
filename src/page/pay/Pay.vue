@@ -15,7 +15,8 @@
       <section>
         <el-button
           size="small"
-          type="success">(假装)已支付</el-button>
+          type="success"
+          @click.native="payOrder()">(假装)已支付</el-button>
         <router-link
           to="/order">
           <el-button
@@ -23,25 +24,14 @@
             type="primary">返回</el-button>
         </router-link>
       </section>
-      <br>
-      <section>
-        <el-button
-          @click.native = "websocket.close()"
-          type="success">
-          send
-        </el-button>
-        <el-button
-          @click.native = "creatWebSocket()"
-          type="success">
-          send2
-        </el-button>
-      </section>
     </article>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import { Toast } from 'mint-ui';
 import { isPc } from '../../tool/tool';
+import { pay } from '../../api/order';
 
 export default {
   data() {
@@ -72,9 +62,11 @@ export default {
       this.time = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
     },
     open() {
+      const orderId = this.$route.query.orderId;
       const id = this.currentUser.id;
       const data = {
         message: 'init',
+        orderId,
         id,
       };
       this.send(JSON.stringify(data));
@@ -83,6 +75,7 @@ export default {
     },
     message(event) {
       if (event.data === 'close') {
+        Toast('您的订单支付已超时，交易已经关闭');
         this.cancelOrder();
       } else {
         this.data = { ...this.data, ...JSON.parse(event.data) };
@@ -114,12 +107,26 @@ export default {
       clearInterval(this.getTime);
       this.$router.push('/home');
     },
+    async payOrder() {
+      const res = await pay();
+      if (res.data.stateCode) {
+        this.$router.push('/order');
+      }
+    },
   },
   created() {
     this.creatWebSocket();
     const intervalId = setInterval(() => {
       const time = this.surplusTime();
       if (time <= 0) {
+        const orderId = this.$route.query.orderId;
+        const id = this.currentUser.id;
+        const data = {
+          message: 'cancle',
+          orderId,
+          id,
+        };
+        this.websocket.send(JSON.stringify(data));
         this.cancelOrder();
       }
       this.setTime(time);

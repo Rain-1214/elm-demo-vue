@@ -17,6 +17,7 @@
         </h1>
         <div class="text-center">
           <el-button
+            @click="toShop()"
             size="small"
             type="primary">
             再来一单
@@ -42,17 +43,79 @@
             </span>
           </li>
           <li>
-            <span class="name">满减优惠</span>
+            <span class="name">配送费</span>
             <span class="only-price">
-              {{currentOrder.order.discounts}}
+              {{currentOrder.order.deliveryCost}}
+            </span>
+          </li>
+          <li>
+            <span class="name">满减优惠</span>
+            <span class="only-price text-red">
+              -{{currentOrder.order.discounts}}
             </span>
           </li>
           <li>
             <span class="name">
               红包优惠
             </span>
+            <span class="only-price text-red">
+              -{{redPacket.minusMoney}}
+            </span>
+          </li>
+          <li>
+            <span class="name">
+              支付
+            </span>
             <span class="only-price">
-              {{redPacket.minusMoney}}
+              {{currentOrder.order.payPrice}}
+            </span>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3 class="bottom-border">配送信息</h3>
+        <ul>
+          <li>
+            <span class="name">
+              配送时间
+            </span>
+            <span class="only-price">
+              {{currentOrder.order.selectDeliveryTime}}
+            </span>
+          </li>
+          <li>
+            <span class="name-small">
+              配送地址
+            </span>
+            <span class="only-price-large">
+              <p>{{currentOrder.order.userAddressName}}</p>
+              <p>{{currentOrder.order.userAddressDetail}}</p>
+              <p>{{currentOrder.order.userName}} {{currentOrder.order.userPhoneNumber}}</p>
+            </span>
+          </li>
+          <li>
+            <span class="name">
+              配送方式
+            </span>
+            <span class="only-price">
+              {{currentOrder.order.deliveryMethod}}
+            </span>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3 class="bottom-border">订单信息</h3>
+        <ul>
+          <li>
+            <span class="name">支付方式</span>
+            <span class="only-price">
+              {{currentOrder.order.payMethod}}
+            </span>
+          </li>
+          <li>
+            <span class="name-small">下单时间</span>
+            <span class="only-price-large">
+              {{currentOrder.order.creatTime.slice(0,currentOrder.order.creatTime.length-2)}}
             </span>
           </li>
         </ul>
@@ -87,6 +150,10 @@
       floatCompute(sign, ...val) {
         return floatComputeAddorMul(sign, ...val);
       },
+      toShop() {
+        this.$store.commit('ALERT_CURRENTSHOP', this.currentOrder.shop);
+        this.$router.push('/shop');
+      },
     },
     async created() {
       if (this.currentOrder.order.redPacketId !== -1) {
@@ -111,6 +178,7 @@
     width: 100vw;
     height: 100vh;
     background: #f1f1f1;
+    overflow-y: scroll;
     .header{
       background: #fff;
       @include remCalc('padding-bottom',15px);
@@ -157,6 +225,16 @@
           .only-price{
             text-align: right;
             flex: 0 0 30%;
+          }
+          .only-price-large{
+            text-align: right;
+            flex: 0 0 70%;
+          }
+          .name-small{
+            flex: 0 0 30%;
+          }
+          .text-red{
+            color: red;
           }
           .price{
             text-align: right;

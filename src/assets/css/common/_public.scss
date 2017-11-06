@@ -38,6 +38,9 @@ h5,.h5{
 .mint-cell{
   @include remCalc('min-height',40px);
 }
+.el-message{
+  @include remCalc('min-width',200px);
+}
 
 .blue-border{
   border:1px solid $blue;
