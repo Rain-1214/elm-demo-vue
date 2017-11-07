@@ -35,6 +35,20 @@
                 去付款 
               </el-button>
             </router-link>
+            <router-link :to="{
+              path: '/pay',
+              query: {
+                orderId: v.order.id,
+                payPrice: v.order.payPrice,
+              }
+            }">
+              <el-button 
+                v-if="v.order.orderState == 1"
+                type="primary"
+                size="small">
+                取消订单 
+              </el-button>
+            </router-link>
             <el-button 
               type="primary"
               v-if="v.order.orderState == 3"
@@ -102,16 +116,24 @@
             message: '恭喜，订单已完成',
             type: 'success',
           });
+          this.loadOrder();
+        } else {
+          Message({
+            message: res.data.message,
+            type: 'error',
+          });
+        }
+      },
+      async loadOrder() {
+        const userId = this.currentUser.id;
+        const res = await getOrder({ userId });
+        if (res.data.stateCode) {
+          this.orderList = res.data.data.reverse();
         }
       },
     },
     async created() {
-      const userId = this.currentUser.id;
-      const res = await getOrder({ userId });
-      console.log(res);
-      if (res.data.stateCode) {
-        this.orderList = res.data.data;
-      }
+      this.loadOrder();
     },
   };
 </script>

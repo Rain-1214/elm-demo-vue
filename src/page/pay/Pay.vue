@@ -17,6 +17,12 @@
           size="small"
           type="success"
           @click.native="payOrder()">(假装)已支付</el-button>
+        <el-button
+          size="small"
+          type="success"
+          @click.native="cancleOrder()">取消订单</el-button>
+      </section>
+      <section>
         <router-link
           to="/order">
           <el-button
@@ -30,8 +36,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import { Toast } from 'mint-ui';
-import { isPc } from '../../tool/tool';
-import { pay } from '../../api/order';
+import { Message } from 'element-ui';
 
 export default {
   data() {
@@ -62,7 +67,7 @@ export default {
       this.time = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
     },
     open() {
-      const orderId = this.$route.query.orderId;
+      const orderId = parseInt(this.$route.query.orderId, 10);
       const id = this.currentUser.id;
       const data = {
         message: 'init',
@@ -74,9 +79,17 @@ export default {
     close() {
     },
     message(event) {
+      console.log(event.data);
       if (event.data === 'close') {
         Toast('您的订单支付已超时，交易已经关闭');
-        this.cancelOrder();
+        this.closeWebsocket();
+      } else if (event.data === 'paySuccess' || event.data === 'cancleSuccess') {
+        const str = event.data === 'paySuccess' ? '支付成功' : '取消成功';
+        Message({
+          message: str,
+          type: 'success',
+        });
+        this.closeWebsocket('/order');
       } else {
         this.data = { ...this.data, ...JSON.parse(event.data) };
       }
@@ -88,12 +101,11 @@ export default {
       this.websocket.send(message);
     },
     creatWebSocket() {
-      let wsServer;
-      if (isPc()) {
-        wsServer = 'ws://localhost:8080/ElmPro/websocket';
-      } else {
-        wsServer = 'ws://10.1.1.35:8080/ElmPro/websocket';
-      }
+      const locHref = location.href;
+      let domain = locHref.match(/\/\/.+?\//)[0];
+      domain = domain.slice(2, domain.length - 1);
+      domain = domain.replace('9000', '8080');
+      const wsServer = `ws://${domain}/ElmPro/websocket`;
       const websocket = new WebSocket(wsServer);
       this.websocket = websocket;
       websocket.onopen = this.open;
@@ -101,36 +113,43 @@ export default {
       websocket.onmessage = this.message;
       websocket.onerror = this.error;
     },
-    cancelOrder() {
+    closeWebsocket(path = '/home') {
       this.websocket.close();
       clearInterval(this.intervalId);
       clearInterval(this.getTime);
-      this.$router.push('/home');
+      this.$router.push(path);
     },
-    async payOrder() {
-      const res = await pay();
-      if (res.data.stateCode) {
-        this.$router.push('/order');
-      }
+    payOrder() {
+      const orderId = parseInt(this.$route.query.orderId, 10);
+      const id = this.currentUser.id;
+      this.send(JSON.stringify({
+        message: 'pay',
+        orderId,
+        id,
+      }));
+    },
+    cancleOrder() {
+      const orderId = parseInt(this.$route.query.orderId, 10);
+      const id = this.currentUser.id;
+      this.send(JSON.stringify({
+        message: 'cancle',
+        orderId,
+        id,
+      }));
     },
   },
   created() {
     this.creatWebSocket();
+
     const intervalId = setInterval(() => {
       const time = this.surplusTime();
       if (time <= 0) {
-        const orderId = this.$route.query.orderId;
-        const id = this.currentUser.id;
-        const data = {
-          message: 'cancle',
-          orderId,
-          id,
-        };
-        this.websocket.send(JSON.stringify(data));
         this.cancelOrder();
+        this.closeWebsocket();
       }
       this.setTime(time);
     }, 1000);
+
     const id = this.currentUser.id;
     const data = {
       message: 'getTime',
@@ -139,6 +158,7 @@ export default {
     const getTime = setInterval(() => {
       this.send(JSON.stringify(data));
     }, 6000);
+
     this.intervalId = intervalId;
     this.getTime = getTime;
   },
@@ -170,6 +190,9 @@ export default {
         .small{
           color: #ccc;
           @include remCalc('margin',12px,0);
+        }
+        &:last-child{
+          @include remCalc('margin-top',10px);
         }
       }
     }

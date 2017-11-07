@@ -260,8 +260,8 @@
         shopHeaderShow: true, // 头部是否显示
         shopHeaderHeight: 0, // 头部组建高度
         createBlueBallFlag: false, // 什么时候点击可以产生蓝色球的添加动画
-        fullMinusIndex: 0,
-        loading: true,
+        fullMinusIndex: 0, // 当前价格处于哪个满减
+        loading: true, // 商品loading
       };
     },
     computed: {

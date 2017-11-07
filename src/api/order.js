@@ -11,3 +11,5 @@ export const getRedPacket = (data) => axios.post('/ElmPro/order/getHongbao.do', 
 export const pay = () => axios.post('/ElmPro/order/pay.do');
 
 export const orderCompleted = (data) => axios.post('/ElmPro/order/orderCompleted.do', data);
+
+export const cancleOrder = (data) => axios.post('/ElmPro/order/cancleOrder.do', data);

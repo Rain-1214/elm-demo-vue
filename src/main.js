@@ -37,17 +37,25 @@ router.beforeEach((to, from, next) => {
       break;
     case /^\/user\/.*$/.test(to.path) && to.path:
       /* eslint-disable no-undef */
-      console.log(user.user);
       if (localStorage.getItem('User') != null && !hasOwn.call(user.user, 'id')) {
         const User = localStorage.getItem('User');
         store.commit('SAVE_CURRENT_USER', JSON.parse(User));
-      } else {
+      } else if (!localStorage.getItem('User') != null && !hasOwn.call(user.user, 'id')) {
         router.push('/user');
       }
       break;
     case /(^\/login$)|(^\/register$)/.test(to.path) && to.path:
       if (localStorage.getItem('User') != null) {
         router.push('/user');
+      }
+      break;
+    case /^\/pay.*$/.test(to.path) && to.path:
+      /* eslint-disable no-undef */
+      if (localStorage.getItem('User') != null && !hasOwn.call(user.user, 'id')) {
+        const User = localStorage.getItem('User');
+        store.commit('SAVE_CURRENT_USER', JSON.parse(User));
+      } else if (!localStorage.getItem('User') != null && !hasOwn.call(user.user, 'id')) {
+        router.push('/order');
       }
       break;
     default:next();

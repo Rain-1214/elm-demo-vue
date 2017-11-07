@@ -54,7 +54,7 @@
               -{{currentOrder.order.discounts}}
             </span>
           </li>
-          <li>
+          <li v-if="currentOrder.order.redPacketId != -1">
             <span class="name">
               红包优惠
             </span>
@@ -116,6 +116,27 @@
             <span class="name-small">下单时间</span>
             <span class="only-price-large">
               {{currentOrder.order.creatTime.slice(0,currentOrder.order.creatTime.length-2)}}
+            </span>
+          </li>
+        </ul>
+      </section>
+      <section v-if="currentOrder.order.companyName != null">
+        <h3 class="bottom-border">发票信息</h3>
+        <ul>
+          <li>
+            <span class="name-small">
+              公司名称
+            </span>
+            <span class="only-price-large">
+              {{currentOrder.order.companyName}}
+            </span>
+          </li>
+          <li>
+            <span class="name-small">
+              纳税人识别码
+            </span>
+            <span class="only-price-large">
+              {{currentOrder.order.code}}
             </span>
           </li>
         </ul>

@@ -386,6 +386,11 @@ export default {
     async submit() {
       if (this.ajaxFlag) {
         this.ajaxFlag = false;
+        if (!Object.prototype.hasOwnProperty.call(this.order.address, 'id')) {
+          Toast('请先选择地址');
+          this.ajaxFlag = true;
+          return;
+        }
         try {
           const tempDate = new Date();
           this.order.time = `${tempDate.getFullYear()}-${tempDate.getMonth() + 1}-${tempDate.getDate()} ${tempDate.getHours()}:${tempDate.getMinutes()}:${tempDate.getSeconds()}`;
@@ -396,10 +401,11 @@ export default {
           if (res.data.stateCode) {
             const shopId = this.currentShop.id;
             this.$store.commit('REMOVE_ALL_PRODUCTS', { shopId });
+            this.$store.dispatch('afreshHongbao');
             this.$router.push({
               path: '/pay',
               query: {
-                payPrice: res.data.data,
+                payPrice: res.data.payPrice,
                 orderId: res.data.orderId,
               },
             });

@@ -39,7 +39,7 @@ h5,.h5{
   @include remCalc('min-height',40px);
 }
 .el-message{
-  @include remCalc('min-width',200px);
+  @include remCalc-imp('min-width',200px);
 }
 
 .blue-border{

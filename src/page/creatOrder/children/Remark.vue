@@ -1,7 +1,7 @@
 <template>
   <div id="remark">
     <mt-header title="确认订单">
-      <section slot="left" @click="close()">
+      <section slot="left" @click="requestRemark()">
         <i class="el-icon-arrow-left"></i>
       </section>
     </mt-header>
@@ -62,11 +62,8 @@ export default {
     'radio-button': RadioButton,
   },
   methods: {
-    close() {
-      this.$emit('close', '');
-    },
     requestRemark() {
-      const string = `${this.str1}${this.str2}${this.str3}${this.str4}${this.str5}${this.str6}`;
+      const string = `${this.str1} ${this.str2} ${this.str3} ${this.str4} ${this.str5} ${this.str6}`;
       this.$emit('close', string);
     },
   },
