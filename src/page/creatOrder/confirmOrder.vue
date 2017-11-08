@@ -268,6 +268,7 @@ export default {
     ...mapGetters(['currentShop', 'currentUser', 'shoppingCartProducts']),
   },
   methods: {
+    // 计算到达时间
     computedArrivedTime() {
       const { lat: addressLat, lng: addressLng } = this.order.address;
       const { latitude: shopLat, longitude: shopLng } = this.currentShop;
@@ -287,6 +288,7 @@ export default {
       console.log(this.arrivedTime, this.order.pickerValue);
       this.startInterval();
     },
+    // 接受用户选择的时间
     handleConfirm(value) {
       this.computedArrivedTime();
       const minute = value.split(':')[1];
@@ -299,12 +301,14 @@ export default {
         this.arrivedTimeVisible = false;
       }
     },
+    // 显示用户时间选择并停止时间更新
     showTimePicker() {
       if (this.order.address.id) {
         clearInterval(this.timeInterval);
         this.arrivedTimeVisible = true;
       }
     },
+    // 显示选择红包
     showRedPacker() {
       if (this.order.address.id) {
         const redPacketId = this.order.redPacketId;
@@ -314,6 +318,7 @@ export default {
         });
       }
     },
+    // 开始时间更新
     startInterval() {
       if (!this.timeInterval) {
         const time = setInterval(() => {
@@ -322,21 +327,25 @@ export default {
         this.timeInterval = time;
       }
     },
+    // 设置付款方式
     setPayMethod(method) {
       this.payMethodVisible = false;
       if (method) {
         this.order.payMethod = method;
       }
     },
+    // 计算总价格
     computedPayPrice() {
       let totalPrice = this.shoppingCartProducts[this.currentShop.id].totalPrice;
       totalPrice = floatComputeAddorMul('+', totalPrice, this.currentShop.deliveryCost);
       this.order.payPrice = floatComputeSuborDiv('-', totalPrice, this.redPacket, this.fullMinus, ...this.OtherDiscounts);
       this.order.payPrice = this.order.payPrice < 1 ? 1 : this.order.payPrice;
     },
+    // 计算红包优惠
     computedRedPacket(redPacketIndex) {
       this.redPacket = this.currentUser.hongbao[redPacketIndex].minusMoney;
     },
+    // 检测红包是否可用
     checkRedPacket() {
       this.canUserRedPackedNum = 0;
       if (Object.prototype.hasOwnProperty.call(this.order.address, 'id')) {
@@ -370,10 +379,12 @@ export default {
         });
       }
     },
+    // 接收备注信息
     responseRemark(remarkString) {
       this.remarkVisible = false;
       this.order.remarkString = remarkString;
     },
+    // 接收发票信息
     responseInvoice(invoice) {
       if (!invoice) {
         this.order.needInvoice = false;
@@ -383,6 +394,7 @@ export default {
       }
       this.invoiceVisible = false;
     },
+    // 提交订单
     async submit() {
       if (this.ajaxFlag) {
         this.ajaxFlag = false;

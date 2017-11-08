@@ -41,11 +41,11 @@ import { Message } from 'element-ui';
 export default {
   data() {
     return {
-      websocket: null,
-      time: '15:00',
-      intervalId: -1,
-      getTime: -1,
-      data: null,
+      websocket: null, // websocket对象
+      time: '15:00', // 剩余支付时间
+      intervalId: -1, // 更新剩余时间定时器ID
+      getTime: -1, // 心跳检测定时器id
+      data: null, // 订单创建时间
     };
   },
   watch: {
@@ -58,14 +58,17 @@ export default {
     ...mapGetters(['currentUser']),
   },
   methods: {
+    // 计算当前时刻到15分钟支付时限剩余的毫秒数
     surplusTime() {
       return (this.data.time + (15 * 60 * 1000)) - new Date().getTime();
     },
+    // 设置剩余支付时间字符串
     setTime(time) {
       const minutes = new Date(time).getMinutes();
       const seconds = new Date(time).getSeconds();
       this.time = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
     },
+    // wesocket连接创建成功是触发的函数
     open() {
       const orderId = parseInt(this.$route.query.orderId, 10);
       const id = this.currentUser.id;
@@ -76,8 +79,10 @@ export default {
       };
       this.send(JSON.stringify(data));
     },
+    // websocket连接关闭时候关闭的链接
     close() {
     },
+    // websocket链接接收到信息的时候触发的函数
     message(event) {
       console.log(event.data);
       if (event.data === 'close') {
@@ -94,13 +99,17 @@ export default {
         this.data = { ...this.data, ...JSON.parse(event.data) };
       }
     },
+    // websocket链接发生错误的时候触犯的函数   发生错误时 进行重新连接
     error() {
       this.creatWebSocket();
     },
+    // 通过websocket向服务器发送信息
     send(message) {
       this.websocket.send(message);
     },
+    // 创建websocket连接
     creatWebSocket() {
+      // 因为我在电脑上用localhost:9000的域名 但是有时我会用手机测试 在局域网访问时候用 10.1.1.xx 访问 所以要获取一下当前域名
       const locHref = location.href;
       let domain = locHref.match(/\/\/.+?\//)[0];
       domain = domain.slice(2, domain.length - 1);
@@ -113,12 +122,14 @@ export default {
       websocket.onmessage = this.message;
       websocket.onerror = this.error;
     },
+    // 关闭websocket连接
     closeWebsocket(path = '/home') {
       this.websocket.close();
       clearInterval(this.intervalId);
       clearInterval(this.getTime);
       this.$router.push(path);
     },
+    // 支付订单时候通过websocket向服务器发送支付的message
     payOrder() {
       const orderId = parseInt(this.$route.query.orderId, 10);
       const id = this.currentUser.id;
@@ -128,6 +139,7 @@ export default {
         id,
       }));
     },
+    // 点击取消订单的时候通过websocket向服务器发送取消订单的message
     cancleOrder() {
       const orderId = parseInt(this.$route.query.orderId, 10);
       const id = this.currentUser.id;
@@ -138,6 +150,7 @@ export default {
       }));
     },
   },
+  // created钩子当中 需要创建websocket连接 启动时间更新定时器 启动心跳检测定时器
   created() {
     this.creatWebSocket();
 

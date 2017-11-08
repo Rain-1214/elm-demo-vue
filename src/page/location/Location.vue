@@ -49,11 +49,11 @@
   export default{
     data() {
       return {
-        loadShow: true,
-        popupVisible: false,
-        hotCity: [],
-        allCity: {},
-        getLocationFromBrowser: true,
+        loadShow: true, // 获取定位过程的显示的loading
+        popupVisible: false, // 搜索地址页是否显示
+        hotCity: [], // 热门城市数据
+        allCity: {}, // 全部城市数据
+        getLocationFromBrowser: true, // 判断用户是否在等待获取地址
       };
     },
     computed: {

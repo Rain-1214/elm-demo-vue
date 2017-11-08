@@ -55,9 +55,6 @@ export default {
         };
       }
     },
-    handleConfirm(value) {
-      console.log(value);
-    },
   },
 };
 </script>

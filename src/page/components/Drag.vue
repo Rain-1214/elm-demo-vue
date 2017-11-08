@@ -2,9 +2,9 @@
   <div
     :style="styleObject"
     class="drag"
-    @touchstart='openMoveState($event)'
-    @touchmove='move($event)'
-    @touchend='closeMoveState($event)'>
+    @touchstart.stop='openMoveState($event)'
+    @touchmove.stop='move($event)'
+    @touchend.stop='closeMoveState($event)'>
     <slot></slot>
   </div>
 </template>
