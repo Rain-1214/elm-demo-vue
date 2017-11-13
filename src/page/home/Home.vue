@@ -21,7 +21,8 @@
       </mt-swipe>
     </section>
     <section class="grayLine"></section>
-    <section class="shop-wrapper">
+    <section 
+      class="shop-wrapper">
       <div class="title">
         <h2>推荐商家</h2>
       </div>
@@ -35,9 +36,9 @@
           <div class="shopList-header">
             <h2 :class="{'isbrand':v.isBrand}">{{ v.shopName }}</h2>
             <div class="shop-type">
-              <span v-show="v.shopProperty.safeguard">保</span>
-              <span v-show="v.shopProperty.hummingbird">准</span>
-              <span v-show="v.shopProperty.invoice">票</span>
+              <span v-if="v.shopProperty.safeguard">保</span>
+              <span v-if="v.shopProperty.hummingbird">准</span>
+              <span v-if="v.shopProperty.invoice">票</span>
             </div>
           </div>
           <div class="shop-info">
@@ -105,6 +106,7 @@
       async loadShopList() {
         try {
           const res = await getShopList();
+          console.log(res);
           res.data.data.forEach((e) => {
             // 计算评价平均值
             const { serveEvaluate, foodEvaluate } = e;
@@ -193,6 +195,7 @@
     @include remCalc("height",15px);
   }
   .shop-wrapper{
+    @include remCalc('padding-bottom',60px);
     .title{
       border-bottom: 1px solid #e5e5e5;
       h2{
@@ -208,8 +211,8 @@
       .img{
         padding:5px;
         img{
-          @include remCalc('height',60px);
-          @include remCalc('width',60px);
+          @include remCalc('height',55px);
+          @include remCalc('width',55px);
         }
       }
       .shop-detail{
