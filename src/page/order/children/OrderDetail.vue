@@ -48,7 +48,7 @@
               {{currentOrder.order.deliveryCost}}
             </span>
           </li>
-          <li>
+          <li v-if="currentOrder.order.discounts != 0">
             <span class="name">满减优惠</span>
             <span class="only-price text-red">
               -{{currentOrder.order.discounts}}

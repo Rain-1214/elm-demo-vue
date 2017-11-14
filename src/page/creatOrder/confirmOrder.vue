@@ -63,10 +63,10 @@
             </div>
             <div>
               <span>x{{v.foodNum}}</span>
-              <span>{{v.price * v.foodNum}}</span>
+              <span>{{ floatComputemul(v.price * v.foodNum) }}</span>
             </div>
           </li>
-          <li>
+          <li class="haveNoNum">
             <div>配送费</div>
             <div>
               <span>{{currentShop.deliveryCost}}</span>
@@ -74,7 +74,7 @@
           </li>
           <li 
             v-if="fullMinus != 0"
-            class="orange">
+            class="orange haveNoNum">
             <div>
               满减优惠
             </div>
@@ -84,7 +84,7 @@
           </li>
           <li 
             v-if="order.redPacketId != -1"
-            class="orange">
+            class="orange haveNoNum">
             <div>
               红包优惠
             </div>
@@ -92,7 +92,7 @@
               <span>{{`-${redPacket}`}}</span>
             </div>
           </li>
-          <li class="orange">
+          <li class="orange haveNoNum">
             <div>总计</div>
             <div>
               <span>
@@ -269,6 +269,9 @@ export default {
   },
   methods: {
     // 计算到达时间
+    floatComputemul(val1, val2) {
+      return floatComputeAddorMul('*', val1, val2);
+    },
     computedArrivedTime() {
       const { lat: addressLat, lng: addressLng } = this.order.address;
       const { latitude: shopLat, longitude: shopLng } = this.currentShop;
@@ -413,7 +416,9 @@ export default {
           if (res.data.stateCode) {
             const shopId = this.currentShop.id;
             this.$store.commit('REMOVE_ALL_PRODUCTS', { shopId });
-            this.$store.dispatch('afreshHongbao');
+            if (this.order.redPacketId !== -1) {
+              this.$store.dispatch('afreshHongbao');
+            }
             this.$router.push({
               path: '/pay',
               query: {
@@ -546,12 +551,30 @@ export default {
         li{
           display: flex;
           justify-content: space-between;
+          &.haveNoNum{
+            div{
+              span{
+                width: 100% !important;
+              }
+            }
+          }
           div{
+            &:first-child{
+              width: 70%;
+            }
+            &:last-child{
+              width: 30%;
+            }
             span{
+              &:first-child{
+                display: inline-block;
+                text-align: right;
+                width: 33%;
+              }
               &:last-child{
                 display: inline-block;
                 text-align: right;
-                @include remCalc('width',70px);
+                width: 63%;
               }
             }
           }

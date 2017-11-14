@@ -62,7 +62,7 @@
                               多规格
                             </span>
                           </header>
-                          <section class="gray">月售{{item.countMonth}}份 好评率{{item.goodEvaluate * 100}}%</section>
+                          <section class="gray">月售{{item.countMonth}}份 <br> 好评率{{parseInt((item.goodEvaluate / 5) * 10000) / 100}}%</section>
                           <section>{{item.foodInfo}}</section>
                           <section class="price">
                             <span>￥{{item.price}}</span>
@@ -389,7 +389,9 @@
             this.selectArray.push(tempArray);
           });
           // 将当前商品在所有商品的位置记录 以便以后使用
-          Object.assign(this.foodType, product, productList, { productListIndex });
+          console.log(product);
+          console.log(productList);
+          Object.assign(this.foodType, product, { foodList: productList.foodList }, { productListIndex });
 
           this.currentPopupProductPrice = floatComputeAddorMul('+', this.foodType.price, productTypePrice);
           this.selectFoodType = true;
@@ -535,6 +537,7 @@
       const id = this.currentShop.id;
       try {
         const res = await getShopFoodTypeList({ id });
+        console.log(res.data.data);
         // 检测购物车当中是否有该商品以初始化商品数量
         res.data.data.forEach((e) => {
           e.foodList.forEach((e) => {
@@ -626,6 +629,8 @@
       }
       ul{
         display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
         li{
           @include remCalc('padding',5px,10px);
           @include remCalc('border-radius',15px);
@@ -751,7 +756,7 @@
         @include remCalc('width',80px);
         ul{
           li{
-            @include remCalc('font-size',14px);
+            @include remCalc('font-size',12px);
             @include remCalc('padding',10px,5px);
             border-left: 4px solid #ededed;
             &.active{
@@ -793,9 +798,10 @@
                   @include remCalc('padding',5px);
                   header{
                     font-weight: bold;
-                    @include remCalc('font-size',16px);
+                    @include remCalc('font-size',14px);
                     span{
                       float: right;
+                      transform:scale(0.8);
                       @include remCalc('padding-left',15px);
                       @include remCalc('padding-right',15px);
                       @include remCalc('border-radius',15px);
@@ -803,6 +809,7 @@
                   }
                   section{
                     margin:2px 0;
+                    @include remCalc('font-size',12px);
                     &.gray{
                       color: #666;
                     }

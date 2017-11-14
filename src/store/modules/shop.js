@@ -15,6 +15,9 @@ const actions = {
 const mutations = {
 
   [type.ALERT_CURRENTSHOP](state, shop) {
+    // 重新排序满减数组
+    const shopFullArray = shop.shopFullMinus.sort((a, b) => a.full - b.full);
+    shop.shopFullMinus = shopFullArray;
     Object.assign(state.currentShop, shop);
   },
 };

@@ -9,11 +9,20 @@
       <redpacket-wrapper
         :key="i"
         :packet='v'
-        v-for="(v,i) in currentUser.hongbao">
+        v-for="(v,i) in canUse">
       </redpacket-wrapper>
-      <section class="empty" v-show="currentUser.hongbao.length == 0">
-        暂无红包~~
+      <section class="empty" v-show="canUse.length == 0">
+        暂无可用红包~~
       </section>
+      <section>
+        <redpacket-wrapper
+        :canNotUse = "true"
+        :canNotUseCause = "'aaa'"
+        :key="i"
+        :packet='v'
+        v-for="(v,i) in canNotUse">
+      </redpacket-wrapper>
+      </section> 
     </article>
   </div>  
 </template>
@@ -24,7 +33,8 @@ import RedpacketWrapper from './children/RedpacketWrapper.vue';
 export default {
   data() {
     return {
-
+      canUse: [],
+      canNotUse: [],
     };
   },
   computed: {
@@ -32,6 +42,25 @@ export default {
   },
   components: {
     'redpacket-wrapper': RedpacketWrapper,
+  },
+  methods: {
+    checkRedPacket(redPacket) {
+      // 检测红包状态
+      if (redPacket.hongbaoState !== 2) {
+        return redPacket.hongbaoState === 1 ? '红包已使用' : '红包已过期';
+      }
+      return true;
+    },
+  },
+  created() {
+    this.$store.dispatch('afreshHongbao');
+    this.currentUser.hongbao.forEach((e) => {
+      if (this.checkRedPacket(e)) {
+        this.canUse.push(e);
+      } else {
+        this.canNotUse.push(e);
+      }
+    });
   },
 };
 </script>
