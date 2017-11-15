@@ -59,7 +59,10 @@
             :key="i" 
             v-for="(v,i) in shoppingCartProducts[currentShop.id].foodList">
             <div>
-              {{v.foodName}}{{v.foodType}}
+              {{v.foodName}} 
+              <p v-if="v.foodType !== ''">
+                {{v.foodType}}
+              </p>
             </div>
             <div>
               <span>x{{v.foodNum}}</span>
@@ -551,6 +554,7 @@ export default {
         li{
           display: flex;
           justify-content: space-between;
+          @include remCalc('margin-bottom',5px);
           &.haveNoNum{
             div{
               span{

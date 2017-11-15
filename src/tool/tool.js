@@ -186,3 +186,15 @@ export const isPc = () => {
   });
   return flag;
 };
+
+/**
+ * 生成[min,max]的随机整数,两个参数应该为整数,如果为小数则会忽略小数部分
+ * @param min 下限
+ * @param max 上限
+ * @returns {number} 生成的随机数
+ */
+export const randomNum = (min, max) => {
+  const maxObject = floatToInt(max);
+  const minObject = floatToInt(min);
+  return Math.floor((Math.random() * ((maxObject.floatInt - minObject.floatInt) + 1)) + minObject.floatInt);
+};

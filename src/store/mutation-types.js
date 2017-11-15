@@ -17,6 +17,7 @@ export const SAVE_CURRENT_USER = 'SAVE_CURRENT_USER'; // 存储当前登录的�
 export const REMOVE_CURRENT_USER = 'REMOVE_CURRENT_USER'; // 删除当前用户 （登出）
 export const AFRESH_ADDRESS = 'AFRESH_ADDRESS'; // 刷新用户地址
 export const AFRESH_HONGBAO = 'AFRESH_HONGBAO'; // 刷新用户红包
+export const AFRESH_ACTIVITYSCORE = 'AFRESH_ACTIVITYSCORE'; // 刷新用户活动积分
 
 // 订单
 export const ALERT_CURRENTORDER = 'ALERT_CURRENTORDER'; // 修改当前订单

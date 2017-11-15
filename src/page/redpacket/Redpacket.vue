@@ -14,15 +14,18 @@
       <section class="empty" v-show="canUse.length == 0">
         暂无可用红包~~
       </section>
-      <section>
+      <section v-show="notUseVisible">
         <redpacket-wrapper
-        :canNotUse = "true"
-        :canNotUseCause = "'aaa'"
-        :key="i"
-        :packet='v'
-        v-for="(v,i) in canNotUse">
-      </redpacket-wrapper>
-      </section> 
+          :canNotUse = "true"
+          :canNotUseCause = "v.canNotUseCause"
+          :key="i"
+          :packet='v.redpacket'
+          v-for="(v,i) in canNotUse">
+        </redpacket-wrapper>
+      </section>
+      <h3 @click="notUseVisible = !notUseVisible">
+        查看历史红包
+      </h3>
     </article>
   </div>  
 </template>
@@ -35,6 +38,7 @@ export default {
     return {
       canUse: [],
       canNotUse: [],
+      notUseVisible: false,
     };
   },
   computed: {
@@ -55,10 +59,14 @@ export default {
   created() {
     this.$store.dispatch('afreshHongbao');
     this.currentUser.hongbao.forEach((e) => {
-      if (this.checkRedPacket(e)) {
+      const result = this.checkRedPacket(e);
+      if (result === true) {
         this.canUse.push(e);
       } else {
-        this.canNotUse.push(e);
+        this.canNotUse.push({
+          redpacket: e,
+          canNotUseCause: result,
+        });
       }
     });
   },
@@ -77,10 +85,20 @@ export default {
     height: 100vh;
     background: #fff;
     article{
+      @include remCalc('padding-bottom',40px);
       .empty{
         color: #b5b5b5;
         @include remCalc('padding',15px);
         @include remCalc('font-size',22px);
+      }
+      h3{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        color: #ccc;
+        text-align: center;
+        @include remCalc('padding',10px,0);
       }
     }
   }

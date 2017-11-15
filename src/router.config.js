@@ -13,6 +13,7 @@ const OrderSelectAddress = r => require.ensure([], () => r(require('./page/creat
 const Redpacket = r => require.ensure([], () => r(require('./page/redpacket/Redpacket.vue')), 'Redpacket');
 const OrderSelectPacket = r => require.ensure([], () => r(require('./page/creatOrder/OrderSelectRedPacket.vue')), 'OrderSelectRedPacket');
 const Pay = r => require.ensure([], () => r(require('./page/pay/Pay.vue')), 'Pay');
+const ActivityScore = r => require.ensure([], () => r(require('./page/activityScore/ActivityScore.vue')), 'ActivitScore');
 
 export default{
   mode: 'history',
@@ -46,6 +47,10 @@ export default{
         {
           path: 'redpacket',
           component: Redpacket,
+        },
+        {
+          path: 'activityScore',
+          component: ActivityScore,
         },
       ],
     },

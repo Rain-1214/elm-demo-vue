@@ -61,10 +61,12 @@
         </router-link>
       </div>
       <div>
-        <svg>
-          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#profile-coins"></use>
-        </svg>
-        <h2>积分</h2>
+        <router-link to="/user/activityScore">
+          <svg>
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#profile-coins"></use>
+          </svg>
+          <h2>积分</h2>
+        </router-link>
       </div>
     </section>
     <section class="list">
