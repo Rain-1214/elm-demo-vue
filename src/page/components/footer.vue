@@ -5,7 +5,7 @@
         <img slot="icon" :src="src[0]">
         <span :class="{'blue':active === 0}">外卖</span>
       </mt-tab-item>
-      <mt-tab-item id="订单">
+      <mt-tab-item id="订单" @click.native="$router.push('/filter')">
         <img slot="icon" :src="src[1]">
         <span :class="{'blue':active === 1}">发现</span>
       </mt-tab-item>

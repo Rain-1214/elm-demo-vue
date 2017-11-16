@@ -62,7 +62,7 @@ const mutations = {
     localStorage.setItem('User', JSON.stringify(state.user));
   },
   [type.AFRESH_ACTIVITYSCORE](state, activityScore) {
-    state.user.activityPoint = activityScore;
+    state.user.activityPoints = activityScore;
     localStorage.setItem('User', JSON.stringify(state.user));
   },
 };

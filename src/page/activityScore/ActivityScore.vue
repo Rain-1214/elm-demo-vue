@@ -17,12 +17,14 @@
           <h3>需要积分: <span>200</span></h3>
           <h2>获取一个随机大小的红包</h2>
         </div>
-        <div>
+        <div
+          @click="createRedPacket('积分随机大红包', 400,[20,35], [500,1500])">
           <img src="../../assets/img/redpacket.png" alt="">
           <h3>需要积分: <span>400</span></h3>
           <h2>获取一个随机大小的大红包</h2>
         </div>
-        <div>
+        <div
+          @click="createRedPacket('积分随机超大红包', 800,[30,35],[1500,2500])">
           <img src="../../assets/img/redpacket.png" alt="">
           <h3>需要积分: <span>800</span></h3>
           <h2>获取一个随机大小的超大红包</h2>
@@ -30,6 +32,7 @@
       </section>
       <section class="bottom">
         <el-button
+          @click="addActivityPoint(1000)"
           size="small"
           type="success">
           获得1000积分
@@ -41,9 +44,9 @@
 <script>
   import { mapGetters } from 'vuex';
   import { Toast } from 'mint-ui';
-  import { randomNum } from '../../tool/tool'
-  import { insertHongbaoToUser } from '../../api/user';
-  import { AFRESH_HONGBAO } from '../../store/mutation-types'
+  import { randomNum } from '../../tool/tool';
+  import { insertHongbaoToUser, addActivityPoint } from '../../api/user';
+  import { AFRESH_HONGBAO, AFRESH_ACTIVITYSCORE } from '../../store/mutation-types';
 
   export default {
     data() {
@@ -90,9 +93,20 @@
           this.redPacket.shopTypeIdList.push(random);
         }
         const res = await insertHongbaoToUser(this.redPacket);
-        if (res.data.stateCode){
+        if (res.data.stateCode) {
           Toast('兑换成功');
           this.$store.commit(AFRESH_HONGBAO, res.data.data);
+          this.$store.dispatch('afreshActicityPoint');
+        } else {
+          Toast(res.data.message);
+        }
+      },
+      async addActivityPoint(activityPoint) {
+        const userId = this.currentUser.id;
+        const res = await addActivityPoint({ userId, activityPoint });
+        if (res.data.stateCode) {
+          Toast('添加成功');
+          this.$store.commit(AFRESH_ACTIVITYSCORE, res.data.data);
         } else {
           Toast(res.data.message);
         }

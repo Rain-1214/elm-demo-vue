@@ -25,3 +25,5 @@ export const getUserHongbao = (data) => axios.post('/ElmPro/User/findHongbaoByUs
 export const getUserActivityScore = (data) => axios.post('/ElmPro/User/getUserActivityScore.do', data); // 获取用户积分
 
 export const insertHongbaoToUser = (data) => axios.post('/ElmPro/User/creatHongbao.do', data); // 给某个用户添加一个红包
+
+export const addActivityPoint = (data) => axios.post('/ElmPro/User/addActivityPoint.do', data); // 给摸个用户添加积分

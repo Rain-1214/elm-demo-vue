@@ -83,9 +83,11 @@ export default {
     left: 0;
     width: 100vw;
     height: 100vh;
+    overflow-y: scroll;
     background: #fff;
     article{
       @include remCalc('padding-bottom',40px);
+      position: relative;
       .empty{
         color: #b5b5b5;
         @include remCalc('padding',15px);

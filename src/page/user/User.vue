@@ -79,6 +79,7 @@
         </svg>
       </mt-cell>
       <mt-cell
+        to="/user/activityScore"
         title="积分商城"
         is-link>
         <svg slot='icon'>
@@ -86,6 +87,7 @@
         </svg>
       </mt-cell>
       <mt-cell
+        @click.native="showAppAddress()"
         title="下载饿了么APP"
         is-link>
         <svg slot='icon'>
@@ -101,12 +103,17 @@
         </svg>
       </mt-cell>
       <mt-cell title="退出登录" 
-      v-if="Object.hasOwnProperty.call(currentUser,`userName`)" @click.native = "logout()">
+        v-if="Object.hasOwnProperty.call(currentUser,`userName`)" @click.native = "logout()">
         <svg slot='icon'>
           <use xlink:href="#download"></use>
         </svg>
       </mt-cell>
     </section>
+    <mt-popup
+      v-model="popupVisible"
+      popup-transition="popup-fade">
+      <img src="//shadow.elemecdn.com/faas/desktop/media/img/appqc.95e532.png" alt="">
+    </mt-popup>
     <my-footer :active="3"></my-footer>
     <router-view></router-view>
   </div>
@@ -154,6 +161,9 @@
           return;
         }
         this.$router.push('/user/address');
+      },
+      showAppAddress() {
+        this.popupVisible = !this.popupVisible;
       },
     },
     created() {
@@ -249,7 +259,6 @@
           background:none;
         }
       }
-     
       svg{
         position: relative;
         @include remCalc('top',5px);
@@ -258,11 +267,10 @@
       }
     }
     .mint-popup{
-      height: 100vh;
-      width: 100vw;
-      top: 0;
-      left: 0;
-      transform:none;
+      max-width: 60%;
+      img{
+        width: 100%;
+      }
     }
   }
 </style>
