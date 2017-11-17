@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { Button, Select, Form, FormItem, Input,
   Table, TableColumn, Option, Dialog, Icon,
   Rate, Tabs, TabPane, Badge, Radio
-  , Steps, Step, Loading } from 'element-ui';
+  , Steps, Step, Loading, Dropdown, DropdownMenu } from 'element-ui';
 
 Vue.use(Button);
 Vue.use(Select);
@@ -22,3 +22,5 @@ Vue.use(Radio);
 Vue.use(Steps);
 Vue.use(Step);
 Vue.use(Loading);
+Vue.use(Dropdown);
+Vue.use(DropdownMenu);
