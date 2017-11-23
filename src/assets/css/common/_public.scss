@@ -91,3 +91,8 @@ h5,.h5{
 .lightgray{
   color: #ddd
 }
+
+.el-rate__icon{
+  @include remCalc('font-size',12px);
+  @include remCalc('margin-right',0);
+}

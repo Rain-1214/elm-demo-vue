@@ -66,7 +66,7 @@
             </div>
             <div>
               <span>x{{v.foodNum}}</span>
-              <span>{{ floatComputemul(v.price * v.foodNum) }}</span>
+              <span>{{ floatComputemul(v.price,v.foodNum) }}</span>
             </div>
           </li>
           <li class="haveNoNum">

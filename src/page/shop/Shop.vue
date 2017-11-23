@@ -502,6 +502,7 @@
       removeAllProducts() {
         const shopId = this.currentShop.id;
         this.$store.commit(type.REMOVE_ALL_PRODUCTS, shopId);
+        this.currentShopSelectedNum = 0;
       },
       toComfirmOrder() {
         // 生成订单检测 当前店铺是否有商品在购物车当中,所购买的物品是否够起始配送费用,当前用户是否登录,未登录检测是否有缓存登录信息

@@ -26,9 +26,11 @@
       <div class="title">
         <h2>推荐商家</h2>
       </div>
-      <div class="shop" v-for="(v,i) in shopList" 
-      @click="toShopDetail(v)"
-      :key="v.id">
+      <div 
+        class="shop" 
+        @click="toShopDetail(v)"
+        v-for="(v,i) in shopList" 
+        :key="v.id">
         <div class="img">
           <img :src="v.shopLogo">
         </div>
@@ -266,10 +268,7 @@
           flex-direction:row;
           flex-wrap:nowrap;
           justify-content: space-between;
-          .el-rate__icon{
-            @include remCalc('font-size',12px);
-            @include remCalc('margin-right',0);
-          }
+          
           .el-rate__text{
             @include remCalc('font-size',12px);
             vertical-align:middle;
