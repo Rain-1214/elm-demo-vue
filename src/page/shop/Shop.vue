@@ -15,7 +15,6 @@
               {{currentShop.shopProperty.hummingbird?"蜂鸟专送":"商家派送"}}/{{currentShop.time}}分钟送达/配送费￥{{currentShop.deliveryCost}}
             </p>
             <p>公告：{{currentShop.shopNptice}}</p>
-            <i class="el-icon-arrow-right"></i>
           </div>
         </div>
         <div class="activity">
@@ -103,7 +102,32 @@
           </el-tab-pane>
           <el-tab-pane label="评价" name="evaluate">
             <section class="evaluate" :style="{'height':computedHeight}">
-              2222
+              <div class="rate-wrapper">
+                <div class="all-rate">
+                  {{((currentShop.serveEvaluate + currentShop.foodEvaluate) / 2).toFixed(2)}}
+                  <p>综合评价</p>
+                </div>
+                <div class="each-rate">
+                  <div>
+                    服务评价:
+                    <el-rate
+                      v-model="currentShop.serveEvaluate"
+                      disabled
+                      show-score
+                      text-color="#ff9900">
+                    </el-rate>
+                  </div>
+                  <div>
+                    食物评价:
+                    <el-rate
+                      v-model="currentShop.foodEvaluate"
+                      disabled
+                      show-score
+                      text-color="#ff9900">
+                    </el-rate>
+                  </div>
+                </div>
+              </div>  
             </section>
           </el-tab-pane>
         </el-tabs>
@@ -577,7 +601,7 @@
       const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
       const headerHeight = document.querySelector('.shop-header').offsetHeight;
       const tagHeight = document.querySelector('.el-tabs__header').offsetHeight;
-      this.computedHeight = `${(windowHeight - tagHeight) - 40}px`;
+      this.computedHeight = `${(windowHeight - tagHeight)}px`;
       this.shopHeaderHeight = headerHeight;
       // 记录当前店铺中有多少商品在购物车当中
       let tempNumber = 0;
@@ -661,7 +685,7 @@
     .shop-header{
       background: $blue;
       overflow: hidden;
-      @include remCalc('height',145px);
+      @include remCalc('height',125px);
       @include remCalc('padding',10px);
       .back{
         color: #fff;
@@ -700,10 +724,7 @@
           p{
             @include remCalc('font-size',12px);
             @include remCalc('margin',2px,0);
-          }
-          i{
-            @include remCalc('right',0px);
-            @include tb-center(absolute);
+            @include ellipsis;
           }
         }
       }
@@ -741,6 +762,28 @@
               @include remCalc('bottom',2px);
               @include remCalc('width',40px);
               @include remCalc('height',2px);
+            }
+          }
+        }
+      }
+      .evaluate{
+        .rate-wrapper{
+          display: flex;
+          border-bottom:1px solid #ccc;
+          @include remCalc('padding',15px);
+          div{
+            &.all-rate{
+              width: 40%;
+              text-align: center;
+              font-weight: bold;
+              color: #ff6000;
+              @include remCalc('font-size',20px);
+              p{
+                color: #333;
+              }
+            }
+            &.each-rate{
+              width: 60%;
             }
           }
         }

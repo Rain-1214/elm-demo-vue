@@ -12,9 +12,20 @@
       <mt-swipe :auto="0">
         <mt-swipe-item v-for="(v,i) in shopTypeList" :key = 'i'>
           <div class="item-wrapper">
-            <div class="item" v-for="obj in v" :key="obj.id">
-              <img :src="obj.typeLogo">
-              <p>{{obj.typeName}}</p>
+            <div 
+              class="item" 
+              v-for="obj in v" 
+              :key="obj.id">
+              <router-link
+                :to="{
+                  path:'/filter',
+                  query: {
+                    shopType:obj.typeName,
+                  }
+                }">
+                <img :src="obj.typeLogo">
+                <p>{{obj.typeName}}</p>
+              </router-link>
             </div>
           </div>
         </mt-swipe-item>
@@ -22,6 +33,7 @@
     </section>
     <section class="grayLine"></section>
     <section 
+      v-loading="loading"
       class="shop-wrapper">
       <div class="title">
         <h2>推荐商家</h2>
@@ -86,6 +98,7 @@
       return {
         shopTypeList: [],
         shopList: [],
+        loading: true,
       };
     },
     computed: {
@@ -127,6 +140,7 @@
             e.time = time;
             this.shopList.push(e);
           });
+          this.loading = false;
         } catch (e) {
           console.log(e);
         }
@@ -181,6 +195,7 @@
         width: 25%;
         p{
           text-align: center;
+          color: #454545;
           @include remCalc("margin",5px,0);
         }
         img{
@@ -197,6 +212,7 @@
     @include remCalc("height",15px);
   }
   .shop-wrapper{
+    min-height: 200px;
     @include remCalc('padding-bottom',60px);
     .title{
       border-bottom: 1px solid #e5e5e5;

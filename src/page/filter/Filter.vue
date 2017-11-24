@@ -11,17 +11,22 @@
           <div 
             v-show="conditionShow[0]"
             class="dropdown-menu shop-type">
-            <div>
+            <div
+              @click.stop="sortShop({ name:'shopType',value:'all' })"
+              :class="{'is-active':sortBy.shopType.value == 'all'}">
               <img src="//fuss10.elemecdn.com/c/3c/0184f5b3fa72f295fc01864734218jpeg.jpeg?imageMogr/format/webp/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
               全部
               <i class="el-icon-check"></i>
             </div>
             <div 
+              @click.stop="sortShop({ name:'shopType',value: v.typeName })"
               :key="i"
+              :class="{'is-active':sortBy.shopType.value == v.typeName}"
               v-for="(v,i) in shopTypeList">
               <img :src="v.typeLogo" alt="">
               {{v.typeName}}
-              <i class="el-icon-check"></i>
+              <i
+                class="el-icon-check"></i>
             </div>
           </div>
         </div>
@@ -33,7 +38,7 @@
             v-show="conditionShow[1]"
             class="dropdown-menu sort">
             <ul>
-              <li>
+              <li @click.stop="sortShop({ name:'sort',value:'countOrder' })">
                 <div>
                   <svg>
                     <use xlink:href="#hot"></use>
@@ -41,10 +46,12 @@
                   销量最高
                 </div>
                 <div>
-                  <i class="el-icon-check"></i>
+                  <i 
+                    v-show="sortBy.sort.value == 'countOrder'" 
+                    class="el-icon-check"></i>
                 </div>
               </li>
-              <li>
+              <li @click.stop="sortShop({ name:'sort',value:'startCost' })">
                 <div>
                   <svg>
                     <use xlink:href="#price"></use>
@@ -52,10 +59,12 @@
                   起送价最低
                 </div>
                 <div>
-                  <i class="el-icon-check"></i>
+                  <i 
+                    v-show="sortBy.sort.value == 'startCost'" 
+                    class="el-icon-check"></i>
                 </div>
               </li>
-              <li>
+              <li @click.stop="sortShop({ name:'sort',value:'time' })">
                 <div>
                   <svg>
                     <use xlink:href="#speed"></use>
@@ -63,7 +72,9 @@
                   配送最快
                 </div>
                 <div>
-                  <i class="el-icon-check"></i>
+                  <i 
+                    v-show="sortBy.sort.value == 'time'" 
+                    class="el-icon-check"></i>
                 </div>
               </li>
             </ul>
@@ -79,7 +90,9 @@
             <div class="condition-wrapper">
               <h3>配送方式</h3>
               <div class="condition">
-                <div>
+                <div 
+                  @click.stop="sortBy.shopProperty.deliveryMethod = sortBy.shopProperty.deliveryMethod == 'hummingbird' ? '' : 'hummingbird'"
+                  :class="{'is-active':sortBy.shopProperty.deliveryMethod == 'hummingbird'}">
                   <i class="el-icon-check"></i>
                   蜂鸟专送
                 </div>
@@ -88,45 +101,59 @@
             <div class="condition-wrapper">
               <h3>人均消费</h3>
               <div class="condition">
-                <div class="is-active">
+                <div 
+                  @click="setPePersonCost(0,14)"
+                  :class="{'is-active':sortBy.shopProperty.perPersonCost[0] == 0}">
                   <i class="el-icon-check"></i>
-                  10元以内
+                  15元以内
                 </div>
-                <div>
+                <div
+                  @click="setPePersonCost(15,24)"
+                  :class="{'is-active':sortBy.shopProperty.perPersonCost[0] == 15}">
                   <i class="el-icon-check"></i>
-                  10-30
+                  15-25
                 </div>
-                <div>
+                <div
+                  @click="setPePersonCost(25,100000000)"
+                  :class="{'is-active':sortBy.shopProperty.perPersonCost[0] == 25}">
                   <i class="el-icon-check"></i>
-                  30元以上
+                  25元以上
                 </div>
               </div>
             </div>
             <div class="condition-wrapper">
               <h3>商家属性(可多选)</h3>
               <div class="condition">
-                <div>
+                <div
+                  @click.stop="setShopPropertyDetail('safeguard')"
+                  :class="{'is-active':sortBy.shopProperty.shopPropertyDetail.includes('safeguard')}">
                   <i class="el-icon-check"></i>
                   <span class="font-icon">
                     保
                   </span>
                   外卖保
                 </div>
-                <div>
+                <div
+                  @click.stop="setShopPropertyDetail('invoice')"
+                  :class="{'is-active':sortBy.shopProperty.shopPropertyDetail.includes('invoice')}">
                   <i class="el-icon-check"></i>
                   <span class="font-icon">
                     票
                   </span>
                   提供发票
                 </div>
-                <div class="is-active">
+                <div
+                  @click.stop="setShopPropertyDetail('hummingbird')"
+                  :class="{'is-active':sortBy.shopProperty.shopPropertyDetail.includes('hummingbird')}">
                   <i class="el-icon-check"></i>
                   <span class="font-icon">
                     准
                   </span>
                   准时达
                 </div>
-                <div>
+                <div
+                  @click.stop="setShopPropertyDetail('isBrand')"
+                  :class="{'is-active':sortBy.shopProperty.shopPropertyDetail.includes('isBrand')}">
                   <i class="el-icon-check"></i>
                   <span class="font-icon">
                     品
@@ -137,10 +164,12 @@
             </div>
             <div class="submit">
               <el-button
+                @click.native.stop="reset()"
                 size="small">
                 清空
               </el-button>
               <el-button 
+                @click.native.stop="filterByShopType()"
                 size="small"
                 type="success">
                 确定
@@ -149,8 +178,13 @@
           </div>
         </div>
       </section>
-      <section v-show="blackModelShow" class="block-model"></section>
-      <section class="shop-wrapper">
+      <section 
+        @click="closeCondition(true)"
+        v-show="blackModelShow" 
+        class="block-model"></section>
+      <section
+        v-loading="loading"
+        class="shop-wrapper">
         <div 
           class="shop" 
           @click="toShopDetail(v)"
@@ -195,6 +229,10 @@
             </div>
           </div>
         </div>
+        <div>
+          <h2
+            v-show="!loading && showShopList.length == 0">没有商家哦~~~~</h2>
+        </div>
       </section>
     </article>
     <my-footer :active="1"></my-footer>
@@ -214,12 +252,23 @@
         showShopList: [],
         conditionShow: [false, false, false],
         blackModelShow: false,
-        sortBy: [
-          {
+        loading: true,
+        sortBy: {
+          shopType: {
             name: 'filterByShopType',
-            value: [],
+            value: 'all',
           },
-        ],
+          sort: {
+            name: 'filterBySort',
+            value: '',
+          },
+          shopProperty: {
+            name: 'filterByShopProperty',
+            deliveryMethod: '',
+            perPersonCost: [-1, -1],
+            shopPropertyDetail: [],
+          },
+        },
       };
     },
     components: {
@@ -257,6 +306,11 @@
             this.shopList.push(e);
             this.showShopList.push(e);
           });
+          if (this.$route.query.shopType !== undefined) {
+            this.sortShop({ name: 'shopType', value: this.$route.query.shopType });
+            this.filterByShopType();
+          }
+          this.loading = false;
         }
       },
       showCondition(index) {
@@ -264,14 +318,87 @@
         this.conditionShow.splice(index, 1, true);
         this.blackModelShow = true;
       },
-      closeCondition() {
-        this.conditionShow.fill(false);
+      closeCondition(reset = false) {
+        if (reset) {
+          this.reset();
+        }
+        const trueIndex = this.conditionShow.indexOf(true);
+        this.conditionShow.splice(trueIndex, 1, false);
+        this.blackModelShow = false;
       },
-      sortShop() {
-
+      reset() {
+        this.sortBy.shopProperty.deliveryMethod = '';
+        this.sortBy.shopProperty.perPersonCost = [-1, -1];
+        this.sortBy.shopProperty.shopPropertyDetail.splice(0);
       },
-      filterByShopType(shopTypeName) {
-
+      setPePersonCost(min = -1, max = -1) {
+        if (this.sortBy.shopProperty.perPersonCost[0] === min) {
+          this.sortBy.shopProperty.perPersonCost = [-1, -1];
+        } else {
+          this.sortBy.shopProperty.perPersonCost[0] = min;
+          this.sortBy.shopProperty.perPersonCost[1] = max;
+        }
+      },
+      setShopPropertyDetail(value) {
+        const valueIndex = this.sortBy.shopProperty.shopPropertyDetail.indexOf(value);
+        if (valueIndex !== -1) {
+          this.sortBy.shopProperty.shopPropertyDetail.splice(valueIndex, 1);
+        } else {
+          this.sortBy.shopProperty.shopPropertyDetail.push(value);
+        }
+      },
+      sortShop(obj) {
+        this.sortBy[obj.name].value = obj.value;
+        this[this.sortBy[obj.name].name]();
+      },
+      filterByShopType() {
+        this.sortByShopType();
+        this.filterBySort();
+        this.filterByShopProperty();
+        this.closeCondition();
+      },
+      sortByShopType() {
+        if (this.sortBy.shopType.value === 'all') {
+          this.showShopList = this.shopList;
+        } else {
+          this.showShopList = this.shopList.filter(e => e.shopPropertyType.includes(this.sortBy.shopType.value));
+        }
+      },
+      filterBySort() {
+        if (this.sortBy.sort.value !== '') {
+          if (this.sortBy.sort.value === 'countOrder') {
+            this.showShopList.sort((a, b) => b[this.sortBy.sort.value] - a[this.sortBy.sort.value]);
+          } else {
+            this.showShopList.sort((a, b) => a[this.sortBy.sort.value] - b[this.sortBy.sort.value]);
+          }
+        }
+        this.closeCondition();
+      },
+      filterByShopProperty() {
+        if (this.sortBy.shopProperty.deliveryMethod !== '') {
+          this.showShopList = this.showShopList.filter(e => e.shopProperty.hummingbird === 1);
+        }
+        if (this.sortBy.shopProperty.perPersonCost[0] !== -1) {
+          const [min, max] = this.sortBy.shopProperty.perPersonCost;
+          this.showShopList = this.showShopList.filter(e => e.averageUserCost >= min && e.averageUserCost <= max);
+        }
+        if (this.sortBy.shopProperty.shopPropertyDetail.length !== 0) {
+          this.showShopList = this.showShopList.filter((e) => {
+            let flag = true;
+            let once = true;
+            this.sortBy.shopProperty.shopPropertyDetail.forEach((item) => {
+              if (once && item !== 'isBrand' && e.shopProperty[item] !== 1) {
+                flag = false;
+                once = false;
+              } else if (once && item === 'isBrand' && e[item] !== 1) {
+                flag = false;
+                once = false;
+              }
+            });
+            return flag;
+          });
+        }
+        this.closeCondition();
       },
     },
     created() {
@@ -310,6 +437,7 @@
                 position: relative;
                 @include remCalc('margin-bottom',3px);
                 &.is-active{
+                  color: $blue;
                   i{
                     display: block;
                   }
@@ -333,11 +461,11 @@
                 li{
                   display: flex;
                   justify-content: space-between;
-                  @include remCalc('padding',8px,0);
+                  @include remCalc('padding',4px,0);
                   div{
                     min-width: 50%;
                     text-align: left;
-                    @include remCalc('font-size',15px);
+                    @include remCalc('font-size',12px);
                     &:last-child{
                       text-align: right;
                     }
@@ -422,6 +550,8 @@
         z-index: 8;
       }
       .shop-wrapper{
+        min-height: 200px;
+        @include remCalc('padding-bottom',44px);
         .shop{
           display: flex;
           flex-direction:row;
